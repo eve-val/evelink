@@ -94,3 +94,34 @@ class EVE(object):
                 })
 
         return results
+
+    def alliances(self):
+        """Return a dict of all alliances in EVE."""
+
+        api_result = self.api.get('eve/AllianceList')
+
+        results = {}
+        rowset = api_result.find('rowset')
+        for row in rowset.findall('row'):
+            alliance = {
+                'name': row.attrib['name'],
+                'ticker': row.attrib['shortName'],
+                'id': int(row.attrib['allianceID']),
+                'executor_id': int(row.attrib['executorCorpID']),
+                'member_count': int(row.attrib['memberCount']),
+                'timestamp': api.parse_ts(row.attrib['startDate']),
+                'member_corps': {},
+            }
+
+            corp_rowset = row.find('rowset')
+            for corp_row in corp_rowset.findall('row'):
+                corp_id = int(corp_row.attrib['corporationID'])
+                corp_ts = api.parse_ts(corp_row.attrib['startDate'])
+                alliance['member_corps'][corp_id] = {
+                    'id': corp_id,
+                    'timestamp': corp_ts,
+                }
+
+            results[alliance['id']] = alliance
+
+        return results
