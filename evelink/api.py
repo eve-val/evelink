@@ -21,17 +21,26 @@ def parse_ts(v):
 
 def get_named_value(elem, field):
     """Returns the string value of the named child element."""
-    return elem.find(field).text
+    try:
+        return elem.find(field).text
+    except AttributeError:
+        return None
 
 
 def get_ts_value(elem, field):
     """Returns the timestamp value of the named child element."""
-    return parse_ts(get_named_value(elem, field))
+    val = get_named_value(elem, field)
+    if val:
+        return parse_ts(val)
+    return val
 
 
 def get_int_value(elem, field):
     """Returns the integer value of the named child element."""
-    return int(get_named_value(elem, field))
+    val = get_named_value(elem, field)
+    if val:
+        return int(val)
+    return val
 
 
 class APICache(object):

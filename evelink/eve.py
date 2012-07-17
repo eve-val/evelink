@@ -47,18 +47,39 @@ class EVE(object):
 
         def _str(key): return api.get_named_value(api_result, key)
         def _int(key): return api.get_int_value(api_result, key)
-        def _float(key): return float(_str(key))
         def _ts(key): return api.get_ts_value(api_result, key)
+        def _float(key):
+            val = _str(key)
+            return float(val) if val is not None else None
 
         results = {
             'id': _int('characterID'),
             'name': _str('characterName'),
             'race': _str('race'),
             'bloodline': _str('bloodline'),
-            'corp_id': _int('corporationID'),
-            'corp_name': _str('corporation'),
-            'corp_ts': _ts('corporationDate'),
             'sec_status': _float('securityStatus'),
+            'skillpoints': _int('skillPoints'),
+            'location': _str('lastKnownLocation'),
+            'isk': _float('accountBalance'),
+
+            'corp': {
+                'id': _int('corporationID'),
+                'name': _str('corporation'),
+                'timestamp': _ts('corporationDate'),
+            },
+
+            'alliance': {
+                'id': _int('allianceID'),
+                'name': _str('alliance'),
+                'timestamp': _ts('allianceDate'),
+            },
+
+            'ship': {
+                'name': _str('shipName'),
+                'type_id': _int('shipTypeID'),
+                'type_name': _str('shipTypeName'),
+            },
+            
             'history': [],
         }
 
