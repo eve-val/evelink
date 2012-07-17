@@ -1,4 +1,5 @@
 import calendar
+import functools
 import time
 from urllib import urlencode
 import urllib2
@@ -13,9 +14,33 @@ def _clean(v):
         return str(v)
 
 
-def _parse_ts(v):
+def parse_ts(v):
     """Parse a timestamp from EVE API XML into a unix-ish timestamp."""
     return calendar.timegm(time.strptime(v, "%Y-%m-%d %H:%M:%S"))
+
+
+def get_named_value(elem, field):
+    """Returns the string value of the named child element."""
+    try:
+        return elem.find(field).text
+    except AttributeError:
+        return None
+
+
+def get_ts_value(elem, field):
+    """Returns the timestamp value of the named child element."""
+    val = get_named_value(elem, field)
+    if val:
+        return parse_ts(val)
+    return val
+
+
+def get_int_value(elem, field):
+    """Returns the integer value of the named child element."""
+    val = get_named_value(elem, field)
+    if val:
+        return int(val)
+    return val
 
 
 class APICache(object):
@@ -107,8 +132,24 @@ class API(object):
         tree = ElementTree.parse(response)
         result = tree.find('result')
 
-        current_time = _parse_ts(tree.find('currentTime').text)
-        expires_time = _parse_ts(tree.find('cachedUntil').text)
+        current_time = get_ts_value(tree, 'currentTime')
+        expires_time = get_ts_value(tree, 'cachedUntil')
 
         self.cache.put(key, result, expires_time - current_time)
         return result
+
+
+def auto_api(func):
+    """A decorator to automatically provide an API instance.
+
+    Functions decorated with this will have the api= kwarg
+    automatically supplied with a default-initialized API()
+    object if no other API object is supplied.
+    """
+
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        if 'api' not in kwargs:
+            kwargs['api'] = API()
+        return func(*args, **kwargs)
+    return wrapper
