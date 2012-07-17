@@ -17,7 +17,7 @@ class EVE(object):
         """
 
         api_result = self.api.get('eve/CharacterID', {
-                'names': name_list,
+                'names': set(name_list),
             })
 
         rowset = api_result.find('rowset')
