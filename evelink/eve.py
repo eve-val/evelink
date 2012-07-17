@@ -7,6 +7,44 @@ class EVE(object):
     def __init__(self, api=None):
         self.api = api
 
+    def character_names_from_ids(self, id_list):
+        """Retrieve a dict mapping character IDs to names.
+
+        id_list:
+            A list of ids to retrieve names.
+
+        NOTE: *ALL* character IDs passed to this function
+        must be valid - an invalid character ID will cause
+        the entire call to fail.
+        """
+
+        api_result = self.api.get('eve/CharacterName', {
+                'IDs': set(id_list),
+            })
+
+        if api_result is None:
+            # The API doesn't actually tell us which character IDs are invalid
+            msg = "One or more of these character IDs are invalid: %r"
+            raise ValueError(msg % id_list)
+
+        rowset = api_result.find('rowset')
+        rows = rowset.findall('row')
+
+        results = {}
+        for row in rows:
+            name = row.attrib['name']
+            char_id = int(row.attrib['characterID'])
+            results[char_id] = name
+
+        return results
+
+    def character_name_from_id(self, char_id):
+        """Retrieve the character's name based on ID.
+
+        Convenience wrapper around character_names_from_ids().
+        """
+        return self.character_names_from_ids([char_id]).get(char_id)
+
     def character_ids_from_names(self, name_list):
         """Retrieve a dict mapping character names to IDs.
 
@@ -34,7 +72,7 @@ class EVE(object):
     def character_id_from_name(self, name):
         """Retrieve the named character's ID.
 
-        Convenience wrapper around character_ids().
+        Convenience wrapper around character_ids_from_names().
         """
         return self.character_ids_from_names([name]).get(name)
 
