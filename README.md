@@ -36,6 +36,7 @@ Wrapped is the middle layer of access. The methods in the wrapped access layer s
 
 Object access is the highest layer of access and the most encapsulated. Though implementation is being deferred until after the wrapped access layer is more complete, the goal here is to essentially emulate a set of ORM objects, allowing you do to things like `Character(id=1234).corporation.name` to fetch the name of the corporation that the character with ID `1234` is in.
 
+
 Example Usage
 -------------
 
@@ -52,3 +53,25 @@ print result.find('rowset').findall('row')[0].attrib['name']
 eve = evelink.eve.EVE()
 print eve.character_name_from_id(1)
 ```
+
+
+Development
+-----------
+
+To acquire a development copy of the library and set up the requirements for testing:
+
+```bash
+$ git clone https://github.com/eve-val/evelink.git
+$ cd evelink
+$ virtualenv venv --distribute
+$ source venv/bin/activate
+$ pip install -r requirements.txt
+```
+
+To run the tests:
+
+```bash
+$ python -m unittest discover -s tests
+```
+
+(You can also use a `unittest`-compatible test runner such as [`nose`](http://nose.readthedocs.org/).)
