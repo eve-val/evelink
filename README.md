@@ -11,6 +11,7 @@ EVELink does not require any extra dependencies for normal operation.
 If you are developing on EVELink, however, the following packages are required in order to run the tests:
 
  - `mock`
+ - `nose`
 
 A `requirements.txt` is provided as part of the repository for developer convenience.
 
@@ -71,9 +72,7 @@ $ pip install -r requirements.txt
 To run the tests:
 
 ```bash
-$ python -m unittest discover -s tests
+$ nosetests
 ```
-
-(You can also use a `unittest`-compatible test runner such as [`nose`](http://nose.readthedocs.org/).)
 
 Additional information for developers is available [here](https://github.com/eve-val/evelink/wiki/DevelopmentGuidelines).
