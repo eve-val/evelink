@@ -86,13 +86,17 @@ class APICache(object):
 class API(object):
     """A wrapper around the EVE API."""
 
-    def __init__(self, base_url="api.eveonline.com", cache=None):
+    def __init__(self, base_url="api.eveonline.com", cache=None, api_key=None):
         self.base_url = base_url
 
         cache = cache or APICache()
         if not isinstance(cache, APICache):
             raise ValueError("The provided cache must subclass from APICacheBase.")
         self.cache = cache
+
+        if api_key and len(api_key) != 2:
+            raise ValueError("The provided API key must be a tuple of (key_id, key_code).")
+        self.api_key = api_key
 
     def _cache_key(self, path, params):
         sorted_params = sorted(params.iteritems())
@@ -108,6 +112,10 @@ class API(object):
 
         params = params or {}
         params = dict((k, _clean(v)) for k,v in params.iteritems())
+
+        if self.api_key:
+            params['userID'] = self.api_key[0]
+            params['apiKey'] = self.api_key[1]
 
         key = self._cache_key(path, params)
         cached_result = self.cache.get(key)
