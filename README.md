@@ -39,14 +39,16 @@ Object access is the highest layer of access and the most encapsulated. Though i
 Example Usage
 -------------
 
-    import evelink.api # Raw API access
-    import evelink.eve # Wrapped API access
-    
-    # Using the raw access level to get the name of a character
-    api = evelink.api.API()
-    result = api.get('eve/CharacterName', {'IDs': [1]})
-    print result.find('rowset').findall('row')[0].attrib['name']
-    
-    # Using the wrapped access level to get the name of a character
-    eve = evelink.eve.EVE()
-    print eve.character_name_from_id(1)
+```python
+import evelink.api # Raw API access
+import evelink.eve # Wrapped API access for the /eve/ API path
+
+# Using the raw access level to get the name of a character
+api = evelink.api.API()
+result = api.get('eve/CharacterName', {'IDs': [1]})
+print result.find('rowset').findall('row')[0].attrib['name']
+
+# Using the wrapped access level to get the name of a character
+eve = evelink.eve.EVE()
+print eve.character_name_from_id(1)
+```
