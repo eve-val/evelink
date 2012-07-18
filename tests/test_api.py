@@ -1,5 +1,5 @@
 from StringIO import StringIO
-import unittest
+import unittest2 as unittest
 from xml.etree import ElementTree
 
 import mock
