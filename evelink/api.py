@@ -43,6 +43,14 @@ def get_int_value(elem, field):
     return val
 
 
+def get_float_value(elem, field):
+    """Returns the float value of the named child element."""
+    val = get_named_value(elem, field)
+    if val:
+        return float(val)
+    return val
+
+
 def get_bool_value(elem, field):
     """Returns the boolean value of the named child element."""
     val = get_named_value(elem, field)
@@ -51,6 +59,20 @@ def get_bool_value(elem, field):
     elif val == 'False':
         return False
     return None
+
+
+def elem_getters(elem):
+    """Returns a tuple of (_str, _int, _float, _bool, _ts) functions.
+
+    These are getters closed around the provided element.
+    """
+    _str = lambda key: get_named_value(elem, key)
+    _int = lambda key: get_int_value(elem, key)
+    _float = lambda key: get_float_value(elem, key)
+    _bool = lambda key: get_bool_value(elem, key)
+    _ts = lambda key: get_ts_value(elem, key)
+
+    return _str, _int, _float, _bool, _ts
 
 
 class APICache(object):
