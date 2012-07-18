@@ -83,11 +83,8 @@ class APITestCase(unittest.TestCase):
         result = self.api.get('foo/Bar', {'a':[1,2,3]})
 
         rowset = result.find('rowset')
-        self.assertIsInstance(rowset, ElementTree.Element)
-
         rows = rowset.findall('row')
         self.assertEqual(len(rows), 2)
-        self.assertIsInstance(rows[0], ElementTree.Element)
         self.assertEqual(rows[0].attrib['foo'], 'bar')
 
     @mock.patch('urllib2.urlopen')
