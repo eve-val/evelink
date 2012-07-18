@@ -1,3 +1,5 @@
+import unittest2 as unittest
+
 import mock
 
 from evelink import map as evelink_map
@@ -51,3 +53,48 @@ class MapTestCase(APITestCase):
         self.assertEqual(self.api.mock_calls, [
                 mock.call.get('map/Kills'),
             ])
+
+    def test_faction_warfare_systems(self):
+        self.api.get.return_value = self.make_api_result(r"""
+            <result>
+                <rowset name="solarSystems">
+                     <row solarSystemID="30002056" solarSystemName="Resbroko"
+                      occupyingFactionID="0" occupyingFactionName="" contested="True" />
+                     <row solarSystemID="30002057" solarSystemName="Hadozeko"
+                      occupyingFactionID="0" occupyingFactionName="" contested="False" />
+                     <row solarSystemID="30003068" solarSystemName="Kourmonen"
+                      occupyingFactionID="500002" occupyingFactionName="Minmatar Republic"
+                      contested="False" />
+                </rowset>
+            </result>
+        """)
+
+        result = self.map.faction_warfare_systems()
+
+        self.assertEqual(result, {
+                30002056: {
+                    'contested': True,
+                    'faction': {'id': None, 'name': None},
+                    'id': 30002056,
+                    'name': 'Resbroko',
+                },
+                30002057: {
+                    'contested': False,
+                    'faction': {'id': None, 'name': None},
+                    'id': 30002057,
+                    'name': 'Hadozeko',
+                },
+                30003068: {
+                    'contested': False,
+                    'faction': {'id': 500002, 'name': 'Minmatar Republic'},
+                    'id': 30003068,
+                    'name': 'Kourmonen',
+                },
+            })
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('map/FacWarSystems'),
+            ])
+
+
+if __name__ == "__main__":
+    unittest.main()

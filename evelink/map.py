@@ -56,3 +56,29 @@ class Map(object):
         data_time = api.parse_ts(api_result.find('dataTime').text)
 
         return results, data_time
+
+    def faction_warfare_systems(self):
+        """Get a dict of factional warfare systems and their info."""
+
+        api_result = self.api.get('map/FacWarSystems')
+
+        rowset = api_result.find('rowset')
+        results = {}
+        for row in rowset.findall('row'):
+            system = int(row.attrib['solarSystemID'])
+            name = row.attrib['solarSystemName']
+            faction_id = int(row.attrib['occupyingFactionID']) or None
+            faction_name = row.attrib['occupyingFactionName'] or None
+            contested = (row.attrib['contested'] == 'True')
+
+            results[system] = {
+                'id': system,
+                'name': name,
+                'faction': {
+                    'id': faction_id,
+                    'name': faction_name,
+                },
+                'contested': contested,
+            }
+
+        return results
