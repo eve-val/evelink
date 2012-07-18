@@ -12,6 +12,7 @@ If you are developing on EVELink, however, the following packages are required i
 
  - `mock`
  - `nose`
+ - `unittest2`
 
 A `requirements.txt` is provided as part of the repository for developer convenience.
 
