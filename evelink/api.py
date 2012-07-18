@@ -105,7 +105,7 @@ class API(object):
         self.cache = cache
 
         if api_key and len(api_key) != 2:
-            raise ValueError("The provided API key must be a tuple of (key_id, key_code).")
+            raise ValueError("The provided API key must be a tuple of (keyID, vCode).")
         self.api_key = api_key
 
     def _cache_key(self, path, params):
@@ -124,8 +124,8 @@ class API(object):
         params = dict((k, _clean(v)) for k,v in params.iteritems())
 
         if self.api_key:
-            params['userID'] = self.api_key[0]
-            params['apiKey'] = self.api_key[1]
+            params['keyID'] = self.api_key[0]
+            params['vCode'] = self.api_key[1]
 
         key = self._cache_key(path, params)
         cached_result = self.cache.get(key)
