@@ -54,6 +54,11 @@ print result.find('rowset').findall('row')[0].attrib['name']
 # Using the wrapped access level to get the name of a character
 eve = evelink.eve.EVE()
 print eve.character_name_from_id(1)
+
+# Using authenticated calls
+api = evelink.api.API(api_key=(12345, 'longvcodestring'))
+char = evelink.char.Char(api=api)
+print char.wallet_balance(1234567)
 ```
 
 
