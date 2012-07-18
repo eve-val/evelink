@@ -1,6 +1,5 @@
 from StringIO import StringIO
 import unittest2 as unittest
-from xml.etree import ElementTree
 
 import mock
 
@@ -108,7 +107,7 @@ class APITestCase(unittest.TestCase):
         # Pretend we don't have a cached result
         self.cache.get.return_value = None
 
-        result = api.get('foo', {'a':[2,3,4]})
+        api.get('foo', {'a':[2,3,4]})
 
         # Make sure the api key id and verification code were passed
         self.assertEqual(mock_urlopen.mock_calls, [
