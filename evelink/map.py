@@ -82,3 +82,29 @@ class Map(object):
             }
 
         return results
+
+    def sov_by_system(self):
+        """Get sovereignty info keyed by system."""
+
+        api_result = self.api.get('map/Sovereignty')
+
+        rowset = api_result.find('rowset')
+        results = {}
+        for row in rowset.findall('row'):
+            system = int(row.attrib['solarSystemID'])
+            name = row.attrib['solarSystemName']
+            faction_id = int(row.attrib['factionID']) or None
+            alliance_id = int(row.attrib['allianceID']) or None
+            corp_id = int(row.attrib['corporationID']) or None
+
+            results[system] = {
+                'id': system,
+                'name': name,
+                'faction_id': faction_id,
+                'alliance_id': alliance_id,
+                'corp_id': corp_id,
+            }
+
+        data_time = api.parse_ts(api_result.find('dataTime').text)
+
+        return (results, data_time)
