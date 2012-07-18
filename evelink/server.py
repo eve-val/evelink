@@ -12,9 +12,8 @@ class Server(object):
 
         api_result = self.api.get('server/ServerStatus')
 
-        result = {}
-        result['online'] = api.get_bool_value(api_result, 'serverOpen')
-        result['players'] = api.get_int_value(api_result, 'onlinePlayers')
-
-        return result
+        return {
+            'online': api.get_bool_value(api_result, 'serverOpen'),
+            'players': api.get_int_value(api_result, 'onlinePlayers'),
+        }
 
