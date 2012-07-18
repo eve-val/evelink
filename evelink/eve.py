@@ -83,6 +83,9 @@ class EVE(object):
                 'characterID': char_id,
             })
 
+        if api_result is None:
+            raise ValueError("Unable to fetch info for character %r" % char_id)
+
         def _str(key): return api.get_named_value(api_result, key)
         def _int(key): return api.get_int_value(api_result, key)
         def _ts(key): return api.get_ts_value(api_result, key)
