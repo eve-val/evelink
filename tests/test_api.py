@@ -117,7 +117,7 @@ class APITestCase(unittest.TestCase):
         self.assertEqual(mock_urlopen.mock_calls, [
                 mock.call(
                     'https://api.eveonline.com/foo.xml.aspx',
-                    'a=2%2C3%2C4&apiKey=code&userID=1',
+                    'a=2%2C3%2C4&vCode=code&keyID=1',
                 ),
             ])
 
