@@ -43,6 +43,16 @@ def get_int_value(elem, field):
     return val
 
 
+def get_bool_value(elem, field):
+    """Returns the boolean value of the named child element."""
+    val = get_named_value(elem, field)
+    if val == 'True':
+        return True
+    elif val == 'False':
+        return False
+    return None
+
+
 class APICache(object):
     """Minimal interface for caching API requests.
     
