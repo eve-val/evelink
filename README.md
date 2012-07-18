@@ -75,3 +75,5 @@ $ python -m unittest discover -s tests
 ```
 
 (You can also use a `unittest`-compatible test runner such as [`nose`](http://nose.readthedocs.org/).)
+
+Additional information for developers is available [here](https://github.com/eve-val/evelink/wiki/DevelopmentGuidelines).
