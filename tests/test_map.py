@@ -95,6 +95,53 @@ class MapTestCase(APITestCase):
                 mock.call.get('map/FacWarSystems'),
             ])
 
+    def test_sov_by_system(self):
+        self.api.get.return_value = self.make_api_result(r"""
+            <result>
+                <rowset name="solarSystems">
+                    <row solarSystemID="30023410" allianceID="0" factionID="500002"
+                     solarSystemName="Embod" corporationID="0"/>
+                    <row solarSystemID="30001597" allianceID="1028876240" factionID="0"
+                     solarSystemName="M-NP5O" corporationID="421957727" />
+                    <row solarSystemID="30000480" allianceID="824518128" factionID="0"
+                     solarSystemName="0-G8NO" corporationID="123456789"/>
+                </rowset>
+                <dataTime>2009-12-23 05:16:38</dataTime>
+            </result>
+        """)
+
+        result = self.map.sov_by_system()
+
+        self.assertEqual(result, (
+                {
+                    30000480: {
+                        'alliance_id': 824518128,
+                        'corp_id': 123456789,
+                        'faction_id': None,
+                        'id': 30000480,
+                        'name': '0-G8NO',
+                    },
+                    30001597: {
+                        'alliance_id': 1028876240,
+                        'corp_id': 421957727,
+                        'faction_id': None,
+                        'id': 30001597,
+                        'name': 'M-NP5O',
+                    },
+                    30023410: {
+                        'alliance_id': None,
+                        'corp_id': None,
+                        'faction_id': 500002,
+                        'id': 30023410,
+                        'name': 'Embod',
+                    },
+                },
+                1261545398,
+            ))
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('map/Sovereignty'),
+            ])
+
 
 if __name__ == "__main__":
     unittest.main()
