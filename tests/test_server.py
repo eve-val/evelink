@@ -1,5 +1,4 @@
 import unittest2 as unittest
-
 import mock
 
 import evelink.server as evelink_server
@@ -26,3 +25,5 @@ class ServerTestCase(APITestCase):
                 mock.call.get('server/ServerStatus'),
             ])
 
+if __name__ == "__main__":
+    unittest.main()
