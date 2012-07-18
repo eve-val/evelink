@@ -91,7 +91,7 @@ class API(object):
 
         cache = cache or APICache()
         if not isinstance(cache, APICache):
-            raise ValueError("The provided cache must subclass from APICacheBase.")
+            raise ValueError("The provided cache must subclass from APICache.")
         self.cache = cache
 
         if api_key and len(api_key) != 2:
