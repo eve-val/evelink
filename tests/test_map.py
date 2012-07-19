@@ -12,14 +12,7 @@ class MapTestCase(APITestCase):
         self.map = evelink_map.Map(api=self.api)
 
     def test_jumps_by_system(self):
-        self.api.get.return_value = self.make_api_result(r"""
-            <result>
-                <rowset name="solarSystems">
-                    <row solarSystemID="30001984" shipJumps="10" />
-                </rowset>
-                <dataTime>2007-12-12 11:50:38</dataTime>
-            </result>
-        """)
+        self.api.get.return_value = self.make_api_result("map/jumps_by_system.xml")
 
         result = self.map.jumps_by_system()
 
@@ -29,16 +22,7 @@ class MapTestCase(APITestCase):
             ])
 
     def test_kills_by_system(self):
-        self.api.get.return_value = self.make_api_result(r"""
-            <result>
-                <rowset name="solarSystems">
-                    <row solarSystemID="30001343" shipKills="0" factionKills="17" podKills="0" />
-                    <row solarSystemID="30002671" shipKills="1" factionKills="34" podKills="0" />
-                    <row solarSystemID="30005327" shipKills="5" factionKills="21" podKills="1" />
-                </rowset>
-                <dataTime>2007-12-16 10:57:53</dataTime>
-            </result>
-        """)
+        self.api.get.return_value = self.make_api_result("map/kills_by_system.xml")
 
         result = self.map.kills_by_system()
 
@@ -55,19 +39,7 @@ class MapTestCase(APITestCase):
             ])
 
     def test_faction_warfare_systems(self):
-        self.api.get.return_value = self.make_api_result(r"""
-            <result>
-                <rowset name="solarSystems">
-                     <row solarSystemID="30002056" solarSystemName="Resbroko"
-                      occupyingFactionID="0" occupyingFactionName="" contested="True" />
-                     <row solarSystemID="30002057" solarSystemName="Hadozeko"
-                      occupyingFactionID="0" occupyingFactionName="" contested="False" />
-                     <row solarSystemID="30003068" solarSystemName="Kourmonen"
-                      occupyingFactionID="500002" occupyingFactionName="Minmatar Republic"
-                      contested="False" />
-                </rowset>
-            </result>
-        """)
+        self.api.get.return_value = self.make_api_result("map/faction_warfare_systems.xml")
 
         result = self.map.faction_warfare_systems()
 
@@ -96,19 +68,7 @@ class MapTestCase(APITestCase):
             ])
 
     def test_sov_by_system(self):
-        self.api.get.return_value = self.make_api_result(r"""
-            <result>
-                <rowset name="solarSystems">
-                    <row solarSystemID="30023410" allianceID="0" factionID="500002"
-                     solarSystemName="Embod" corporationID="0"/>
-                    <row solarSystemID="30001597" allianceID="1028876240" factionID="0"
-                     solarSystemName="M-NP5O" corporationID="421957727" />
-                    <row solarSystemID="30000480" allianceID="824518128" factionID="0"
-                     solarSystemName="0-G8NO" corporationID="123456789"/>
-                </rowset>
-                <dataTime>2009-12-23 05:16:38</dataTime>
-            </result>
-        """)
+        self.api.get.return_value = self.make_api_result("map/sov_by_system.xml")
 
         result = self.map.sov_by_system()
 

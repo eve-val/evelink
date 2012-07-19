@@ -1,0 +1,5 @@
+<result>
+    <rowset name="accounts" key="accountID" columns="accountID,accountKey,balance">
+        <row accountID="1" accountKey="1000" balance="209127923.31" />
+    </rowset>
+</result>

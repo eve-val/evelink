@@ -12,14 +12,7 @@ class EVETestCase(APITestCase):
         self.eve = evelink_eve.EVE(api=self.api)
 
     def test_character_names_from_ids(self):
-        self.api.get.return_value = self.make_api_result(r"""
-            <result>
-                <rowset>
-                    <row characterID="1" name="EVE System" />
-                    <row characterID="2" name="EVE Central Bank" />
-                </rowset>
-            </result>
-        """)
+        self.api.get.return_value = self.make_api_result("eve/character_name.xml")
 
         result = self.eve.character_names_from_ids([1,2])
 
@@ -29,13 +22,7 @@ class EVETestCase(APITestCase):
             ])
 
     def test_character_name_from_id(self):
-        self.api.get.return_value = self.make_api_result(r"""
-            <result>
-                <rowset>
-                    <row characterID="1" name="EVE System" />
-                </rowset>
-            </result>
-        """)
+        self.api.get.return_value = self.make_api_result("eve/character_name_single.xml")
 
         result = self.eve.character_name_from_id(1)
 
@@ -45,14 +32,7 @@ class EVETestCase(APITestCase):
             ])
 
     def test_character_ids_from_names(self):
-        self.api.get.return_value = self.make_api_result(r"""
-            <result>
-                <rowset>
-                    <row characterID="1" name="EVE System" />
-                    <row characterID="2" name="EVE Central Bank" />
-                </rowset>
-            </result>
-        """)
+        self.api.get.return_value = self.make_api_result("eve/character_id.xml")
 
         result = self.eve.character_ids_from_names(["EVE System", "EVE Central Bank"])
         self.assertEqual(result, {"EVE System":1, "EVE Central Bank":2})
@@ -61,13 +41,7 @@ class EVETestCase(APITestCase):
             ])
 
     def test_character_id_from_name(self):
-        self.api.get.return_value = self.make_api_result(r"""
-            <result>
-                <rowset>
-                    <row characterID="1" name="EVE System" />
-                </rowset>
-            </result>
-        """)
+        self.api.get.return_value = self.make_api_result("eve/character_id_single.xml")
 
         result = self.eve.character_id_from_name("EVE System")
         self.assertEqual(result, 1)
@@ -76,22 +50,7 @@ class EVETestCase(APITestCase):
             ])
 
     def test_character_info_from_id(self):
-        self.api.get.return_value = self.make_api_result(r"""
-            <result>
-                <characterID>1234</characterID>
-                <characterName>Test Character</characterName>
-                <race>Caldari</race>
-                <bloodline>Civire</bloodline>
-                <corporationID>2345</corporationID>
-                <corporation>Test Corporation</corporation>
-                <corporationDate>2012-06-03 02:10:00</corporationDate>
-                <securityStatus>2.50000000000000</securityStatus>
-                <rowset name="employmentHistory">
-                    <row corporationID="1" startDate="2012-06-02 02:10:00" />
-                    <row corporationID="2" startDate="2011-10-12 12:34:56" />
-                </rowset>
-            </result>
-        """)
+        self.api.get.return_value = self.make_api_result("eve/character_info.xml")
 
         result = self.eve.character_info_from_id(1234)
         self.assertEqual(result, {
@@ -116,20 +75,7 @@ class EVETestCase(APITestCase):
             ])
 
     def test_alliances(self):
-        self.api.get.return_value = self.make_api_result(r"""
-            <result>
-                <rowset name="alliances">
-                    <row allianceID="1" executorCorpID="2" memberCount="123"
-                     name="Test Alliance" shortName="TEST" startDate="2010-05-01 12:34:00">
-                        <rowset name="memberCorporations">
-                            <row corporationID="2" startDate="2010-11-08 21:11:00" />
-                            <row corporationID="3" startDate="2012-01-28 05:36:00" />
-                            <row corporationID="4" startDate="2010-12-15 19:15:00" />
-                        </rowset>
-                    </row>
-                </rowset>
-            </result>
-        """)
+        self.api.get.return_value = self.make_api_result("eve/alliances.xml")
 
         result = self.eve.alliances()
         self.assertEqual(result, {
@@ -152,14 +98,7 @@ class EVETestCase(APITestCase):
             ])
 
     def test_errors(self):
-        self.api.get.return_value = self.make_api_result(r"""
-            <result>
-                <rowset name="errors">
-                    <row errorCode="1" errorText="Foo" />
-                    <row errorCode="2" errorText="Bar" />
-                </rowset>
-            </result>
-        """)
+        self.api.get.return_value = self.make_api_result("eve/errors.xml")
 
         result = self.eve.errors()
         self.assertEqual(result, {1:"Foo", 2:"Bar"})
@@ -168,54 +107,7 @@ class EVETestCase(APITestCase):
             ])
 
     def test_faction_warfare_stats(self):
-        self.api.get.return_value = self.make_api_result(r"""
-            <result>
-                <totals>
-                    <killsYesterday>677</killsYesterday>
-                    <killsLastWeek>3246</killsLastWeek>
-                    <killsTotal>232772</killsTotal>
-                    <victoryPointsYesterday>55087</victoryPointsYesterday>
-                    <victoryPointsLastWeek>414049</victoryPointsLastWeek>
-                    <victoryPointsTotal>44045189</victoryPointsTotal>
-                </totals>
-                <rowset name="factions">
-                    <row factionID="500001" factionName="Caldari State" pilots="5324"
-                        systemsControlled="61" killsYesterday="115" killsLastWeek="627"
-                        killsTotal="59239" victoryPointsYesterday="9934" victoryPointsLastWeek="64548"
-                        victoryPointsTotal="4506493" />
-                    <row factionID="500002" factionName="Minmatar Republic" pilots="4068"
-                        systemsControlled="0" killsYesterday="213" killsLastWeek="952"
-                        killsTotal="56736" victoryPointsYesterday="2925" victoryPointsLastWeek="51211"
-                        victoryPointsTotal="3627522" />
-                    <row factionID="500003" factionName="Amarr Empire" pilots="3960"
-                        systemsControlled="11" killsYesterday="225" killsLastWeek="1000"
-                        killsTotal="55717" victoryPointsYesterday="3330" victoryPointsLastWeek="50518"
-                        victoryPointsTotal="3670190" />
-                    <row factionID="500004" factionName="Gallente Federation" pilots="3663"
-                        systemsControlled="0" killsYesterday="124" killsLastWeek="667"
-                        killsTotal="61080" victoryPointsYesterday="10343" victoryPointsLastWeek="62118"
-                        victoryPointsTotal="4098366" />
-                </rowset>
-                <rowset name="factionWars">
-                    <row factionID="500001" factionName="Caldari State" againstID="500002"
-                        againstName="Minmatar Republic" />
-                    <row factionID="500001" factionName="Caldari State" againstID="500004"
-                        againstName="Gallente Federation" />
-                    <row factionID="500002" factionName="Minmatar Republic" againstID="500001"
-                        againstName="Caldari State" />
-                    <row factionID="500002" factionName="Minmatar Republic" againstID="500003"
-                        againstName="Amarr Empire" />
-                    <row factionID="500003" factionName="Amarr Empire" againstID="500002"
-                        againstName="Minmatar Republic" />
-                    <row factionID="500003" factionName="Amarr Empire" againstID="500004"
-                        againstName="Gallente Federation" />
-                    <row factionID="500004" factionName="Gallente Federation" againstID="500001"
-                        againstName="Caldari State" />
-                    <row factionID="500004" factionName="Gallente Federation" againstID="500003"
-                        againstName="Amarr Empire" />
-                </rowset>
-            </result>
-        """)
+        self.api.get.return_value = self.make_api_result("eve/faction_warfare_stats.xml")
 
         result = self.eve.faction_warfare_stats()
         from pprint import pprint

@@ -1,0 +1,14 @@
+<result>
+    <characterID>1234</characterID>
+    <characterName>Test Character</characterName>
+    <race>Caldari</race>
+    <bloodline>Civire</bloodline>
+    <corporationID>2345</corporationID>
+    <corporation>Test Corporation</corporation>
+    <corporationDate>2012-06-03 02:10:00</corporationDate>
+    <securityStatus>2.50000000000000</securityStatus>
+    <rowset name="employmentHistory">
+        <row corporationID="1" startDate="2012-06-02 02:10:00" />
+        <row corporationID="2" startDate="2011-10-12 12:34:56" />
+    </rowset>
+</result>

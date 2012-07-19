@@ -1,0 +1,6 @@
+<result>
+    <rowset name="errors">
+        <row errorCode="1" errorText="Foo" />
+        <row errorCode="2" errorText="Bar" />
+    </rowset>
+</result>

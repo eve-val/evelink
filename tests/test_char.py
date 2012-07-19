@@ -1,4 +1,5 @@
 import mock
+import unittest2 as unittest
 
 import evelink.char as evelink_char
 from tests.utils import APITestCase
@@ -10,13 +11,7 @@ class CharTestCase(APITestCase):
         self.char = evelink_char.Char(api=self.api)
 
     def test_wallet_info(self):
-        self.api.get.return_value = self.make_api_result(r"""
-          <result>
-            <rowset name="accounts" key="accountID" columns="accountID,accountKey,balance">
-              <row accountID="1" accountKey="1000" balance="209127923.31" />
-            </rowset>
-          </result>
-        """)
+        self.api.get.return_value = self.make_api_result("char/wallet_info.xml")
 
         result = self.char.wallet_info(1)
 
@@ -32,13 +27,7 @@ class CharTestCase(APITestCase):
             ])
 
     def test_wallet_balance(self):
-        self.api.get.return_value = self.make_api_result(r"""
-          <result>
-            <rowset name="accounts" key="accountID" columns="accountID,accountKey,balance">
-              <row accountID="1" accountKey="1000" balance="209127923.31" />
-            </rowset>
-          </result>
-        """)
+        self.api.get.return_value = self.make_api_result("char/wallet_balance.xml")
 
         result = self.char.wallet_balance(1)
 
@@ -48,56 +37,7 @@ class CharTestCase(APITestCase):
             ])
 
     def test_industry_jobs(self):
-        self.api.get.return_value = self.make_api_result(r"""
-            <result>
-                <rowset name="jobs" key="jobID">
-                    <row jobID="37051255" assemblyLineID="101335750"
-                        containerID="61000211" installedItemID="664432163"
-                        installedItemLocationID="61000211"
-                        installedItemQuantity="1"
-                        installedItemProductivityLevel="11"
-                        installedItemMaterialLevel="90"
-                        installedItemLicensedProductionRunsRemaining="-1"
-                        outputLocationID="61000211" installerID="975676271"
-                        runs="75" licensedProductionRuns="0"
-                        installedInSolarSystemID="30001233"
-                        containerLocationID="30001233" materialMultiplier="1"
-                        charMaterialMultiplier="1.25"
-                        timeMultiplier="0.699999988079071"
-                        charTimeMultiplier="0.800000011920929"
-                        installedItemTypeID="894" outputTypeID="193"
-                        containerTypeID="21644" installedItemCopy="0" completed="0"
-                        completedSuccessfully="0" installedItemFlag="4"
-                        outputFlag="4" activityID="1" completedStatus="0"
-                        installTime="2009-02-01 15:07:00"
-                        beginProductionTime="2009-02-01 15:07:00"
-                        endProductionTime="2009-02-01 17:59:00"
-                        pauseProductionTime="0001-01-01 00:00:00" />
-                    <row jobID="19962573" assemblyLineID="100502936"
-                        containerID="61000139" installedItemID="178470781"
-                        installedItemLocationID="61000139"
-                        installedItemQuantity="1"
-                        installedItemProductivityLevel="0"
-                        installedItemMaterialLevel="0"
-                        installedItemLicensedProductionRunsRemaining="-1"
-                        outputLocationID="61000139" installerID="975676271"
-                        runs="20" licensedProductionRuns="0"
-                        installedInSolarSystemID="30002903"
-                        containerLocationID="30002903" materialMultiplier="1"
-                        charMaterialMultiplier="1.25" timeMultiplier="1"
-                        charTimeMultiplier="0.949999988079071"
-                        installedItemTypeID="27309" outputTypeID="27309"
-                        containerTypeID="21644" installedItemCopy="0" completed="0"
-                        completedSuccessfully="0" installedItemFlag="4"
-                        outputFlag="0" activityID="4" completedStatus="0"
-                        installTime="2008-03-13 15:50:00"
-                        beginProductionTime="2008-03-17 22:35:00"
-                        endProductionTime="2008-04-13 07:55:00"
-                        pauseProductionTime="0001-01-01 00:00:00" />
-                </rowset>
-            </result>
-
-        """)
+        self.api.get.return_value = self.make_api_result("char/industry_jobs.xml")
 
         result = self.char.industry_jobs(1)
 
@@ -180,51 +120,7 @@ class CharTestCase(APITestCase):
             ])
 
     def test_kills(self):
-        self.api.get.return_value = self.make_api_result(r"""
-          <result> 
-              <rowset name="kills" key="killID">
-                  <row killID="15640551" solarSystemID="30001160" killTime="2010-11-24 15:29:00" moonID="0">
-                      <victim characterID="150080271" characterName="Pilot 333"
-                          corporationID="1254875843" corporationName="Starbase Anchoring Corp"
-                          allianceID="1254074" allianceName="EVE Gurus"
-                          factionID="0" factionName="" damageTaken="446"
-                          shipTypeID="670" />
-                      <rowset name="attackers"> 
-                          <row characterID="935091361" characterName="ICU123"
-                              corporationID="224588600" corporationName="Inkblot Squad"
-                              allianceID="5514808" allianceName="Authorities of EVE"
-                              factionID="0" factionName=""
-                              securityStatus="-0.441287532452161"
-                              damageDone="446" finalBlow="1"
-                              weaponTypeID="2881" shipTypeID="17932" />
-                      </rowset>
-                      <rowset name="items" columns="typeID,flag,qtyDropped,qtyDestroyed" />
-                  </row>
-                  <row killID="15640545" solarSystemID="30001160" killTime="2010-11-24 15:28:00" moonID="0"> 
-                      <victim characterID="150080271" characterName="Pilot 333"
-                          corporationID="1254875843" corporationName="Starbase Anchoring Corp"
-                          allianceID="1254074" allianceName="EVE Gurus"
-                          factionID="0" factionName="" damageTaken="446"
-                          shipTypeID="670" />
-                      <rowset name="attackers"> 
-                          <row characterID="935091361" characterName="ICU123"
-                              corporationID="224588600" corporationName="Inkblot Squad"
-                              allianceID="5514808" allianceName="Authorities of EVE"
-                              factionID="0" factionName=""
-                              securityStatus="-0.441287532452161"
-                              damageDone="446" finalBlow="1"
-                              weaponTypeID="2881" shipTypeID="17932" />
-                      </rowset>
-                      <rowset name="items">
-                          <row typeID="5531" flag="0" qtyDropped="1" qtyDestroyed="0" />
-                          <row typeID="16273" flag="5" qtyDropped="0" qtyDestroyed="750" />
-                          <row typeID="21096" flag="0" qtyDropped="0" qtyDestroyed="1" />
-                          <row typeID="2605" flag="0" qtyDropped="0" qtyDestroyed="1" />
-                      </rowset>
-                  </row>
-              </rowset>
-          </result>
-        """)
+        self.api.get.return_value = self.make_api_result("char/kills.xml")
 
         result = self.char.kills(1)
 
@@ -331,11 +227,7 @@ class CharTestCase(APITestCase):
             ])
 
     def test_kills_paged(self):
-        self.api.get.return_value = self.make_api_result(r"""
-          <result> 
-              <rowset name="kills" key="killID"/>
-          </result>
-        """)
+        self.api.get.return_value = self.make_api_result("char/kills_paged.xml")
 
         self.char.kills(1, 12345)
         self.assertEqual(self.api.mock_calls, [
@@ -343,23 +235,7 @@ class CharTestCase(APITestCase):
             ])
 
     def test_orders(self):
-        self.api.get.return_value = self.make_api_result(r"""
-          <result> 
-              <rowset name="orders" key="orderID">
-                  <row orderID="2579890411" charID="91397530"
-                      stationID="60011866" volEntered="2120"
-                      volRemaining="2120" minVolume="1" orderState="0"
-                      typeID="3689" range="32767" accountKey="1000"
-                      duration="90" escrow="0.00" price="5100.00" bid="0"
-                      issued="2012-06-26 20:31:52" />
-                  <row orderID="2584848036" charID="91397530"
-                      stationID="60012550" volEntered="1" volRemaining="1"
-                      minVolume="1" orderState="0" typeID="16399" range="32767"
-                      accountKey="1000" duration="90" escrow="0.00"
-                      price="250000.00" bid="0" issued="2012-07-01 22:51:20" />
-              </rowset>
-          </result>
-        """)
+        self.api.get.return_value = self.make_api_result("char/orders.xml")
 
         result = self.char.orders(1)
 
@@ -399,3 +275,7 @@ class CharTestCase(APITestCase):
         self.assertEqual(self.api.mock_calls, [
                 mock.call.get('char/MarketOrders', {'characterID': 1}),
             ])
+
+
+if __name__ == "__main__":
+    unittest.main()
