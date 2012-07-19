@@ -178,3 +178,167 @@ class CharTestCase(APITestCase):
         self.assertEqual(self.api.mock_calls, [
                 mock.call.get('char/IndustryJobs', {'characterID': 1}),
             ])
+
+    def test_kills(self):
+        self.api.get.return_value = self.make_api_result(r"""
+          <result> 
+              <rowset name="kills" key="killID">
+                  <row killID="15640551" solarSystemID="30001160" killTime="2010-11-24 15:29:00" moonID="0">
+                      <victim characterID="150080271" characterName="Pilot 333"
+                          corporationID="1254875843" corporationName="Starbase Anchoring Corp"
+                          allianceID="1254074" allianceName="EVE Gurus"
+                          factionID="0" factionName="" damageTaken="446"
+                          shipTypeID="670" />
+                      <rowset name="attackers"> 
+                          <row characterID="935091361" characterName="ICU123"
+                              corporationID="224588600" corporationName="Inkblot Squad"
+                              allianceID="5514808" allianceName="Authorities of EVE"
+                              factionID="0" factionName=""
+                              securityStatus="-0.441287532452161"
+                              damageDone="446" finalBlow="1"
+                              weaponTypeID="2881" shipTypeID="17932" />
+                      </rowset>
+                      <rowset name="items" columns="typeID,flag,qtyDropped,qtyDestroyed" />
+                  </row>
+                  <row killID="15640545" solarSystemID="30001160" killTime="2010-11-24 15:28:00" moonID="0"> 
+                      <victim characterID="150080271" characterName="Pilot 333"
+                          corporationID="1254875843" corporationName="Starbase Anchoring Corp"
+                          allianceID="1254074" allianceName="EVE Gurus"
+                          factionID="0" factionName="" damageTaken="446"
+                          shipTypeID="670" />
+                      <rowset name="attackers"> 
+                          <row characterID="935091361" characterName="ICU123"
+                              corporationID="224588600" corporationName="Inkblot Squad"
+                              allianceID="5514808" allianceName="Authorities of EVE"
+                              factionID="0" factionName=""
+                              securityStatus="-0.441287532452161"
+                              damageDone="446" finalBlow="1"
+                              weaponTypeID="2881" shipTypeID="17932" />
+                      </rowset>
+                      <rowset name="items">
+                          <row typeID="5531" flag="0" qtyDropped="1" qtyDestroyed="0" />
+                          <row typeID="16273" flag="5" qtyDropped="0" qtyDestroyed="750" />
+                          <row typeID="21096" flag="0" qtyDropped="0" qtyDestroyed="1" />
+                          <row typeID="2605" flag="0" qtyDropped="0" qtyDestroyed="1" />
+                      </rowset>
+                  </row>
+              </rowset>
+          </result>
+        """)
+
+        result = self.char.kills(1)
+
+        self.assertEqual(result, {
+            15640545: {
+                'attackers': {
+                    935091361: {
+                        'alliance': {
+                            'id': 5514808,
+                            'name': 'Authorities of EVE'},
+                        'corp': {
+                            'id': 224588600,
+                            'name': 'Inkblot Squad'},
+                        'damage': 446,
+                        'faction': {
+                            'id': 0,
+                            'name': ''},
+                        'final_blow': True,
+                        'id': 935091361,
+                        'name': 'ICU123',
+                        'sec_status': -0.441287532452161,
+                        'ship_type_id': 17932,
+                        'weapon_type_id': 2881}},
+                'items': {
+                    2605: {
+                        'destroyed': 1,
+                        'dropped': 0,
+                        'flag': 0,
+                        'id': 2605}, 
+                    5531: {
+                        'destroyed': 0,
+                        'dropped': 1,
+                        'flag': 0,
+                        'id': 5531}, 
+                    16273: {
+                        'destroyed': 750,
+                        'dropped': 0,
+                        'flag': 5,
+                        'id': 16273}, 
+                    21096: {
+                        'destroyed': 1,
+                        'dropped': 0,
+                        'flag': 0,
+                        'id': 21096}}, 
+                'id': 15640545, 
+                'moon_id': 0,
+                'system_id': 30001160,
+                'time': 1290612480,
+                'victim': {
+                    'alliance': {
+                        'id': 1254074,
+                        'name': 'EVE Gurus'}, 
+                    'corp': {
+                        'id': 1254875843,
+                        'name': 'Starbase Anchoring Corp'},
+                    'damage': 446,
+                    'faction': {
+                        'id': 0,
+                        'name': ''},
+                    'id': 150080271,
+                    'name': 'Pilot 333',
+                    'ship_type_id': 670}},
+            15640551: {
+                'attackers': {
+                    935091361: {
+                        'alliance': {
+                            'id': 5514808,
+                            'name': 'Authorities of EVE'},
+                        'corp': {
+                            'id': 224588600,
+                            'name': 'Inkblot Squad'},
+                        'damage': 446,
+                        'faction': {
+                            'id': 0,
+                            'name': ''},
+                        'final_blow': True,
+                        'id': 935091361,
+                        'name': 'ICU123',
+                        'sec_status': -0.441287532452161,
+                        'ship_type_id': 17932,
+                        'weapon_type_id': 2881}},
+                'items': {},
+                'id': 15640551,
+                'moon_id': 0,
+                'system_id': 30001160,
+                'time': 1290612540,
+                'victim': {
+                    'alliance': {
+                        'id': 1254074,
+                        'name': 'EVE Gurus'},
+                    'corp': {
+                        'id': 1254875843,
+                        'name': 'Starbase Anchoring Corp'},
+                    'damage': 446,
+                    'faction': {
+                        'id': 0,
+                        'name': ''},
+                    'id': 150080271,
+                    'name': 'Pilot 333',
+                    'ship_type_id': 670}}
+            })
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('char/KillLog', {'characterID': 1}),
+            ])
+
+    def test_kills_paged(self):
+        self.api.get.return_value = self.make_api_result(r"""
+          <result> 
+              <rowset name="kills" key="killID"/>
+          </result>
+        """)
+
+        self.char.kills(1, 12345)
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('char/KillLog', {'characterID': 1, 'beforeKillID': 12345}),
+            ])
+
