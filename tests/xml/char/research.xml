@@ -1,0 +1,7 @@
+<result>
+    <rowset name="research" key="agentID">
+        <row agentID="3014201" skillTypeID="11445"
+            researchStartDate="2007-05-09 06:34:30" pointsPerDay="59.52"
+            remainderPoints="-41461.92" />
+    </rowset>
+</result>
