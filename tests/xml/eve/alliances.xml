@@ -1,0 +1,12 @@
+<result>
+    <rowset name="alliances">
+        <row allianceID="1" executorCorpID="2" memberCount="123"
+         name="Test Alliance" shortName="TEST" startDate="2010-05-01 12:34:00">
+            <rowset name="memberCorporations">
+                <row corporationID="2" startDate="2010-11-08 21:11:00" />
+                <row corporationID="3" startDate="2012-01-28 05:36:00" />
+                <row corporationID="4" startDate="2010-12-15 19:15:00" />
+            </rowset>
+        </row>
+    </rowset>
+</result>

@@ -1,0 +1,8 @@
+<result>
+    <rowset name="solarSystems">
+        <row solarSystemID="30001343" shipKills="0" factionKills="17" podKills="0" />
+        <row solarSystemID="30002671" shipKills="1" factionKills="34" podKills="0" />
+        <row solarSystemID="30005327" shipKills="5" factionKills="21" podKills="1" />
+    </rowset>
+    <dataTime>2007-12-16 10:57:53</dataTime>
+</result>

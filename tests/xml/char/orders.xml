@@ -1,0 +1,15 @@
+<result> 
+    <rowset name="orders" key="orderID">
+        <row orderID="2579890411" charID="91397530"
+            stationID="60011866" volEntered="2120"
+            volRemaining="2120" minVolume="1" orderState="0"
+            typeID="3689" range="32767" accountKey="1000"
+            duration="90" escrow="0.00" price="5100.00" bid="0"
+            issued="2012-06-26 20:31:52" />
+        <row orderID="2584848036" charID="91397530"
+            stationID="60012550" volEntered="1" volRemaining="1"
+            minVolume="1" orderState="0" typeID="16399" range="32767"
+            accountKey="1000" duration="90" escrow="0.00"
+            price="250000.00" bid="0" issued="2012-07-01 22:51:20" />
+    </rowset>
+</result>
