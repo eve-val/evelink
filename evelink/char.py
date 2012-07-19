@@ -209,3 +209,25 @@ class Char(object):
             }
 
         return result
+
+    def research(self, character_id):
+        """Returns information about the agents with whom the character is doing research."""
+
+        api_result = self.api.get('char/Research',
+            {'characterID': character_id})
+
+        rowset = api_result.find('rowset')
+        rows = rowset.findall('row')
+        result = {}
+        for row in rows:
+            a = row.attrib
+            id = int(a['agentID'])
+            result[id] = {
+                'id': id,
+                'skill_id': int(a['skillTypeID']),
+                'timestamp': api.parse_ts(a['researchStartDate']),
+                'per_day': float(a['pointsPerDay']),
+                'remaining': float(a['remainderPoints']),
+            }
+
+        return result

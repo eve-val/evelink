@@ -276,6 +276,23 @@ class CharTestCase(APITestCase):
                 mock.call.get('char/MarketOrders', {'characterID': 1}),
             ])
 
+    def test_research(self):
+        self.api.get.return_value = self.make_api_result("char/research.xml")
+
+        result = self.char.research(1)
+
+        self.assertEqual(result, {
+            3014201: {
+                'id': 3014201,
+                'per_day': 59.52,
+                'remaining': -41461.92,
+                'skill_id': 11445,
+                'timestamp': 1178692470}
+            })
+
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('char/Research', {'characterID': 1}),
+            ])
 
 if __name__ == "__main__":
     unittest.main()
