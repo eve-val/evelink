@@ -46,6 +46,17 @@ class APITestCase(unittest.TestCase):
                 </eveapi>
             """.strip())
 
+        self.error_xml = StringIO(r"""
+                <?xml version='1.0' encoding='UTF-8'?>
+                <eveapi version="2">
+                    <currentTime>2009-10-18 17:05:31</currentTime>
+                    <error code="123">
+                        Test error message.
+                    </error>
+                    <cachedUntil>2009-11-18 19:05:31</cachedUntil>
+                </eveapi>
+            """.strip())
+
     def test_cache_key(self):
         assert self.api._cache_key('foo/bar', {})
         assert self.api._cache_key('foo/bar', {'baz': 'qux'})
@@ -95,7 +106,7 @@ class APITestCase(unittest.TestCase):
         result = self.api.get('foo/Bar', {'a':[1,2,3]})
 
         self.assertEqual(result, mock.sentinel.cached_result)
-        self.assertFalse(mock_urlopen.mock_calls)
+        self.assertFalse(mock_urlopen.called)
 
     @mock.patch('urllib2.urlopen')
     def test_get_with_apikey(self, mock_urlopen):
@@ -116,6 +127,27 @@ class APITestCase(unittest.TestCase):
                     'a=2%2C3%2C4&vCode=code&keyID=1',
                 ),
             ])
+
+    @mock.patch('urllib2.urlopen')
+    def test_get_with_error(self, mock_urlopen):
+        mock_urlopen.return_value = self.error_xml
+
+        # Pretend we don't have a cached result
+        self.cache.get.return_value = None
+
+        self.assertRaises(evelink_api.APIError,
+            self.api.get, 'eve/Error')
+
+    @mock.patch('urllib2.urlopen')
+    def test_cached_get_with_error(self, mock_urlopen):
+        """Make sure that we don't try to call the API if the result is cached."""
+        mock_urlopen.return_value = self.test_xml
+        self.cache.get.return_value = evelink_api.APIError(123, "Foo")
+
+        self.assertRaises(evelink_api.APIError,
+            self.api.get, 'foo/Bar', {'a':[1,2,3]})
+
+        self.assertFalse(mock_urlopen.called)
 
 
 if __name__ == "__main__":

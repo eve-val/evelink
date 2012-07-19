@@ -77,6 +77,19 @@ def elem_getters(elem):
     return _str, _int, _float, _bool, _ts
 
 
+class APIError(Exception):
+    """Exception raised when the EVE API returns an error."""
+
+    def __init__(self, code, message):
+        self.code = code
+        self.message = message
+
+    def __repr__(self):
+        return "APIError(%r, %r)" % (self.code, self.message)
+
+    def __str__(self):
+        return "%s (code=%d)" % (self.message, self.code)
+
 class APICache(object):
     """Minimal interface for caching API requests.
     
@@ -154,6 +167,10 @@ class API(object):
         key = self._cache_key(path, params)
         cached_result = self.cache.get(key)
         if cached_result is not None:
+            # Cached APIErrors should be re-raised
+            if isinstance(cached_result, APIError):
+                raise cached_result
+            # Normal cached results get returned
             return cached_result
 
         params = urlencode(params)
@@ -172,10 +189,20 @@ class API(object):
             raise e
 
         tree = ElementTree.parse(response)
-        result = tree.find('result')
 
         current_time = get_ts_value(tree, 'currentTime')
         expires_time = get_ts_value(tree, 'cachedUntil')
+
+        error = tree.find('error')
+        if error is not None:
+            code = error.attrib['code']
+            message = error.text.strip()
+            exc = APIError(code, message)
+
+            self.cache.put(key, exc, expires_time - current_time)
+            raise exc
+
+        result = tree.find('result')
 
         self.cache.put(key, result, expires_time - current_time)
         return result
