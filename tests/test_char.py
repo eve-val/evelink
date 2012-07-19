@@ -294,5 +294,25 @@ class CharTestCase(APITestCase):
                 mock.call.get('char/Research', {'characterID': 1}),
             ])
 
+    def test_current_training(self):
+        self.api.get.return_value = self.make_api_result("char/current_training.xml")
+
+        result = self.char.current_training(1)
+
+        self.assertEqual(result, {
+            'current_ts': 1291690831,
+            'end_sp': 2048000,
+            'end_ts': 1295324413,
+            'level': 5,
+            'start_sp': 362039,
+            'start_ts': 1291645953,
+            'active': None,
+            'type_id': 23950
+            })
+
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('char/SkillInTraining', {'characterID': 1}),
+            ])
+
 if __name__ == "__main__":
     unittest.main()
