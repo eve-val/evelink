@@ -175,3 +175,63 @@ class EVE(object):
             results[code] = message
 
         return results
+
+    def faction_warfare_stats(self):
+        """Return various statistics from Faction Warfare."""
+
+        api_result = self.api.get('eve/FacWarStats')
+
+        totals = api_result.find('totals')
+        rowsets = dict((r.attrib['name'], r) for r in api_result.findall('rowset'))
+
+        _str, _int, _float, _bool, _ts = api.elem_getters(totals)
+        results = {
+            'kills': {
+                'yesterday': _int('killsYesterday'),
+                'week': _int('killsLastWeek'),
+                'total': _int('killsTotal'),
+            },
+            'points': {
+                'yesterday': _int('victoryPointsYesterday'),
+                'week': _int('victoryPointsLastWeek'),
+                'total': _int('victoryPointsTotal'),
+            },
+            'factions': {},
+            'wars': [],
+        }
+
+        for row in rowsets['factions'].findall('row'):
+            a = row.attrib
+            faction = {
+                'id': int(a['factionID']),
+                'name': a['factionName'],
+                'pilots': int(a['pilots']),
+                'systems': int(a['systemsControlled']),
+                'kills': {
+                    'yesterday': int(a['killsYesterday']),
+                    'week': int(a['killsLastWeek']),
+                    'total': int(a['killsTotal']),
+                },
+                'points': {
+                    'yesterday': int(a['victoryPointsYesterday']),
+                    'week': int(a['victoryPointsLastWeek']),
+                    'total': int(a['victoryPointsTotal']),
+                },
+            }
+            results['factions'][faction['id']] = faction
+
+        for row in rowsets['factionWars'].findall('row'):
+            a = row.attrib
+            war = {
+                'faction': {
+                    'id': int(a['factionID']),
+                    'name': a['factionName'],
+                },
+                'against': {
+                    'id': int(a['againstID']),
+                    'name': a['againstName'],
+                },
+            }
+            results['wars'].append(war)
+
+        return results
