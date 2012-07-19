@@ -151,6 +151,22 @@ class EVETestCase(APITestCase):
                 mock.call.get('eve/AllianceList'),
             ])
 
+    def test_errors(self):
+        self.api.get.return_value = self.make_api_result(r"""
+            <result>
+                <rowset name="errors">
+                    <row errorCode="1" errorText="Foo" />
+                    <row errorCode="2" errorText="Bar" />
+                </rowset>
+            </result>
+        """)
+
+        result = self.eve.errors()
+        self.assertEqual(result, {1:"Foo", 2:"Bar"})
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('eve/ErrorList'),
+            ])
+
 
 if __name__ == "__main__":
     unittest.main()

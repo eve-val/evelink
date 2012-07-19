@@ -161,3 +161,17 @@ class EVE(object):
             results[alliance['id']] = alliance
 
         return results
+
+    def errors(self):
+        """Return a mapping of error codes to messages."""
+
+        api_result = self.api.get('eve/ErrorList')
+
+        rowset = api_result.find('rowset')
+        results = {}
+        for row in rowset.findall('row'):
+            code = int(row.attrib['errorCode'])
+            message = row.attrib['errorText']
+            results[code] = message
+
+        return results
