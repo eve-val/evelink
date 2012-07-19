@@ -16,7 +16,9 @@ def _clean(v):
 
 def parse_ts(v):
     """Parse a timestamp from EVE API XML into a unix-ish timestamp."""
-    return calendar.timegm(time.strptime(v, "%Y-%m-%d %H:%M:%S"))
+    ts = calendar.timegm(time.strptime(v, "%Y-%m-%d %H:%M:%S"))
+    # Deal with EVE's nonexistent 0001-01-01 00:00:00 timestamp
+    return ts if ts > 0 else None
 
 
 def get_named_value(elem, field):
