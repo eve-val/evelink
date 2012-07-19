@@ -231,3 +231,23 @@ class Char(object):
             }
 
         return result
+
+    def current_training(self, character_id):
+        """Returns the skill that is currently being trained by a specified character"""
+
+        api_result = self.api.get('char/SkillInTraining',
+            {'characterID': character_id})
+
+        _str, _int, _float, _bool, _ts = api.elem_getters(api_result)
+        result = {
+            'start_ts': _ts('trainingStartTime'),
+            'end_ts': _ts('trainingEndTime'),
+            'type_id': _int('trainingTypeID'),
+            'start_sp': _int('trainingStartSP'),
+            'end_sp': _int('trainingDestinationSP'),
+            'current_ts': _ts('currentTQTime'),
+            'level': _int('trainingToLevel'),
+            'active': _bool('skillInTraining'),
+        }
+
+        return result

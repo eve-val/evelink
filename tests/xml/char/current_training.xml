@@ -1,0 +1,11 @@
+  <result>
+    <currentTQTime offset="1">2010-12-07 03:00:31</currentTQTime>
+    <trainingEndTime>2011-01-18 04:20:13</trainingEndTime>
+    <trainingStartTime>2010-12-06 14:32:33</trainingStartTime>
+    <trainingTypeID>23950</trainingTypeID>
+    <trainingStartSP>362039</trainingStartSP>
+    <trainingDestinationSP>2048000</trainingDestinationSP>
+    <trainingToLevel>5</trainingToLevel>
+    <skillInTraining>1</skillInTraining>
+  </result>
+
