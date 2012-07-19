@@ -342,3 +342,60 @@ class CharTestCase(APITestCase):
                 mock.call.get('char/KillLog', {'characterID': 1, 'beforeKillID': 12345}),
             ])
 
+    def test_orders(self):
+        self.api.get.return_value = self.make_api_result(r"""
+          <result> 
+              <rowset name="orders" key="orderID">
+                  <row orderID="2579890411" charID="91397530"
+                      stationID="60011866" volEntered="2120"
+                      volRemaining="2120" minVolume="1" orderState="0"
+                      typeID="3689" range="32767" accountKey="1000"
+                      duration="90" escrow="0.00" price="5100.00" bid="0"
+                      issued="2012-06-26 20:31:52" />
+                  <row orderID="2584848036" charID="91397530"
+                      stationID="60012550" volEntered="1" volRemaining="1"
+                      minVolume="1" orderState="0" typeID="16399" range="32767"
+                      accountKey="1000" duration="90" escrow="0.00"
+                      price="250000.00" bid="0" issued="2012-07-01 22:51:20" />
+              </rowset>
+          </result>
+        """)
+
+        result = self.char.orders(1)
+
+        self.assertEqual(result, { 
+            2579890411L: {
+                'account_key': 1000, 
+                'char_id': 91397530,
+                'duration': 90,
+                'amount': 2120,
+                'escrow': 0.0,
+                'id': 2579890411L,
+                'type': 'sell',
+                'timestamp': 1340742712,
+                'price': 5100.0,
+                'range': 32767,
+                'amount_left': 2120,
+                'status': 'active',
+                'station_id': 60011866,
+                'type_id': 3689},
+            2584848036L: {
+                'account_key': 1000,
+                'char_id': 91397530,
+                'duration': 90,
+                'amount': 1,
+                'escrow': 0.0,
+                'id': 2584848036L,
+                'type': 'sell',
+                'timestamp': 1341183080,
+                'price': 250000.0,
+                'range': 32767,
+                'amount_left': 1,
+                'status': 'active',
+                'station_id': 60012550,
+                'type_id': 16399}
+            })
+
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('char/MarketOrders', {'characterID': 1}),
+            ])
