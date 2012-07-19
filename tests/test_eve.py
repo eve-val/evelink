@@ -110,8 +110,6 @@ class EVETestCase(APITestCase):
         self.api.get.return_value = self.make_api_result("eve/faction_warfare_stats.xml")
 
         result = self.eve.faction_warfare_stats()
-        from pprint import pprint
-        pprint(result)
         self.assertEqual(result, {
             'kills': {'total': 232772, 'week': 3246, 'yesterday': 677},
             'points': {'total': 44045189, 'week': 414049, 'yesterday': 55087},
