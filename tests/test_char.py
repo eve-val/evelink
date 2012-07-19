@@ -112,7 +112,7 @@ class CharTestCase(APITestCase):
                 'end_ts': 1208073300,
                 'input': {
                     'id': 178470781,
-                    'is_bpc': False,
+                    'blueprint_type': 'original',
                     'item_flag': 4,
                     'location_id': 61000139,
                     'mat_level': 0,
@@ -148,7 +148,7 @@ class CharTestCase(APITestCase):
                 'end_ts': 1233511140,
                 'input': {
                     'id': 664432163,
-                    'is_bpc': False,
+                    'blueprint_type': 'original',
                     'item_flag': 4,
                     'location_id': 61000211,
                     'mat_level': 90,

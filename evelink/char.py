@@ -50,7 +50,7 @@ class Char(object):
                 'container_id': int(a['containerID']),
                 'input': {
                     'id': int(a['installedItemID']),
-                    'is_bpc': a['installedItemCopy'] == '1',
+                    'blueprint_type': 'copy' if a['installedItemCopy'] == '1' else 'original',
                     'location_id': int(a['installedItemLocationID']),
                     'quantity': int(a['installedItemQuantity']),
                     'prod_level': int(a['installedItemProductivityLevel']),
