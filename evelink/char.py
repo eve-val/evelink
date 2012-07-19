@@ -136,8 +136,13 @@ class Char(object):
             }
 
             result[kill_id]['attackers'] = {}
-            attackers = row.find("rowset[@name='attackers']")
-            for attacker in attackers.findall('row'):
+
+            rowsets = {}
+            for rowset in row.findall('rowset'):
+                key = rowset.attrib['name']
+                rowsets[key] = rowset
+
+            for attacker in rowsets['attackers'].findall('row'):
                 a = attacker.attrib
                 attacker_id = int(a['characterID'])
                 result[kill_id]['attackers'][attacker_id] = {
@@ -163,8 +168,7 @@ class Char(object):
                 }
 
             result[kill_id]['items'] = {}
-            items = row.find("rowset[@name='items']")
-            for item in items.findall('row'):
+            for item in rowsets['items'].findall('row'):
                 a = item.attrib
                 type_id = int(a['typeID'])
                 result[kill_id]['items'][type_id] = {
