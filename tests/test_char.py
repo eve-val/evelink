@@ -10,6 +10,71 @@ class CharTestCase(APITestCase):
         super(CharTestCase, self).setUp()
         self.char = evelink_char.Char(1, api=self.api)
 
+    def test_wallet_journal(self):
+        self.api.get.return_value = self.make_api_result("char/wallet_journal.xml")
+
+        result = self.char.wallet_journal()
+
+        self.assertEqual(result, [{
+            'amount': -10000.0,
+            'arg': {'id': 0, 'name': '35402980'},
+            'balance': 985580165.53,
+            'date': 1291962720,
+            'id': 3605306236L,
+            'party_1': {'char_id': 150337897, 'name': 'corpslave12'},
+            'party_2': {'char_id': 1000132, 'name': 'Secure Commerce Commission'},
+            'reason': '',
+            'tax': {'amount': 0.0, 'taxer_id': 0},
+            'type_id': 72},
+        {
+            'amount': -10000.0,
+            'arg': {'id': 0, 'name': '35402974'},
+            'balance': 985590165.53,
+            'date': 1291962720,
+            'id': 3605305292L,
+            'party_1': {'char_id': 150337897, 'name': 'corpslave12'},
+            'party_2': {'char_id': 1000132, 'name': 'Secure Commerce Commission'},
+            'reason': '',
+            'tax': {'amount': 0.0, 'taxer_id': 0},
+            'type_id': 72},
+        {
+            'amount': -10000.0,
+            'arg': {'id': 0, 'name': '35402956'},
+            'balance': 985600165.53,
+            'date': 1291962660,
+            'id': 3605303380L,
+            'party_1': {'char_id': 150337897, 'name': 'corpslave12'},
+            'party_2': {'char_id': 1000132, 'name': 'Secure Commerce Commission'},
+            'reason': '',
+            'tax': {'amount': 0.0, 'taxer_id': 0},
+            'type_id': 72},
+        {
+            'amount': -10000.0,
+            'arg': {'id': 0, 'name': '35402950'},
+            'balance': 985610165.53,
+            'date': 1291962600,
+            'id': 3605302609L,
+            'party_1': {'char_id': 150337897, 'name': 'corpslave12'},
+            'party_2': {'char_id': 1000132, 'name': 'Secure Commerce Commission'},
+            'reason': '',
+            'tax': {'amount': 0.0, 'taxer_id': 0},
+            'type_id': 72},
+        {
+            'amount': -10000.0,
+            'arg': {'id': 0, 'name': '35402941'},
+            'balance': 985620165.53,
+            'date': 1291962600,
+            'id': 3605301231L,
+            'party_1': {'char_id': 150337897, 'name': 'corpslave12'},
+            'party_2': {'char_id': 1000132, 'name': 'Secure Commerce Commission'},
+            'reason': '',
+            'tax': {'amount': 0.0, 'taxer_id': 0},
+            'type_id': 72}]
+        )
+        self.assertEqual(self.api.mock_calls, [
+            mock.call.get('char/WalletJournal', {'characterID': 1}),
+        ])
+
     def test_wallet_info(self):
         self.api.get.return_value = self.make_api_result("char/wallet_info.xml")
 

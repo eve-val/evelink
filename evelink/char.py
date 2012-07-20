@@ -11,6 +11,49 @@ class Char(object):
         self.api = api
         self.char_id = char_id
 
+    def wallet_journal(self, from_id=None, count=None):
+        """Returns a complete record of all wallet activity for a specified character"""
+        params = {'characterID': self.char_id}
+        if from_id is not None:
+            params['fromID'] = from_id 
+        if count is not None:
+            params['count'] = count 
+        api_result = self.api.get('char/WalletJournal', params)
+
+        rowset = api_result.find('rowset')
+        result = []
+
+        for row in rowset.findall('row'):
+            a = row.attrib
+            entry = {
+                'date': api.parse_ts(a['date']),
+                'id': int(a['refID']),
+                'type_id': int(a['refTypeID']),
+                'party_1': {
+                    'name': a['ownerName1'],
+                    'char_id': int(a['ownerID1']),
+                },
+                'party_2': {
+                    'name': a['ownerName2'],
+                    'char_id': int(a['ownerID2']),
+                },
+                'arg': {
+                    'name': a['argName1'],
+                    'id': int(a['argID1']),
+                },
+                'amount': float(a['amount']),
+                'balance': float(a['balance']),
+                'reason': a['reason'],
+                'tax': {
+                    'taxer_id': int(a['taxReceiverID'] or 0),
+                    'amount': float(a['taxAmount'] or 0),
+                },
+            }
+
+            result.append(entry)
+
+        return result
+
     def wallet_info(self):
         """Return a given character's wallet."""
         api_result = self.api.get('char/AccountBalance',
