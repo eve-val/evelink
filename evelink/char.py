@@ -275,3 +275,32 @@ class Char(object):
 
         return result
 
+    def messages(self):
+        """Returns a list of headers for a character's mail."""
+        api_result = self.api.get('char/MailMessages',
+            {'characterID': self.char_id})
+
+        rowset = api_result.find('rowset')
+        results = []
+        for row in rowset.findall('row'):
+            a = row.attrib
+            message = {
+                'id': int(a['messageID']),
+                'sender_id': int(a['senderID']),
+                'timestamp': api.parse_ts(a['sentDate']),
+                'title': a['title'],
+                'to': {},
+            }
+
+            org_id = a['toCorpOrAllianceID']
+            message['to']['org_id'] = int(org_id) if org_id else None
+
+            char_ids = a['toCharacterIDs']
+            message['to']['char_ids'] = [int(i) for i in char_ids.split(',')] if char_ids else None
+
+            list_ids = a['toListID']
+            message['to']['list_ids'] = [int(i) for i in list_ids.split(',')] if list_ids else None
+
+            results.append(message)
+
+        return results

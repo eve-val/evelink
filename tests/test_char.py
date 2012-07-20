@@ -342,5 +342,50 @@ class CharTestCase(APITestCase):
                 mock.call.get('char/SkillQueue', {'characterID': 1}),
             ])
 
+    def test_messages(self):
+        self.api.get.return_value = self.make_api_result("char/messages.xml")
+
+        result = self.char.messages()
+
+        self.assertEqual(result, [
+                {
+                    'id': 290285276,
+                    'sender_id': 999999999,
+                    'timestamp': 1259629440,
+                    'title': 'Corp mail',
+                    'to': {
+                        'org_id': 999999999,
+                        'char_ids': None,
+                        'list_ids': None,
+                    },
+                },
+                {
+                    'id': 290285275,
+                    'sender_id': 999999999,
+                    'timestamp': 1259629440,
+                    'title': 'Personal mail',
+                    'to': {
+                        'org_id': None,
+                        'char_ids': [999999999],
+                        'list_ids': None,
+                    },
+                },
+                {
+                    'id': 290285274,
+                    'sender_id': 999999999,
+                    'timestamp': 1259629440,
+                    'title': 'Message to mailing list',
+                    'to': {
+                        'org_id': None,
+                        'char_ids': None,
+                        'list_ids': [999999999],
+                    },
+                },
+            ])
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('char/MailMessages', {'characterID': 1}),
+            ])
+
+
 if __name__ == "__main__":
     unittest.main()
