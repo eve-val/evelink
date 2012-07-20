@@ -11,6 +11,50 @@ class Char(object):
         self.api = api
         self.char_id = char_id
 
+    def wallet_journal(self, before_id=None, limit=None):
+        """Returns a complete record of all wallet activity for a specified character"""
+        params = {'characterID': self.char_id}
+        if before_id is not None:
+            params['fromID'] = before_id 
+        if limit is not None:
+            params['rowCount'] = limit 
+        api_result = self.api.get('char/WalletJournal', params)
+
+        rowset = api_result.find('rowset')
+        result = []
+
+        for row in rowset.findall('row'):
+            a = row.attrib
+            entry = {
+                'timestamp': api.parse_ts(a['date']),
+                'id': int(a['refID']),
+                'type_id': int(a['refTypeID']),
+                'party_1': {
+                    'name': a['ownerName1'],
+                    'id': int(a['ownerID1']),
+                },
+                'party_2': {
+                    'name': a['ownerName2'],
+                    'id': int(a['ownerID2']),
+                },
+                'arg': {
+                    'name': a['argName1'],
+                    'id': int(a['argID1']),
+                },
+                'amount': float(a['amount']),
+                'balance': float(a['balance']),
+                'reason': a['reason'],
+                'tax': {
+                    'taxer_id': int(a['taxReceiverID'] or 0),
+                    'amount': float(a['taxAmount'] or 0),
+                },
+            }
+
+            result.append(entry)
+
+        result.sort(key=lambda x: x['id'])
+        return result
+
     def wallet_info(self):
         """Return a given character's wallet."""
         api_result = self.api.get('char/AccountBalance',
