@@ -7,13 +7,14 @@ class Char(object):
     Note that a valid API key is required.
     """
 
-    def __init__(self, api):
+    def __init__(self, char_id, api):
         self.api = api
+        self.char_id = char_id
 
-    def wallet_info(self, character_id):
+    def wallet_info(self):
         """Return a given character's wallet."""
         api_result = self.api.get('char/AccountBalance',
-            {'characterID': character_id})
+            {'characterID': self.char_id})
 
         rowset = api_result.find('rowset')
         row = rowset.find('row')
@@ -24,16 +25,16 @@ class Char(object):
         }
         return result
 
-    def wallet_balance(self, character_id):
+    def wallet_balance(self):
         """Helper to return just the balance from a given character wallet"""
 
-        return self.wallet_info(character_id)['balance']
+        return self.wallet_info()['balance']
 
-    def industry_jobs(self, character_id):
+    def industry_jobs(self):
         """Get a list of jobs for a character"""
 
         api_result = self.api.get('char/IndustryJobs',
-            {'characterID': character_id})
+            {'characterID': self.char_id})
 
         rowset = api_result.find('rowset')
         result = {}
@@ -88,16 +89,14 @@ class Char(object):
 
         return result
 
-    def kills(self, character_id, before_kill=None):
+    def kills(self, before_kill=None):
         """Look up recent kills for the given character
 
-        character_id: 
-            The ID of the character to look up kills for.
         before_kill:
             Optional. Only show kills before this kill id. (Used for paging.)
         """
 
-        params = {'characterID': character_id}
+        params = {'characterID': self.char_id}
         if before_kill is not None:
             params['beforeKillID'] = before_kill
         api_result = self.api.get('char/KillLog', params)
@@ -180,10 +179,10 @@ class Char(object):
             
         return result
 
-    def orders(self, character_id):
+    def orders(self):
         """Return a given character's buy and sell orders."""
         api_result = self.api.get('char/MarketOrders',
-            {'characterID': character_id})
+            {'characterID': self.char_id})
 
         rowset = api_result.find('rowset')
         rows = rowset.findall('row')
@@ -210,11 +209,11 @@ class Char(object):
 
         return result
 
-    def research(self, character_id):
+    def research(self):
         """Returns information about the agents with whom the character is doing research."""
 
         api_result = self.api.get('char/Research',
-            {'characterID': character_id})
+            {'characterID': self.char_id})
 
         rowset = api_result.find('rowset')
         rows = rowset.findall('row')
@@ -232,11 +231,11 @@ class Char(object):
 
         return result
 
-    def current_training(self, character_id):
+    def current_training(self):
         """Returns the skill that is currently being trained by a specified character"""
 
         api_result = self.api.get('char/SkillInTraining',
-            {'characterID': character_id})
+            {'characterID': self.char_id})
 
         _str, _int, _float, _bool, _ts = api.elem_getters(api_result)
         result = {
@@ -252,10 +251,10 @@ class Char(object):
 
         return result
 
-    def skill_queue(self, character_id):
+    def skill_queue(self):
         """returns the skill queue of the character"""
         api_result = self.api.get('char/SkillQueue',
-            {'characterID': character_id})
+            {'characterID': self.char_id})
 
         rowset = api_result.find('rowset')
         rows = rowset.findall('row')

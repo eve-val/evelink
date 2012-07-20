@@ -8,12 +8,12 @@ class CharTestCase(APITestCase):
 
     def setUp(self):
         super(CharTestCase, self).setUp()
-        self.char = evelink_char.Char(api=self.api)
+        self.char = evelink_char.Char(1, api=self.api)
 
     def test_wallet_info(self):
         self.api.get.return_value = self.make_api_result("char/wallet_info.xml")
 
-        result = self.char.wallet_info(1)
+        result = self.char.wallet_info()
 
         self.assertEqual(result, 
             { 
@@ -29,7 +29,7 @@ class CharTestCase(APITestCase):
     def test_wallet_balance(self):
         self.api.get.return_value = self.make_api_result("char/wallet_balance.xml")
 
-        result = self.char.wallet_balance(1)
+        result = self.char.wallet_balance()
 
         self.assertEqual(result, 209127923.31)
         self.assertEqual(self.api.mock_calls, [
@@ -39,7 +39,7 @@ class CharTestCase(APITestCase):
     def test_industry_jobs(self):
         self.api.get.return_value = self.make_api_result("char/industry_jobs.xml")
 
-        result = self.char.industry_jobs(1)
+        result = self.char.industry_jobs()
 
         self.assertEqual(result, { 
             19962573: {
@@ -122,7 +122,7 @@ class CharTestCase(APITestCase):
     def test_kills(self):
         self.api.get.return_value = self.make_api_result("char/kills.xml")
 
-        result = self.char.kills(1)
+        result = self.char.kills()
 
         self.assertEqual(result, {
             15640545: {
@@ -229,7 +229,7 @@ class CharTestCase(APITestCase):
     def test_kills_paged(self):
         self.api.get.return_value = self.make_api_result("char/kills_paged.xml")
 
-        self.char.kills(1, 12345)
+        self.char.kills(12345)
         self.assertEqual(self.api.mock_calls, [
                 mock.call.get('char/KillLog', {'characterID': 1, 'beforeKillID': 12345}),
             ])
@@ -237,7 +237,7 @@ class CharTestCase(APITestCase):
     def test_orders(self):
         self.api.get.return_value = self.make_api_result("char/orders.xml")
 
-        result = self.char.orders(1)
+        result = self.char.orders()
 
         self.assertEqual(result, { 
             2579890411L: {
@@ -279,7 +279,7 @@ class CharTestCase(APITestCase):
     def test_research(self):
         self.api.get.return_value = self.make_api_result("char/research.xml")
 
-        result = self.char.research(1)
+        result = self.char.research()
 
         self.assertEqual(result, {
             3014201: {
@@ -297,7 +297,7 @@ class CharTestCase(APITestCase):
     def test_current_training(self):
         self.api.get.return_value = self.make_api_result("char/current_training.xml")
 
-        result = self.char.current_training(1)
+        result = self.char.current_training()
 
         self.assertEqual(result, {
             'current_ts': 1291690831,
@@ -317,7 +317,7 @@ class CharTestCase(APITestCase):
     def test_skill_queue(self):
         self.api.get.return_value = self.make_api_result("char/skill_queue.xml")
 
-        result = self.char.skill_queue(1)
+        result = self.char.skill_queue()
 
         self.assertEqual(result, [
             {
