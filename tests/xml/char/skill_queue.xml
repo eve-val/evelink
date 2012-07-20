@@ -1,0 +1,10 @@
+  <result>
+    <rowset name="skillqueue" key="queuePosition">
+      <row queuePosition="0" typeID="23950" level="5" startSP="362039"
+          endSP="2048000" startTime="2010-12-06 14:32:33" endTime="2011-01-18 04:20:13" />
+      <row queuePosition="1" typeID="3437" level="5" startSP="45255"
+          endSP="256000" startTime="2012-07-18 14:20:19" endTime="2012-07-21 11:53:53" />
+
+    </rowset>
+  </result>
+

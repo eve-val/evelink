@@ -251,3 +251,28 @@ class Char(object):
         }
 
         return result
+
+    def skill_queue(self, character_id):
+        """returns the skill queue of the character"""
+        api_result = self.api.get('char/SkillQueue',
+            {'characterID': character_id})
+
+        rowset = api_result.find('rowset')
+        rows = rowset.findall('row')
+        result = []
+        for row in rows:
+            a = row.attrib
+            line = {
+                'position': int(a['queuePosition']),
+                'type_id': int(a['typeID']),
+                'level': int(a['level']),
+                'start_sp': int(a['startSP']),
+                'end_sp': int(a['endSP']),
+                'start_ts': api.parse_ts(a['startTime']),
+                'end_ts': api.parse_ts(a['endTime']),
+            }
+
+            result.append(line)
+
+        return result
+
