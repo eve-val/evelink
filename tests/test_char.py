@@ -314,5 +314,33 @@ class CharTestCase(APITestCase):
                 mock.call.get('char/SkillInTraining', {'characterID': 1}),
             ])
 
+    def test_skill_queue(self):
+        self.api.get.return_value = self.make_api_result("char/skill_queue.xml")
+
+        result = self.char.skill_queue(1)
+
+        self.assertEqual(result, [
+            {
+                'end_ts': 1295324413,
+                'level': 5,
+                'type_id': 23950,
+                'start_ts': 1291645953,
+                'end_sp': 2048000,
+                'start_sp': 362039,
+                'position': 0},
+            {
+                'end_sp': 256000,
+                'end_ts': 1342871633,
+                'level': 5,
+                'position': 1,
+                'start_sp': 45255,
+                'start_ts': 1342621219,
+                'type_id': 3437},
+            ])
+
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('char/SkillQueue', {'characterID': 1}),
+            ])
+
 if __name__ == "__main__":
     unittest.main()
