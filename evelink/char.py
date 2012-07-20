@@ -11,13 +11,13 @@ class Char(object):
         self.api = api
         self.char_id = char_id
 
-    def wallet_journal(self, from_id=None, count=None):
+    def wallet_journal(self, before_id=None, limit=None):
         """Returns a complete record of all wallet activity for a specified character"""
         params = {'characterID': self.char_id}
-        if from_id is not None:
-            params['fromID'] = from_id 
-        if count is not None:
-            params['count'] = count 
+        if before_id is not None:
+            params['fromID'] = before_id 
+        if limit is not None:
+            params['rowCount'] = limit 
         api_result = self.api.get('char/WalletJournal', params)
 
         rowset = api_result.find('rowset')
@@ -26,16 +26,16 @@ class Char(object):
         for row in rowset.findall('row'):
             a = row.attrib
             entry = {
-                'date': api.parse_ts(a['date']),
+                'timestamp': api.parse_ts(a['date']),
                 'id': int(a['refID']),
                 'type_id': int(a['refTypeID']),
                 'party_1': {
                     'name': a['ownerName1'],
-                    'char_id': int(a['ownerID1']),
+                    'id': int(a['ownerID1']),
                 },
                 'party_2': {
                     'name': a['ownerName2'],
-                    'char_id': int(a['ownerID2']),
+                    'id': int(a['ownerID2']),
                 },
                 'arg': {
                     'name': a['argName1'],
@@ -52,6 +52,7 @@ class Char(object):
 
             result.append(entry)
 
+        result.sort(key=lambda x: x['id'])
         return result
 
     def wallet_info(self):
