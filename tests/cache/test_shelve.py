@@ -21,5 +21,5 @@ class ShelveCacheTestCase(unittest.TestCase):
         self.assertEqual(self.cache.get('foo'), 'bar')
 
     def test_expire(self):
-        self.cache.put('baz', 'qux', 0)
+        self.cache.put('baz', 'qux', -1)
         self.assertEqual(self.cache.get('baz'), None)
