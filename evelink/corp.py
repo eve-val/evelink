@@ -15,3 +15,20 @@ class Corp(object):
         api_result = self.api.get('corp/IndustryJobs')
 
         return parse_industry_jobs(api_result)
+
+    def wallet_info(self):
+        """Get information about corp wallets."""
+
+        api_result = self.api.get('corp/AccountBalance')
+
+        rowset = api_result.find('rowset')
+        results = {}
+        for row in rowset.findall('row'):
+            wallet = {
+                'balance': float(row.attrib['balance']),
+                'id': int(row.attrib['accountID']),
+                'key': int(row.attrib['accountKey']),
+            }
+            results[wallet['key']] = wallet
+
+        return results
