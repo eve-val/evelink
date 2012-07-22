@@ -5,13 +5,13 @@ def parse_assets(api_result):
     def handle_rowset(rowset, parent_location):
         results = []
         for row in rowset.findall('row'):
-            item = {}
-            item['id'] = int(row.attrib['itemID'])
-            item['item_type_id'] = int(row.attrib['typeID'])
-            item['location_id'] = int(row.attrib.get('locationID', parent_location))
-            item['location_flag'] = int(row.attrib['flag'])
-            item['quantity'] = int(row.attrib['quantity'])
-            item['packaged'] = row.attrib['singleton'] == '0'
+            item = {'id': int(row.attrib['itemID']),
+		    'item_type_id': int(row.attrib['typeID']),
+		    'location_id': int(row.attrib.get('locationID', parent_location)),
+		    'location_flag': int(row.attrib['flag']),
+		    'quantity': int(row.attrib['quantity']),
+		    'packaged': row.attrib['singleton'] == '0',
+	    }
             contents = row.find('rowset')
             if contents:
                 item['contents'] = handle_rowset(contents, item['location_id'])

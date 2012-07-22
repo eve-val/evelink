@@ -79,6 +79,9 @@ class CorpTestCase(APITestCase):
                      'packaged': False,
                      'quantity': 1}],
                 'location_id': 67000050}})
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('corp/AssetList'),
+            ])
 
 
 if __name__ == "__main__":
