@@ -26,7 +26,7 @@ class CorpTestCase(APITestCase):
             ])
 
     def test_wallet_info(self):
-        self.api.get.return_value = self.make_api_result('corp/wallet_info.xml')
+        self.api.get.return_value = self.make_api_result("corp/wallet_info.xml")
 
         result = self.corp.wallet_info()
 
@@ -47,39 +47,39 @@ class CorpTestCase(APITestCase):
         self.api.get.return_value = self.make_api_result('corp/assets.xml')
         result = self.corp.assets()
 
-        # Top-level items are in 2 distinct locations.
-        self.assertEqual(len(result), 2)
-        # The single item in this location has this exact structure.
-        self.assertEqual(len(result[67000050]['contents']), 1)
-        self.assertEqual(result[67000050]['contents'][0],
-                         {'flag': 0,
-                          'id': 1007221285456,
-                          'item_type': 13780,
-                          'location': 67000050,
-                          'packaged': False,
-                          'quantity': 1})
-        # This location is a single container that contains 2 items.
-        self.assertEqual(len(result[30003719]['contents']), 1)
-        self.assertEqual(len(result[30003719]['contents'][0]['contents']), 2)
-        # In theory, we make no guarantees on the order in which items
-        # are returned; in practice (for the sake of testing) we can
-        # rely that the items are in the same order that they appear
-        # in the XML file.
-        self.assertEqual(result[30003719]['contents'][0]['contents'][0],
-                         {'flag': 42,
-                          'id': 1007353294812,
-                          'item_type': 34,
-                          'location': 30003719,
-                          'packaged': True,
-                          'quantity': 100})
-        self.assertEqual(result[30003719]['contents'][0]['contents'][1],
-                         {'flag': 42,
-                          'id': 1007353294813,
-                          'item_type': 34,
-                          'location': 30003719,
-                          'packaged': True,
-                          'quantity': 200})
+        self.assertEqual(result, {
+            30003719: {
+                'contents': [
+                    {'contents': [
+                        {'id': 1007353294812,
+                         'item_type_id': 34,
+                         'location_flag': 42,
+                         'location_id': 30003719,
+                         'packaged': True,
+                         'quantity': 100},
+                        {'id': 1007353294813,
+                         'item_type_id': 34,
+                         'location_flag': 42,
+                         'location_id': 30003719,
+                         'packaged': True,
+                         'quantity': 200}],
+                     'id': 1007222140712,
+                     'item_type_id': 16216,
+                     'location_flag': 0,
+                     'location_id': 30003719,
+                     'packaged': False,
+                     'quantity': 1}],
+                'location_id': 30003719},
+            67000050: {
+                'contents': [
+                    {'id': 1007221285456,
+                     'item_type_id': 13780,
+                     'location_flag': 0,
+                     'location_id': 67000050,
+                     'packaged': False,
+                     'quantity': 1}],
+                'location_id': 67000050}})
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
