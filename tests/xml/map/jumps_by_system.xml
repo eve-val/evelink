@@ -1,0 +1,6 @@
+<result>
+    <rowset name="solarSystems">
+        <row solarSystemID="30001984" shipJumps="10" />
+    </rowset>
+    <dataTime>2007-12-12 11:50:38</dataTime>
+</result>

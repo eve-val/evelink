@@ -1,0 +1,43 @@
+<result> 
+    <rowset name="kills" key="killID">
+        <row killID="15640551" solarSystemID="30001160" killTime="2010-11-24 15:29:00" moonID="0">
+            <victim characterID="150080271" characterName="Pilot 333"
+                corporationID="1254875843" corporationName="Starbase Anchoring Corp"
+                allianceID="1254074" allianceName="EVE Gurus"
+                factionID="0" factionName="" damageTaken="446"
+                shipTypeID="670" />
+            <rowset name="attackers"> 
+                <row characterID="935091361" characterName="ICU123"
+                    corporationID="224588600" corporationName="Inkblot Squad"
+                    allianceID="5514808" allianceName="Authorities of EVE"
+                    factionID="0" factionName=""
+                    securityStatus="-0.441287532452161"
+                    damageDone="446" finalBlow="1"
+                    weaponTypeID="2881" shipTypeID="17932" />
+            </rowset>
+            <rowset name="items" columns="typeID,flag,qtyDropped,qtyDestroyed" />
+        </row>
+        <row killID="15640545" solarSystemID="30001160" killTime="2010-11-24 15:28:00" moonID="0"> 
+            <victim characterID="150080271" characterName="Pilot 333"
+                corporationID="1254875843" corporationName="Starbase Anchoring Corp"
+                allianceID="1254074" allianceName="EVE Gurus"
+                factionID="0" factionName="" damageTaken="446"
+                shipTypeID="670" />
+            <rowset name="attackers"> 
+                <row characterID="935091361" characterName="ICU123"
+                    corporationID="224588600" corporationName="Inkblot Squad"
+                    allianceID="5514808" allianceName="Authorities of EVE"
+                    factionID="0" factionName=""
+                    securityStatus="-0.441287532452161"
+                    damageDone="446" finalBlow="1"
+                    weaponTypeID="2881" shipTypeID="17932" />
+            </rowset>
+            <rowset name="items">
+                <row typeID="5531" flag="0" qtyDropped="1" qtyDestroyed="0" />
+                <row typeID="16273" flag="5" qtyDropped="0" qtyDestroyed="750" />
+                <row typeID="21096" flag="0" qtyDropped="0" qtyDestroyed="1" />
+                <row typeID="2605" flag="0" qtyDropped="0" qtyDestroyed="1" />
+            </rowset>
+        </row>
+    </rowset>
+</result>

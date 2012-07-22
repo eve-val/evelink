@@ -1,0 +1,11 @@
+<result>
+    <rowset name="solarSystems">
+         <row solarSystemID="30002056" solarSystemName="Resbroko"
+          occupyingFactionID="0" occupyingFactionName="" contested="True" />
+         <row solarSystemID="30002057" solarSystemName="Hadozeko"
+          occupyingFactionID="0" occupyingFactionName="" contested="False" />
+         <row solarSystemID="30003068" solarSystemName="Kourmonen"
+          occupyingFactionID="500002" occupyingFactionName="Minmatar Republic"
+          contested="False" />
+    </rowset>
+</result>

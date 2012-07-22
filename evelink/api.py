@@ -16,7 +16,9 @@ def _clean(v):
 
 def parse_ts(v):
     """Parse a timestamp from EVE API XML into a unix-ish timestamp."""
-    return calendar.timegm(time.strptime(v, "%Y-%m-%d %H:%M:%S"))
+    ts = calendar.timegm(time.strptime(v, "%Y-%m-%d %H:%M:%S"))
+    # Deal with EVE's nonexistent 0001-01-01 00:00:00 timestamp
+    return ts if ts > 0 else None
 
 
 def get_named_value(elem, field):
@@ -42,6 +44,51 @@ def get_int_value(elem, field):
         return int(val)
     return val
 
+
+def get_float_value(elem, field):
+    """Returns the float value of the named child element."""
+    val = get_named_value(elem, field)
+    if val:
+        return float(val)
+    return val
+
+
+def get_bool_value(elem, field):
+    """Returns the boolean value of the named child element."""
+    val = get_named_value(elem, field)
+    if val == 'True':
+        return True
+    elif val == 'False':
+        return False
+    return None
+
+
+def elem_getters(elem):
+    """Returns a tuple of (_str, _int, _float, _bool, _ts) functions.
+
+    These are getters closed around the provided element.
+    """
+    _str = lambda key: get_named_value(elem, key)
+    _int = lambda key: get_int_value(elem, key)
+    _float = lambda key: get_float_value(elem, key)
+    _bool = lambda key: get_bool_value(elem, key)
+    _ts = lambda key: get_ts_value(elem, key)
+
+    return _str, _int, _float, _bool, _ts
+
+
+class APIError(Exception):
+    """Exception raised when the EVE API returns an error."""
+
+    def __init__(self, code, message):
+        self.code = code
+        self.message = message
+
+    def __repr__(self):
+        return "APIError(%r, %r)" % (self.code, self.message)
+
+    def __str__(self):
+        return "%s (code=%d)" % (self.message, self.code)
 
 class APICache(object):
     """Minimal interface for caching API requests.
@@ -86,13 +133,17 @@ class APICache(object):
 class API(object):
     """A wrapper around the EVE API."""
 
-    def __init__(self, base_url="api.eveonline.com", cache=None):
+    def __init__(self, base_url="api.eveonline.com", cache=None, api_key=None):
         self.base_url = base_url
 
         cache = cache or APICache()
         if not isinstance(cache, APICache):
-            raise ValueError("The provided cache must subclass from APICacheBase.")
+            raise ValueError("The provided cache must subclass from APICache.")
         self.cache = cache
+
+        if api_key and len(api_key) != 2:
+            raise ValueError("The provided API key must be a tuple of (keyID, vCode).")
+        self.api_key = api_key
 
     def _cache_key(self, path, params):
         sorted_params = sorted(params.iteritems())
@@ -109,9 +160,17 @@ class API(object):
         params = params or {}
         params = dict((k, _clean(v)) for k,v in params.iteritems())
 
+        if self.api_key:
+            params['keyID'] = self.api_key[0]
+            params['vCode'] = self.api_key[1]
+
         key = self._cache_key(path, params)
         cached_result = self.cache.get(key)
         if cached_result is not None:
+            # Cached APIErrors should be re-raised
+            if isinstance(cached_result, APIError):
+                raise cached_result
+            # Normal cached results get returned
             return cached_result
 
         params = urlencode(params)
@@ -130,10 +189,20 @@ class API(object):
             raise e
 
         tree = ElementTree.parse(response)
-        result = tree.find('result')
 
         current_time = get_ts_value(tree, 'currentTime')
         expires_time = get_ts_value(tree, 'cachedUntil')
+
+        error = tree.find('error')
+        if error is not None:
+            code = error.attrib['code']
+            message = error.text.strip()
+            exc = APIError(code, message)
+
+            self.cache.put(key, exc, expires_time - current_time)
+            raise exc
+
+        result = tree.find('result')
 
         self.cache.put(key, result, expires_time - current_time)
         return result

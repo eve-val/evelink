@@ -1,0 +1,11 @@
+<result>
+    <rowset name="accounts">
+        <row accountID="4759" accountKey="1000" balance="74171957.08"/>
+        <row accountID="5687" accountKey="1001" balance="6.05"/>
+        <row accountID="5688" accountKey="1002" balance="0.00"/>
+        <row accountID="5689" accountKey="1003" balance="17349111.00"/>
+        <row accountID="5690" accountKey="1004" balance="0.00"/>
+        <row accountID="5691" accountKey="1005" balance="0.00"/>
+        <row accountID="5692" accountKey="1006" balance="0.00"/>
+    </rowset>
+</result>
