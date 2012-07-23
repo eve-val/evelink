@@ -50,6 +50,25 @@ class AccountTestCase(APITestCase):
                 mock.call.get('account/APIKeyInfo'),
             ])
 
+    def test_characters(self):
+        self.api.get.return_value = self.make_api_result("account/characters.xml")
+
+        result = self.account.characters()
+
+        self.assertEqual(result, {
+                1365215823: {
+                    'corp': {
+                        'id': 238510404,
+                        'name': 'Puppies To the Rescue',
+                    },
+                    'id': 1365215823,
+                    'name': 'Alexis Prey',
+                },
+            })
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('account/Characters'),
+            ])
+
 
 if __name__ == "__main__":
     unittest.main()

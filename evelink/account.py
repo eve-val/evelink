@@ -49,3 +49,23 @@ class Account(object):
             result['characters'][character['id']] = character
 
         return result
+
+    def characters(self):
+        """Returns all of the characters on an account."""
+
+        api_result = self.api.get('account/Characters')
+
+        rowset = api_result.find('rowset')
+        result = {}
+        for row in rowset.findall('row'):
+            character = {
+                'id': int(row.attrib['characterID']),
+                'name': row.attrib['name'],
+                'corp': {
+                    'id': int(row.attrib['corporationID']),
+                    'name': row.attrib['corporationName'],
+                },
+            }
+            result[character['id']] = character
+
+        return result
