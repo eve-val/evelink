@@ -2,6 +2,7 @@ import mock
 import unittest2 as unittest
 
 import evelink.account as evelink_account
+from evelink import constants
 from tests.utils import APITestCase
 
 class AccountTestCase(APITestCase):
@@ -23,6 +24,49 @@ class AccountTestCase(APITestCase):
             })
         self.assertEqual(self.api.mock_calls, [
                 mock.call.get('account/AccountStatus'),
+            ])
+
+    def test_key_info(self):
+        self.api.get.return_value = self.make_api_result("account/key_info.xml")
+
+        result = self.account.key_info()
+
+        self.assertEqual(result, {
+                'access_mask': 59760264,
+                'type': constants.CHARACTER,
+                'expire_ts': 1315699200,
+                'characters': {
+                    898901870: {
+                        'id': 898901870,
+                        'name': "Desmont McCallock",
+                        'corp': {
+                            'id': 1000009,
+                            'name': "Caldari Provisions",
+                        },
+                    },
+                },
+            })
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('account/APIKeyInfo'),
+            ])
+
+    def test_characters(self):
+        self.api.get.return_value = self.make_api_result("account/characters.xml")
+
+        result = self.account.characters()
+
+        self.assertEqual(result, {
+                1365215823: {
+                    'corp': {
+                        'id': 238510404,
+                        'name': 'Puppies To the Rescue',
+                    },
+                    'id': 1365215823,
+                    'name': 'Alexis Prey',
+                },
+            })
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('account/Characters'),
             ])
 
 
