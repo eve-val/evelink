@@ -187,5 +187,57 @@ class EVETestCase(APITestCase):
             ])
 
 
+    def test_skill_tree(self):
+        self.api.get.return_value = self.make_api_result("eve/skill_tree.xml")
+
+        result = self.eve.skill_tree()
+
+        self.assertEqual(result, {
+                266: {
+                    'id': 266,
+                    'name': 'Corporation Management',
+                    'skills': {
+                        11584 : {
+                            'id': 11584,
+                            'group_id': 266,
+                            'name': 'Anchoring',
+                            'description': 'Skill at Anchoring Deployables. Can not be trained on Trial Accounts.',
+                            'published': 1,
+                            'rank': 3,
+                            'primary_attribute': 'memory',
+                            'secondary_attribute': 'charisma',
+                            'required_skills': {},
+                            'bonuses': {
+                                'canNotBeTrainedOnTrial': {
+                                    'type': 'canNotBeTrainedOnTrial',
+                                    'value': 1
+                                    }
+                                }
+                            },
+
+                        3369 : {
+                            'id': 3369,
+                            'group_id': 266,
+                            'name': 'CFO Training',
+                            'description': 'Skill at managing corp finances. 5% discount on all fees at non-hostile NPC station if acting as CFO of a corp. ',
+                            'published': 0,
+                            'rank': 3,
+                            'primary_attribute': 'memory',
+                            'secondary_attribute': 'charisma',
+                            'required_skills': {
+                                3363 : { 'id' : 3363, 'level' : 2 },
+                                3444 : { 'id' : 3444, 'level' : 3 }
+                                },
+                            'bonuses': {}
+                            }
+                        }
+                    }
+                })
+
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('eve/SkillTree')
+                ])
+
+
 if __name__ == "__main__":
     unittest.main()

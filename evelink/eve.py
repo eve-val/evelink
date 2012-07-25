@@ -235,3 +235,70 @@ class EVE(object):
             results['wars'].append(war)
 
         return results
+
+
+    def skill_tree(self):
+        """Return a dict of all available skill groups."""
+
+        api_result = self.api.get('eve/SkillTree')
+
+        rowset = api_result.find('rowset') # skillGroups
+
+        results = {}
+        for row in rowset.findall('row'):
+
+            # the skill group data
+            g = row.attrib
+            group = {
+                'id': int(g['groupID']),
+                'name': g['groupName'],
+                'skills': {}
+                }
+            
+            # now get the actual skill data
+            skills_rs = row.find('rowset') # skills
+            for skill_row in skills_rs.findall('row'):
+                a = skill_row.attrib
+                _str, _int, _float, _bool, _ts = api.elem_getters(skill_row)
+
+                skill = {
+                    'id': int(a['typeID']),
+                    'group_id': int(a['groupID']),
+                    'name': a['typeName'],
+                    'published': int(a['published']),
+                    'description': _str('description'),
+                    'rank': _int('rank'),
+                    'required_skills': {},
+                    'bonuses': {}
+                    }
+
+                req_attrib = skill_row.find('requiredAttributes')
+                skill['primary_attribute'] = api.get_named_value(req_attrib, 'primaryAttribute')
+                skill['secondary_attribute'] = api.get_named_value(req_attrib, 'secondaryAttribute')
+
+                # Check each rowset inside the skill, and branch based on the name attribute
+                for sub_rs in skill_row.findall('rowset'):
+
+                    if sub_rs.attrib['name'] == 'requiredSkills':
+                        for sub_row in sub_rs.findall('row'):
+                            b = sub_row.attrib
+                            req = {
+                                'level': int(b['skillLevel']),
+                                'id': int(b['typeID'])
+                                }
+                            skill['required_skills'][req['id']] = req
+                    
+                    if sub_rs.attrib['name'] == 'skillBonusCollection':
+                        for sub_row in sub_rs.findall('row'):
+                            b = sub_row.attrib
+                            bonus = {
+                                'type': b['bonusType'],
+                                'value': int(b['bonusValue'])
+                                }
+                            skill['bonuses'][bonus['type']] = bonus
+
+                group['skills'][skill['id']] = skill
+
+            results[group['id']] = group
+
+        return results
