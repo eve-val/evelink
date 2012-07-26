@@ -247,44 +247,16 @@ class CharTestCase(APITestCase):
                 mock.call.get('char/KillLog', {'characterID': 1, 'beforeKillID': 12345}),
             ])
 
-    def test_orders(self):
-        self.api.get.return_value = self.make_api_result("char/orders.xml")
+    @mock.patch('evelink.char.parse_market_orders')
+    def test_orders(self, mock_parse):
+        self.api.get.return_value = mock.sentinel.orders_api_result
+        mock_parse.return_value = mock.sentinel.parsed_orders
 
         result = self.char.orders()
-
-        self.assertEqual(result, { 
-            2579890411L: {
-                'account_key': 1000, 
-                'char_id': 91397530,
-                'duration': 90,
-                'amount': 2120,
-                'escrow': 0.0,
-                'id': 2579890411L,
-                'type': 'sell',
-                'timestamp': 1340742712,
-                'price': 5100.0,
-                'range': 32767,
-                'amount_left': 2120,
-                'status': 'active',
-                'station_id': 60011866,
-                'type_id': 3689},
-            2584848036L: {
-                'account_key': 1000,
-                'char_id': 91397530,
-                'duration': 90,
-                'amount': 1,
-                'escrow': 0.0,
-                'id': 2584848036L,
-                'type': 'sell',
-                'timestamp': 1341183080,
-                'price': 250000.0,
-                'range': 32767,
-                'amount_left': 1,
-                'status': 'active',
-                'station_id': 60012550,
-                'type_id': 16399}
-            })
-
+        self.assertEqual(result, mock.sentinel.parsed_orders)
+        self.assertEqual(mock_parse.mock_calls, [
+                mock.call(mock.sentinel.orders_api_result),
+            ])
         self.assertEqual(self.api.mock_calls, [
                 mock.call.get('char/MarketOrders', {'characterID': 1}),
             ])
