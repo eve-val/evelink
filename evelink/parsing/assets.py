@@ -13,7 +13,7 @@ def parse_assets(api_result):
                     'packaged': row.attrib['singleton'] == '0',
             }
             contents = row.find('rowset')
-            if contents:
+            if contents is not None:
                 item['contents'] = handle_rowset(contents, item['location_id'])
             results.append(item)
         return results
