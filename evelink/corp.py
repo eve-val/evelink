@@ -1,5 +1,6 @@
 from evelink.parsing.assets import parse_assets
 from evelink.parsing.industry_jobs import parse_industry_jobs
+from evelink.parsing.orders import parse_market_orders
 
 class Corp(object):
     """Wrapper around /corp/ of the EVE API.
@@ -33,6 +34,12 @@ class Corp(object):
             results[wallet['key']] = wallet
 
         return results
+
+    def orders(self):
+        """Return a corporation's buy and sell orders."""
+        api_result = self.api.get('corp/MarketOrders')
+
+        return parse_market_orders(api_result)
 
     def assets(self):
         """Get information about corp assets.
