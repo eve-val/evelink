@@ -35,7 +35,8 @@ class Char(object):
         the top-level values as "containers" with no fields except for
         "contents" and "location_id".
         """
-        api_result = self.api.get('char/AssetList')
+        api_result = self.api.get('char/AssetList',
+            {'characterID': self.char_id})
 
         return parse_assets(api_result)
 
