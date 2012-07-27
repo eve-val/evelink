@@ -10,6 +10,95 @@ class CharTestCase(APITestCase):
         super(CharTestCase, self).setUp()
         self.char = evelink_char.Char(1, api=self.api)
 
+    def test_assets(self):
+        self.api.get.return_value = self.make_api_result('char/assets.xml')
+        result = self.char.assets()
+
+        self.assertEqual(result, {
+            60002470: {
+                'contents': [
+                   {'id': 1005090389880L,
+                    'item_type_id': 672,
+                    'location_flag': 4,
+                    'location_id': 60002470,
+                    'packaged': False,
+                    'quantity': 1}], 
+                'location_id': 60002470}, 
+            60003760: {
+                'contents': [
+                   {'id': 1004987483977L,
+                    'item_type_id': 11129,
+                    'location_flag': 4,
+                    'location_id': 60003760,
+                    'packaged': False,
+                    'quantity': 1}],
+                    'location_id': 60003760},
+            60003790: {
+                'contents': [
+                   {'id': 1005716625911L,
+                    'item_type_id': 2444,
+                    'location_flag': 4,
+                    'location_id': 60003790,
+                    'packaged': True,
+                    'quantity': 3}, 
+                   {'id': 1005824176485L,
+                    'item_type_id': 2183,
+                    'location_flag': 4,
+                    'location_id': 60003790,
+                    'packaged': True,
+                    'quantity': 9}],
+                'location_id': 60003790},
+            61000050: {
+                'contents': [
+                   {'contents': [
+                      {'id': 1007005313999L,
+                       'item_type_id': 18639,
+                       'location_flag': 5,
+                       'location_id': 61000050,
+                       'packaged': False,
+                       'quantity': 1},
+                      {'id': 1007084932106L,
+                       'item_type_id': 6003,
+                       'location_flag': 5,
+                       'location_id': 61000050,
+                       'packaged': False,
+                       'quantity': 1},
+                      {'id': 1007122962679L,
+                       'item_type_id': 30836,
+                       'location_flag': 5,
+                       'location_id': 61000050,
+                       'packaged': True,
+                       'quantity': 1},
+                      {'id': 1007229525910L,
+                       'item_type_id': 30028,
+                       'location_flag': 5,
+                       'location_id': 61000050,
+                       'packaged': True,
+                       'quantity': 5},
+                      {'id': 1007231241466L,
+                       'item_type_id': 4575,
+                       'location_flag': 5,
+                       'location_id': 61000050,
+                       'packaged': False,
+                       'quantity': 1},
+                      {'id': 1007292536183L,
+                       'item_type_id': 4573,
+                       'location_flag': 5,
+                       'location_id': 61000050,
+                       'packaged': False,
+                       'quantity': 1}],
+                   'id': 1007313528960L,
+                   'item_type_id': 607,
+                   'location_flag': 4,
+                   'location_id': 61000050,
+                   'packaged': False,
+                   'quantity': 1}],
+               'location_id': 61000050}}
+        )
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('char/AssetList'),
+            ])
+
     def test_wallet_journal(self):
         self.api.get.return_value = self.make_api_result("char/wallet_journal.xml")
 

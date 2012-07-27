@@ -1,0 +1,29 @@
+<result>
+    <rowset name="assets" key="itemID">
+        <row itemID="1005090389880" locationID="60002470" typeID="672" quantity="1"
+            flag="4" singleton="1" rawQuantity="-1" />
+        <row itemID="1004987483977" locationID="60003760" typeID="11129"
+            quantity="1" flag="4" singleton="1" rawQuantity="-1" />
+        <row itemID="1005716625911" locationID="60003790" typeID="2444"
+            quantity="3" flag="4" singleton="0" />
+        <row itemID="1005824176485" locationID="60003790" typeID="2183"
+            quantity="9" flag="4" singleton="0" />
+        <row itemID="1007313528960" locationID="61000050" typeID="607" quantity="1"
+            flag="4" singleton="1" rawQuantity="-1">
+            <rowset name="contents" key="itemID">
+                <row itemID="1007005313999" typeID="18639" quantity="1" flag="5"
+                    singleton="1" rawQuantity="-1" />
+                <row itemID="1007084932106" typeID="6003" quantity="1" flag="5"
+                    singleton="1" rawQuantity="-1" />
+                <row itemID="1007122962679" typeID="30836" quantity="1" flag="5"
+                    singleton="0" />
+                <row itemID="1007229525910" typeID="30028" quantity="5" flag="5"
+                    singleton="0" />
+                <row itemID="1007231241466" typeID="4575" quantity="1" flag="5"
+                    singleton="1" rawQuantity="-1" />
+                <row itemID="1007292536183" typeID="4573" quantity="1" flag="5"
+                    singleton="1" rawQuantity="-1" />
+            </rowset>
+        </row>
+    </rowset>
+</result>
