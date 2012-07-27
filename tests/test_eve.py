@@ -239,5 +239,24 @@ class EVETestCase(APITestCase):
                 ])
 
 
+    def test_reference_types(self):
+        self.api.get.return_value = self.make_api_result("eve/reference_types.xml")
+
+        result = self.eve.reference_types()
+        
+        self.assertEqual(result, {
+                0: 'Undefined',
+                1: 'Player Trading',
+                2: 'Market Transaction',
+                3: 'GM Cash Transfer',
+                4: 'ATM Withdraw',
+                5: 'ATM Deposit'
+                })
+
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('eve/RefTypes')
+                ])
+
+
 if __name__ == "__main__":
     unittest.main()

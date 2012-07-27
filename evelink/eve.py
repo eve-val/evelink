@@ -302,3 +302,17 @@ class EVE(object):
             results[group['id']] = group
 
         return results
+
+
+    def reference_types(self):
+        """Return a dict containing id -> name reference type mappings."""
+
+        api_result = self.api.get('eve/RefTypes')
+        rowset = api_result.find('rowset')
+
+        results = {}
+        for row in rowset.findall('row'):
+            a = row.attrib
+            results[int(a['refTypeID'])] = a['refTypeName']
+
+        return results
