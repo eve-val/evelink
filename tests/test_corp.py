@@ -57,7 +57,21 @@ class CorpTestCase(APITestCase):
                 mock.call.get('corp/MarketOrders'),
             ])
 
-    def test_assets(self):
+    @mock.patch('evelink.corp.parse_assets')
+    def test_assets(self, mock_parse):
+        self.api.get.return_value = mock.sentinel.assets_api_result
+        mock_parse.return_value = mock.sentinel.parsed_assets
+
+        result = self.corp.assets()
+        self.assertEqual(result, mock.sentinel.parsed_assets)
+        self.assertEqual(mock_parse.mock_calls, [
+                mock.call(mock.sentinel.assets_api_result),
+            ])
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('corp/AssetList'),
+            ])
+
+    def xx_test_assets(self):
         self.api.get.return_value = self.make_api_result('corp/assets.xml')
         result = self.corp.assets()
 
