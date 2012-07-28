@@ -71,46 +71,5 @@ class CorpTestCase(APITestCase):
                 mock.call.get('corp/AssetList'),
             ])
 
-    def xx_test_assets(self):
-        self.api.get.return_value = self.make_api_result('corp/assets.xml')
-        result = self.corp.assets()
-
-        self.assertEqual(result, {
-            30003719: {
-                'contents': [
-                    {'contents': [
-                        {'id': 1007353294812,
-                         'item_type_id': 34,
-                         'location_flag': 42,
-                         'location_id': 30003719,
-                         'packaged': True,
-                         'quantity': 100},
-                        {'id': 1007353294813,
-                         'item_type_id': 34,
-                         'location_flag': 42,
-                         'location_id': 30003719,
-                         'packaged': True,
-                         'quantity': 200}],
-                     'id': 1007222140712,
-                     'item_type_id': 16216,
-                     'location_flag': 0,
-                     'location_id': 30003719,
-                     'packaged': False,
-                     'quantity': 1}],
-                'location_id': 30003719},
-            67000050: {
-                'contents': [
-                    {'id': 1007221285456,
-                     'item_type_id': 13780,
-                     'location_flag': 0,
-                     'location_id': 67000050,
-                     'packaged': False,
-                     'quantity': 1}],
-                'location_id': 67000050}})
-        self.assertEqual(self.api.mock_calls, [
-                mock.call.get('corp/AssetList'),
-            ])
-
-
 if __name__ == "__main__":
     unittest.main()
