@@ -202,10 +202,12 @@ class EVETestCase(APITestCase):
                             'group_id': 266,
                             'name': 'Anchoring',
                             'description': 'Skill at Anchoring Deployables. Can not be trained on Trial Accounts.',
-                            'published': 1,
+                            'published': True,
                             'rank': 3,
-                            'primary_attribute': 'memory',
-                            'secondary_attribute': 'charisma',
+                            'attributes': {
+                                'primary': 'memory',
+                                'secondary': 'charisma',
+                                },
                             'required_skills': {},
                             'bonuses': {
                                 'canNotBeTrainedOnTrial': {
@@ -220,10 +222,12 @@ class EVETestCase(APITestCase):
                             'group_id': 266,
                             'name': 'CFO Training',
                             'description': 'Skill at managing corp finances. 5% discount on all fees at non-hostile NPC station if acting as CFO of a corp. ',
-                            'published': 0,
+                            'published': False,
                             'rank': 3,
-                            'primary_attribute': 'memory',
-                            'secondary_attribute': 'charisma',
+                            'attributes': {
+                                'primary': 'memory',
+                                'secondary': 'charisma',
+                                },
                             'required_skills': {
                                 3363 : { 'id' : 3363, 'level' : 2 },
                                 3444 : { 'id' : 3444, 'level' : 3 }

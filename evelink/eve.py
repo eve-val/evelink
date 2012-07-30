@@ -261,20 +261,23 @@ class EVE(object):
                 a = skill_row.attrib
                 _str, _int, _float, _bool, _ts = api.elem_getters(skill_row)
 
+                req_attrib = skill_row.find('requiredAttributes')
+
                 skill = {
                     'id': int(a['typeID']),
                     'group_id': int(a['groupID']),
                     'name': a['typeName'],
-                    'published': int(a['published']),
+                    'published': (a['published'] == '1'),
                     'description': _str('description'),
                     'rank': _int('rank'),
                     'required_skills': {},
-                    'bonuses': {}
+                    'bonuses': {},
+                    'attributes': {
+                        'primary': api.get_named_value(req_attrib, 'primaryAttribute'),
+                        'secondary': api.get_named_value(req_attrib, 'secondaryAttribute')
+                        }
                     }
 
-                req_attrib = skill_row.find('requiredAttributes')
-                skill['primary_attribute'] = api.get_named_value(req_attrib, 'primaryAttribute')
-                skill['secondary_attribute'] = api.get_named_value(req_attrib, 'secondaryAttribute')
 
                 # Check each rowset inside the skill, and branch based on the name attribute
                 for sub_rs in skill_row.findall('rowset'):
@@ -293,13 +296,14 @@ class EVE(object):
                             b = sub_row.attrib
                             bonus = {
                                 'type': b['bonusType'],
-                                'value': int(b['bonusValue'])
+                                'value': b['bonusValue']
                                 }
                             skill['bonuses'][bonus['type']] = bonus
 
                 group['skills'][skill['id']] = skill
 
             results[group['id']] = group
+        
 
         return results
 
