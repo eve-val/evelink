@@ -1,5 +1,6 @@
 from evelink import api
 from evelink.parsing.assets import parse_assets
+from evelink.parsing.contracts import parse_contracts
 from evelink.parsing.industry_jobs import parse_industry_jobs
 from evelink.parsing.orders import parse_market_orders
 
@@ -39,6 +40,12 @@ class Char(object):
             {'characterID': self.char_id})
 
         return parse_assets(api_result)
+
+    def contracts(self):
+        """Returns a record of all contracts for a specified character"""
+        api_result = self.api.get('char/Contracts',
+            { 'characterID': self.char_id })
+        return parse_contracts(api_result)
 
     def wallet_journal(self, before_id=None, limit=None):
         """Returns a complete record of all wallet activity for a specified character"""
