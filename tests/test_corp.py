@@ -43,6 +43,33 @@ class CorpTestCase(APITestCase):
                 mock.call.get('corp/AccountBalance'),
             ])
 
+    @mock.patch('evelink.corp.parse_market_orders')
+    def test_orders(self, mock_parse):
+        self.api.get.return_value = mock.sentinel.orders_api_result
+        mock_parse.return_value = mock.sentinel.parsed_orders
+
+        result = self.corp.orders()
+        self.assertEqual(result, mock.sentinel.parsed_orders)
+        self.assertEqual(mock_parse.mock_calls, [
+                mock.call(mock.sentinel.orders_api_result),
+            ])
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('corp/MarketOrders'),
+            ])
+
+    @mock.patch('evelink.corp.parse_assets')
+    def test_assets(self, mock_parse):
+        self.api.get.return_value = mock.sentinel.assets_api_result
+        mock_parse.return_value = mock.sentinel.parsed_assets
+
+        result = self.corp.assets()
+        self.assertEqual(result, mock.sentinel.parsed_assets)
+        self.assertEqual(mock_parse.mock_calls, [
+                mock.call(mock.sentinel.assets_api_result),
+            ])
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('corp/AssetList'),
+            ])
 
 if __name__ == "__main__":
     unittest.main()
