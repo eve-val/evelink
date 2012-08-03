@@ -122,7 +122,7 @@ class EVE(object):
         # Add in corp history
         history = api_result.find('rowset')
         for row in history.findall('row'):
-            corp_id = row.attrib['corporationID']
+            corp_id = int(row.attrib['corporationID'])
             start_date = api.parse_ts(row.attrib['startDate'])
             results['history'].append({
                     'corp_id': corp_id,
