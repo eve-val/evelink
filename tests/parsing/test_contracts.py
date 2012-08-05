@@ -3,12 +3,10 @@ import time
 
 from tests.utils import make_api_result
 
+from evelink import api
 from evelink.parsing import contracts as evelink_c
 
 class AssetsTestCase(unittest.TestCase):
-    def parse_time(self, t):
-        return time.strptime(t, '%Y-%m-%d %H:%M:%S')
-
     def test_parse_contracts(self):
         self.maxDiff = None
         api_result = make_api_result("corp/contracts.xml")
@@ -27,8 +25,10 @@ class AssetsTestCase(unittest.TestCase):
                     'title': '',
                     'corp': False,
                     'availability': 'Public',
-                    'issued': self.parse_time('2010-02-23 11:28:00'),
-                    'expired': self.parse_time('2010-03-24 11:28:00'),
+                    'issued': api.parse_ts('2010-02-23 11:28:00'),
+                    'expired': api.parse_ts('2010-03-24 11:28:00'),
+                    'accepted': None,
+                    'completed': None,
                     'days': 0,
                     'price': 5000.0,
                     'reward': 0.0,
@@ -49,8 +49,10 @@ class AssetsTestCase(unittest.TestCase):
                     'title': '',
                     'corp': False,
                     'availability': 'Private',
-                    'issued': self.parse_time('2010-02-25 11:33:00'),
-                    'expired': self.parse_time('2010-03-26 11:33:00'),
+                    'issued': api.parse_ts('2010-02-25 11:33:00'),
+                    'expired': api.parse_ts('2010-03-26 11:33:00'),
+                    'accepted': None,
+                    'completed': None,
                     'days': 0,
                     'price': 0.00,
                     'reward': 0.00,

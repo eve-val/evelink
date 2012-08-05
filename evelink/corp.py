@@ -1,4 +1,5 @@
 from evelink.parsing.assets import parse_assets
+from evelink.parsing.contracts import parse_contracts
 from evelink.parsing.industry_jobs import parse_industry_jobs
 from evelink.parsing.orders import parse_market_orders
 
@@ -65,6 +66,11 @@ class Corp(object):
         """
         api_result = self.api.get('corp/AssetList')
         return parse_assets(api_result)
+
+    def contracts(self):
+        """Returns a record of all contracts for this corp"""
+        api_result = self.api.get('corp/Contracts')
+        return parse_contracts(api_result)
 
     def contracts(self):
         """Get information about corp contracts."""

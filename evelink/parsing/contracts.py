@@ -3,41 +3,36 @@ from evelink import constants
 import time
 
 def parse_contracts(api_result):
-    def parse_time(t):
-        return time.strptime(t, '%Y-%m-%d %H:%M:%S')
-
     rowset = api_result.find('rowset')
     if rowset is None:
         return
 
     results = {}
     for row in rowset.findall('row'):
+        a = row.attrib
         contract = {
-            'id': int(row.attrib['contractID']),
-            'issuer': int(row.attrib['issuerID']),
-            'issuer_corp': int(row.attrib['issuerCorpID']),
-            'assignee': int(row.attrib['assigneeID']),
-            'acceptor': int(row.attrib['acceptorID']),
-            'start': int(row.attrib['startStationID']),
-            'end': int(row.attrib['endStationID']),
-            'type': row.attrib['type'],
-            'status': row.attrib['status'],
-            'corp': row.attrib['forCorp'] == '1',
-            'availability': row.attrib['availability'],
-            'issued': parse_time(row.attrib['dateIssued']),
-            'days': int(row.attrib['numDays']),
-            'price': float(row.attrib['price']),
-            'reward': float(row.attrib['reward']),
-            'collateral': float(row.attrib['collateral']),
-            'buyout': float(row.attrib['buyout']),
-            'volume': float(row.attrib['volume']),
-            'title': row.attrib['title']
+            'id': int(a['contractID']),
+            'issuer': int(a['issuerID']),
+            'issuer_corp': int(a['issuerCorpID']),
+            'assignee': int(a['assigneeID']),
+            'acceptor': int(a['acceptorID']),
+            'start': int(a['startStationID']),
+            'end': int(a['endStationID']),
+            'type': a['type'],
+            'status': a['status'],
+            'corp': a['forCorp'] == '1',
+            'availability': a['availability'],
+            'issued': api.parse_ts(a['dateIssued']),
+            'days': int(a['numDays']),
+            'price': float(a['price']),
+            'reward': float(a['reward']),
+            'collateral': float(a['collateral']),
+            'buyout': float(a['buyout']),
+            'volume': float(a['volume']),
+            'title': a['title']
         }
-        if row.attrib['dateExpired']:
-            contract['expired'] = parse_time(row.attrib['dateExpired'])
-        if row.attrib['dateAccepted']:
-            contract['accepted'] = parse_time(row.attrib['dateAccepted'])
-        if row.attrib['dateCompleted']:
-            contract['completed'] = parse_time(row.attrib['dateCompleted'])
+        contract['expired'] = api.parse_ts(a['dateExpired'])
+        contract['accepted'] = api.parse_ts(a['dateAccepted'])
+        contract['completed'] = api.parse_ts(a['dateCompleted'])
         results[contract['id']] = contract
     return results

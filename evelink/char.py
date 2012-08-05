@@ -44,7 +44,7 @@ class Char(object):
     def contracts(self):
         """Returns a record of all contracts for a specified character"""
         api_result = self.api.get('char/Contracts',
-            { 'characterID': self.char_id })
+            {'characterID': self.char_id})
         return parse_contracts(api_result)
 
     def wallet_journal(self, before_id=None, limit=None):
