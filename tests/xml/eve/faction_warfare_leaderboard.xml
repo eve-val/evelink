@@ -1,0 +1,64 @@
+<result>
+    <characters>
+        <rowset name="KillsYesterday">
+            <row characterID="1007512845" characterName="StonedBoy" kills="14" />
+            <row characterID="646053002" characterName="Erick Voliffe" kills="11" />
+        </rowset>
+        <rowset name="KillsLastWeek">
+            <row characterID="187452523" characterName="Tigrana Blanque" kills="52" />
+        </rowset>
+        <rowset name="KillsTotal">
+            <row characterID="673662188" characterName="Val Erian" kills="451" />
+        </rowset>
+        <rowset name="VictoryPointsYesterday">
+            <row characterID="774720050" characterName="v3nd3tt4" victoryPoints="3151" />
+        </rowset>
+        <rowset name="VictoryPointsLastWeek">
+            <row characterID="161929388" characterName="Ankhesentapemkah" victoryPoints="20851" />
+        </rowset>
+        <rowset name="VictoryPointsTotal">
+            <row characterID="395923478" characterName="sasawong" victoryPoints="197046" />
+        </rowset>
+    </characters>
+    <corporations>
+        <rowset name="KillsYesterday">
+            <row corporationID="1007512845" corporationName="StonedBoy" kills="14" />
+            <row corporationID="646053002" corporationName="Erick Voliffe" kills="11" />
+        </rowset>
+        <rowset name="KillsLastWeek">
+            <row corporationID="187452523" corporationName="Tigrana Blanque" kills="52" />
+        </rowset>
+        <rowset name="KillsTotal">
+            <row corporationID="673662188" corporationName="Val Erian" kills="451" />
+        </rowset>
+        <rowset name="VictoryPointsYesterday">
+            <row corporationID="774720050" corporationName="v3nd3tt4" victoryPoints="3151" />
+        </rowset>
+        <rowset name="VictoryPointsLastWeek">
+            <row corporationID="161929388" corporationName="Ankhesentapemkah" victoryPoints="20851" />
+        </rowset>
+        <rowset name="VictoryPointsTotal">
+            <row corporationID="395923478" corporationName="sasawong" victoryPoints="197046" />
+        </rowset>
+    </corporations>
+    <factions>
+        <rowset name="KillsYesterday">
+            <row factionID="500004" factionName="Gallente Federation" kills="106" />
+        </rowset>
+        <rowset name="KillsLastWeek">
+            <row factionID="500004" factionName="Gallente Federation" kills="105" />
+        </rowset>
+        <rowset name="KillsTotal">
+            <row factionID="500004" factionName="Gallente Federation" kills="104" />
+        </rowset>
+        <rowset name="VictoryPointsYesterday">
+            <row factionID="500004" factionName="Gallente Federation" victoryPoints="103" />
+        </rowset>
+        <rowset name="VictoryPointsLastWeek">
+            <row factionID="500004" factionName="Gallente Federation" victoryPoints="102" />
+        </rowset>
+        <rowset name="VictoryPointsTotal">
+            <row factionID="500004" factionName="Gallente Federation" victoryPoints="101" />
+        </rowset>
+    </factions>
+</result>
