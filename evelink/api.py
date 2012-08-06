@@ -36,7 +36,7 @@ def get_ts_value(elem, field):
     val = get_named_value(elem, field)
     if val:
         return parse_ts(val)
-    return val if val != '' else None
+    return None
 
 
 def get_int_value(elem, field):

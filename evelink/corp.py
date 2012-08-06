@@ -68,11 +68,6 @@ class Corp(object):
         return parse_assets(api_result)
 
     def contracts(self):
-        """Returns a record of all contracts for this corp"""
-        api_result = self.api.get('corp/Contracts')
-        return parse_contracts(api_result)
-
-    def contracts(self):
         """Get information about corp contracts."""
         api_result = self.api.get('corp/Contracts')
         return parse_contracts(api_result)
