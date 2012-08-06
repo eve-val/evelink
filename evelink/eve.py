@@ -235,3 +235,50 @@ class EVE(object):
             results['wars'].append(war)
 
         return results
+
+    def faction_warfare_leaderboard(self):
+        """Return top-100 lists from Faction Warfare."""
+
+        api_result = self.api.get('eve/FacWarTopStats')
+
+        def parse_top_100(rowset, prefix, attr, attr_name):
+            top100 = []
+            id_field = '%sID' % prefix
+            name_field = '%sName' % prefix
+            for row in rowset.findall('row'):
+                a = row.attrib
+                top100.append({
+                    'id': int(a[id_field]),
+                    'name': a[name_field],
+                    attr_name: int(a[attr]),
+                })
+            return top100
+
+        def parse_section(section, prefix):
+            section_result = {}
+            rowsets = dict((r.attrib['name'], r) for r in section.findall('rowset'))
+
+            section_result['kills'] = {
+                'yesterday': parse_top_100(rowsets['KillsYesterday'], prefix, 'kills', 'kills'),
+                'week': parse_top_100(rowsets['KillsLastWeek'], prefix, 'kills', 'kills'),
+                'total': parse_top_100(rowsets['KillsTotal'], prefix, 'kills', 'kills'),
+            }
+
+            section_result['points'] = {
+                'yesterday': parse_top_100(rowsets['VictoryPointsYesterday'],
+                    prefix, 'victoryPoints', 'points'),
+                'week': parse_top_100(rowsets['VictoryPointsLastWeek'],
+                    prefix, 'victoryPoints', 'points'),
+                'total': parse_top_100(rowsets['VictoryPointsTotal'],
+                    prefix, 'victoryPoints', 'points'),
+            }
+
+            return section_result
+
+        results = {
+            'char': parse_section(api_result.find('characters'), 'character'),
+            'corp': parse_section(api_result.find('corporations'), 'corporation'),
+            'faction': parse_section(api_result.find('factions'), 'faction'),
+        }
+        
+        return results

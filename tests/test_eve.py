@@ -186,6 +186,58 @@ class EVETestCase(APITestCase):
                 mock.call.get('eve/FacWarStats'),
             ])
 
+    def test_faction_warfare_leaderboard(self):
+        self.api.get.return_value = self.make_api_result("eve/faction_warfare_leaderboard.xml")
+
+        result = self.eve.faction_warfare_leaderboard()
+        self.assertEqual(result, {
+                'char': {
+                    'kills': {
+                        'total': [{'id': 673662188, 'kills': 451, 'name': 'Val Erian'}],
+                        'week': [{'id': 187452523,  'kills': 52, 'name': 'Tigrana Blanque'}],
+                        'yesterday': [
+                            {'id': 1007512845, 'kills': 14, 'name': 'StonedBoy'},
+                            {'id': 646053002, 'kills': 11, 'name': 'Erick Voliffe'},
+                        ],
+                    },
+                    'points': {
+                        'total': [{'id': 395923478, 'name': 'sasawong', 'points': 197046}],
+                         'week': [{'id': 161929388, 'name': 'Ankhesentapemkah', 'points': 20851}],
+                         'yesterday': [{'id': 774720050, 'name': 'v3nd3tt4', 'points': 3151}],
+                    },
+                },
+                'corp': {
+                    'kills': {
+                        'total': [{'id': 673662188, 'kills': 451, 'name': 'Val Erian'}],
+                        'week': [{'id': 187452523,  'kills': 52, 'name': 'Tigrana Blanque'}],
+                        'yesterday': [
+                            {'id': 1007512845, 'kills': 14, 'name': 'StonedBoy'},
+                            {'id': 646053002, 'kills': 11, 'name': 'Erick Voliffe'},
+                        ],
+                    },
+                    'points': {
+                        'total': [{'id': 395923478, 'name': 'sasawong', 'points': 197046}],
+                         'week': [{'id': 161929388, 'name': 'Ankhesentapemkah', 'points': 20851}],
+                         'yesterday': [{'id': 774720050, 'name': 'v3nd3tt4', 'points': 3151}],
+                    },
+                },
+                'faction': {
+                    'kills': {
+                        'total': [{'id': 500004, 'kills': 104, 'name': 'Gallente Federation'}],
+                        'week': [{'id': 500004, 'kills': 105, 'name': 'Gallente Federation'}],
+                        'yesterday': [{'id': 500004, 'kills': 106, 'name': 'Gallente Federation'}],
+                    },
+                    'points': {
+                        'total': [{'id': 500004, 'points': 101, 'name': 'Gallente Federation'}],
+                        'week': [{'id': 500004, 'points': 102, 'name': 'Gallente Federation'}],
+                        'yesterday': [{'id': 500004, 'points': 103, 'name': 'Gallente Federation'}],
+                    },
+                },
+            })
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('eve/FacWarTopStats'),
+            ])
+
 
 if __name__ == "__main__":
     unittest.main()
