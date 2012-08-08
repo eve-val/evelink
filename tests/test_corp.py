@@ -25,6 +25,21 @@ class CorpTestCase(APITestCase):
                 mock.call(mock.sentinel.industry_jobs_api_result),
             ])
 
+    @mock.patch('evelink.corp.parse_contracts')
+    def test_contracts(self, mock_parse):
+        self.api.get.return_value = mock.sentinel.contracts_api_result
+        mock_parse.return_value = mock.sentinel.parsed_contracts
+
+        result = self.corp.contracts()
+        self.assertEqual(result, mock.sentinel.parsed_contracts)
+        self.assertEqual(mock_parse.mock_calls, [
+                mock.call(mock.sentinel.contracts_api_result),
+            ])
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('corp/Contracts'),
+            ])
+
+
     def test_wallet_info(self):
         self.api.get.return_value = self.make_api_result("corp/wallet_info.xml")
 
