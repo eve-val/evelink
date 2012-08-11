@@ -22,8 +22,9 @@ print eve.character_name_from_id(1)
 
 # Using authenticated calls
 api = evelink.api.API(api_key=(12345, 'longvcodestring'))
-char = evelink.char.Char(api=api)
-print char.wallet_balance(1234567)
+charid = eve.character_id_from_name("Character Name")
+char = evelink.char.Char(char_id = charid, api=api)
+print char.wallet_balance()
 ```
 
 
