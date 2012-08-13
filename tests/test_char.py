@@ -280,8 +280,6 @@ class CharTestCase(APITestCase):
 
         result = self.char.character_sheet()
 
-        from pprint import pprint
-        pprint(result)
         self.assertEqual(result, {
             'id': 150337897,
             'name': 'corpslave',
@@ -319,18 +317,18 @@ class CharTestCase(APITestCase):
                 'willpower': {
                     'base': 10,
                     'bonus': {'bonus': {'name': 'Neural Boost - Basic', 'value': 3}}}},
-                'skills': [{'level': 3, 'published': True, 'skill_points': 8000, 'type': 3431},
-                           {'level': 3, 'published': True, 'skill_points': 8000, 'type': 3413},
-                           {'level': 1, 'published': True, 'skill_points': 500, 'type': 21059},
-                           {'level': 3, 'published': True, 'skill_points': 8000, 'type': 3416},
-                           {'level': 5, 'published': False, 'skill_points': 512000, 'type': 3445}],
-                'certificates': ['1', '5', '19', '239', '282', '32', '258'],
-                'roles': {'Roles': [{'id': 1, 'name': 'roleDirector'}],
-                          'RolesAtBase': [{'id': 1, 'name': 'roleDirector'}],
-                          'RolesAtHQ': [{'id': 1, 'name': 'roleDirector'}],
-                          'RolesAtOther': [{'id': 1, 'name': 'roleDirector'}]},
-                'titles': [{'id': 1, 'name': 'Member'}],
-            })
+        'skills': [{'level': 3, 'published': True, 'skill_points': 8000, 'type': 3431},
+                   {'level': 3, 'published': True, 'skill_points': 8000, 'type': 3413},
+                   {'level': 1, 'published': True, 'skill_points': 500, 'type': 21059},
+                   {'level': 3, 'published': True, 'skill_points': 8000, 'type': 3416},
+                   {'level': 5, 'published': False, 'skill_points': 512000, 'type': 3445}],
+        'certificates': ['1', '5', '19', '239', '282', '32', '258'],
+        'roles': {'Roles': [{'id': 1, 'name': 'roleDirector'}],
+                  'RolesAtBase': [{'id': 1, 'name': 'roleDirector'}],
+                  'RolesAtHQ': [{'id': 1, 'name': 'roleDirector'}],
+                  'RolesAtOther': [{'id': 1, 'name': 'roleDirector'}]},
+        'titles': [{'id': 1, 'name': 'Member'}],
+        })
         self.assertEqual(self.api.mock_calls, [
                 mock.call.get('char/CharacterSheet', {'characterID': 1}),
             ])
