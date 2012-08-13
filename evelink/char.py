@@ -51,9 +51,9 @@ class Char(object):
         """Returns a complete record of all wallet activity for a specified character"""
         params = {'characterID': self.char_id}
         if before_id is not None:
-            params['fromID'] = before_id 
+            params['fromID'] = before_id
         if limit is not None:
-            params['rowCount'] = limit 
+            params['rowCount'] = limit
         api_result = self.api.get('char/WalletJournal', params)
 
         rowset = api_result.find('rowset')
@@ -98,7 +98,7 @@ class Char(object):
 
         rowset = api_result.find('rowset')
         row = rowset.find('row')
-        result = { 
+        result = {
             'balance': float(row.attrib['balance']),
             'id': int(row.attrib['accountID']),
             'key': int(row.attrib['accountKey']),
@@ -205,7 +205,88 @@ class Char(object):
                     'dropped': int(a['qtyDropped']),
                     'destroyed': int(a['qtyDestroyed']),
                 }
-            
+
+        return result
+
+    def character_sheet(self):
+        """Returns attributes relating to a specific character."""
+        api_result = self.api.get('char/CharacterSheet',
+            {'characterID': self.char_id})
+
+        _str, _int, _float, _bool, _ts = api.elem_getters(api_result)
+        result = {
+            'id': _int('characterID'),
+            'name': _str('name'),
+            'dob': _ts('DoB'),
+            'race': _str('race'),
+            'blood_line': _str('bloodLine'),
+            'ancestry': _str('ancestry'),
+            'gender': _str('gender'),
+            'corp': {
+                'id': _int('corporationID'),
+                'name': _str('corporationName'),
+            },
+            'alliance': {
+                'id': _int('allianceID'),
+                'name': _str('allianceName'),
+            },
+            'clone': {
+                'name': _str('cloneName'),
+                'skill_points': _int('cloneSkillPoints'),
+            },
+            'balance': _float('balance'),
+            'attributes': {},
+        }
+
+        for attr in ('intelligence', 'memory', 'charisma', 'perception', 'willpower'):
+            result['attributes'][attr] = {}
+            result['attributes'][attr]['base'] = int(api_result.findtext('attributes/%s' % attr))
+            bonus = api_result.find('attributeEnhancers/%sBonus' % attr)
+            if bonus is not None:
+                result['attributes'][attr]['bonus'] = {
+                    'bonus': {
+                        'name': bonus.findtext('augmentatorName'),
+                        'value': int(bonus.findtext('augmentatorValue')),
+                    }
+                }
+
+        rowsets = {}
+        for rowset in api_result.findall('rowset'):
+            key = rowset.attrib['name']
+            rowsets[key] = rowset
+
+        result['skills'] = []
+        for skill in rowsets['skills']:
+            a = skill.attrib
+            result['skills'].append({
+                'type': int(a['typeID']),
+                'skill_points': int(a['skillpoints']),
+                'level': int(a['level']),
+                'published': a['published'] == '1',
+            })
+
+        result['certificates'] = []
+        for cert in rowsets['certificates']:
+            result['certificates'].append(cert.attrib['certificateID'])
+
+        result['roles'] = {}
+        for roles in ('Roles', 'RolesAtHQ', 'RolesAtBase', 'RolesAtOther'):
+            result['roles'][roles] = []
+            for role in rowsets['corporation%s' % roles]:
+                a = role.attrib
+                result['roles'][roles].append({
+                    'id': int(a['roleID']),
+                    'name': a['roleName'],
+                })
+
+        result['titles'] = []
+        for title in rowsets['corporationTitles']:
+            a = title.attrib
+            result['titles'].append({
+                'id': int(a['titleID']),
+                'name': a['titleName'],
+            })
+
         return result
 
     def orders(self):
