@@ -304,24 +304,32 @@ class CharTestCase(APITestCase):
             'attributes': {
                 'charisma': {
                     'base': 7,
+                    'total': 8,
                     'bonus': {'bonus': {'name': 'Limited Social Adaptation Chip', 'value': 1}}},
                 'intelligence': {
                     'base': 6,
+                    'total': 9,
                     'bonus': {'bonus': {'name': 'Snake Delta', 'value': 3}}},
                 'memory': {
                     'base': 4,
+                    'total': 7,
                     'bonus': {'bonus': {'name': 'Memory Augmentation - Basic', 'value': 3}}},
                 'perception': {
                     'base': 12,
+                    'total': 15,
                     'bonus': {'bonus': {'name': 'Ocular Filter - Basic', 'value': 3}}},
                 'willpower': {
                     'base': 10,
+                    'total': 13,
                     'bonus': {'bonus': {'name': 'Neural Boost - Basic', 'value': 3}}}},
-        'skills': [{'level': 3, 'published': True, 'skill_points': 8000, 'type': 3431},
-                   {'level': 3, 'published': True, 'skill_points': 8000, 'type': 3413},
-                   {'level': 1, 'published': True, 'skill_points': 500, 'type': 21059},
-                   {'level': 3, 'published': True, 'skill_points': 8000, 'type': 3416},
-                   {'level': 5, 'published': False, 'skill_points': 512000, 'type': 3445}],
+        'skills': {
+            'list': [{'level': 3, 'published': True, 'skill_points': 8000, 'type': 3431},
+                     {'level': 3, 'published': True, 'skill_points': 8000, 'type': 3413},
+                     {'level': 1, 'published': True, 'skill_points': 500, 'type': 21059},
+                     {'level': 3, 'published': True, 'skill_points': 8000, 'type': 3416},
+                     {'level': 5, 'published': False, 'skill_points': 512000, 'type': 3445}],
+            'total': 536500,
+        },
         'certificates': ['1', '5', '19', '239', '282', '32', '258'],
         'roles': {'Roles': [{'id': 1, 'name': 'roleDirector'}],
                   'RolesAtBase': [{'id': 1, 'name': 'roleDirector'}],

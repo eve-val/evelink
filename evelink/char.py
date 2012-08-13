@@ -240,13 +240,17 @@ class Char(object):
 
         for attr in ('intelligence', 'memory', 'charisma', 'perception', 'willpower'):
             result['attributes'][attr] = {}
-            result['attributes'][attr]['base'] = int(api_result.findtext('attributes/%s' % attr))
+            base = int(api_result.findtext('attributes/%s' % attr))
+            result['attributes'][attr]['base'] = base
+            result['attributes'][attr]['total'] = base
             bonus = api_result.find('attributeEnhancers/%sBonus' % attr)
             if bonus is not None:
+                mod = int(bonus.findtext('augmentatorValue'))
+                result['attributes'][attr]['total'] += mod
                 result['attributes'][attr]['bonus'] = {
                     'bonus': {
                         'name': bonus.findtext('augmentatorName'),
-                        'value': int(bonus.findtext('augmentatorValue')),
+                        'value': mod,
                     }
                 }
 
@@ -255,15 +259,20 @@ class Char(object):
             key = rowset.attrib['name']
             rowsets[key] = rowset
 
-        result['skills'] = []
+        result['skills'] = {
+            'list': [],
+            'total': 0,
+        }
         for skill in rowsets['skills']:
             a = skill.attrib
-            result['skills'].append({
+            sp = int(a['skillpoints'])
+            result['skills']['list'].append({
                 'type': int(a['typeID']),
-                'skill_points': int(a['skillpoints']),
+                'skill_points': sp,
                 'level': int(a['level']),
                 'published': a['published'] == '1',
             })
+            result['skills']['total'] += sp
 
         result['certificates'] = []
         for cert in rowsets['certificates']:
