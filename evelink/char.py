@@ -1,4 +1,4 @@
-from evelink import api
+from evelink import api, constants
 from evelink.parsing.assets import parse_assets
 from evelink.parsing.contracts import parse_contracts
 from evelink.parsing.industry_jobs import parse_industry_jobs
@@ -217,9 +217,9 @@ class Char(object):
         result = {
             'id': _int('characterID'),
             'name': _str('name'),
-            'dob': _ts('DoB'),
+            'create_ts': _ts('DoB'),
             'race': _str('race'),
-            'blood_line': _str('bloodLine'),
+            'bloodline': _str('bloodLine'),
             'ancestry': _str('ancestry'),
             'gender': _str('gender'),
             'corp': {
@@ -232,7 +232,7 @@ class Char(object):
             },
             'clone': {
                 'name': _str('cloneName'),
-                'skill_points': _int('cloneSkillPoints'),
+                'skillpoints': _int('cloneSkillPoints'),
             },
             'balance': _float('balance'),
             'attributes': {},
@@ -259,29 +259,27 @@ class Char(object):
             key = rowset.attrib['name']
             rowsets[key] = rowset
 
-        result['skills'] = {
-            'list': [],
-            'total': 0,
-        }
+        result['skills'] = []
+        result['skillpoints'] = 0
         for skill in rowsets['skills']:
             a = skill.attrib
             sp = int(a['skillpoints'])
-            result['skills']['list'].append({
+            result['skills'].append({
                 'type': int(a['typeID']),
-                'skill_points': sp,
+                'skillpoints': sp,
                 'level': int(a['level']),
                 'published': a['published'] == '1',
             })
-            result['skills']['total'] += sp
+            result['skillpoints'] += sp
 
         result['certificates'] = []
         for cert in rowsets['certificates']:
-            result['certificates'].append(cert.attrib['certificateID'])
+            result['certificates'].append(int(cert.attrib['certificateID']))
 
         result['roles'] = {}
-        for roles in ('Roles', 'RolesAtHQ', 'RolesAtBase', 'RolesAtOther'):
+        for roles in constants.Char().corp_roles:
             result['roles'][roles] = []
-            for role in rowsets['corporation%s' % roles]:
+            for role in rowsets[roles]:
                 a = role.attrib
                 result['roles'][roles].append({
                     'id': int(a['roleID']),

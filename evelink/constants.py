@@ -1,6 +1,12 @@
 CHARACTER = 'char'
 CORPORATION = 'corp'
 
+class Char(object):
+    corp_roles = ('corporationRoles',
+                       'corporationRolesAtHQ',
+                       'corporationRolesAtBase',
+                       'corporationRolesAtOther')
+
 class Industry(object):
     job_status = ('failed', 'delivered', 'gm-aborted', 'inflight-unanchored', 'destroyed')
 
