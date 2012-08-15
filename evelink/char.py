@@ -1,4 +1,4 @@
-from evelink import api
+from evelink import api, constants
 from evelink.parsing.assets import parse_assets
 from evelink.parsing.contracts import parse_contracts
 from evelink.parsing.industry_jobs import parse_industry_jobs
@@ -51,9 +51,9 @@ class Char(object):
         """Returns a complete record of all wallet activity for a specified character"""
         params = {'characterID': self.char_id}
         if before_id is not None:
-            params['fromID'] = before_id 
+            params['fromID'] = before_id
         if limit is not None:
-            params['rowCount'] = limit 
+            params['rowCount'] = limit
         api_result = self.api.get('char/WalletJournal', params)
 
         rowset = api_result.find('rowset')
@@ -98,7 +98,7 @@ class Char(object):
 
         rowset = api_result.find('rowset')
         row = rowset.find('row')
-        result = { 
+        result = {
             'balance': float(row.attrib['balance']),
             'id': int(row.attrib['accountID']),
             'key': int(row.attrib['accountKey']),
@@ -205,7 +205,95 @@ class Char(object):
                     'dropped': int(a['qtyDropped']),
                     'destroyed': int(a['qtyDestroyed']),
                 }
-            
+
+        return result
+
+    def character_sheet(self):
+        """Returns attributes relating to a specific character."""
+        api_result = self.api.get('char/CharacterSheet',
+            {'characterID': self.char_id})
+
+        _str, _int, _float, _bool, _ts = api.elem_getters(api_result)
+        result = {
+            'id': _int('characterID'),
+            'name': _str('name'),
+            'create_ts': _ts('DoB'),
+            'race': _str('race'),
+            'bloodline': _str('bloodLine'),
+            'ancestry': _str('ancestry'),
+            'gender': _str('gender'),
+            'corp': {
+                'id': _int('corporationID'),
+                'name': _str('corporationName'),
+            },
+            'alliance': {
+                'id': _int('allianceID') or None,
+                'name': _str('allianceName'),
+            },
+            'clone': {
+                'name': _str('cloneName'),
+                'skillpoints': _int('cloneSkillPoints'),
+            },
+            'balance': _float('balance'),
+            'attributes': {},
+        }
+
+        for attr in ('intelligence', 'memory', 'charisma', 'perception', 'willpower'):
+            result['attributes'][attr] = {}
+            base = int(api_result.findtext('attributes/%s' % attr))
+            result['attributes'][attr]['base'] = base
+            result['attributes'][attr]['total'] = base
+            bonus = api_result.find('attributeEnhancers/%sBonus' % attr)
+            if bonus is not None:
+                mod = int(bonus.findtext('augmentatorValue'))
+                result['attributes'][attr]['total'] += mod
+                result['attributes'][attr]['bonus'] = {
+                    'name': bonus.findtext('augmentatorName'),
+                    'value': mod,
+                }
+
+        rowsets = {}
+        for rowset in api_result.findall('rowset'):
+            key = rowset.attrib['name']
+            rowsets[key] = rowset
+
+        result['skills'] = []
+        result['skillpoints'] = 0
+        for skill in rowsets['skills']:
+            a = skill.attrib
+            sp = int(a['skillpoints'])
+            result['skills'].append({
+                'id': int(a['typeID']),
+                'skillpoints': sp,
+                'level': int(a['level']),
+                'published': a['published'] == '1',
+            })
+            result['skillpoints'] += sp
+
+        result['certificates'] = set()
+        for cert in rowsets['certificates']:
+            result['certificates'].add(int(cert.attrib['certificateID']))
+
+        result['roles'] = {}
+        for our_role, ccp_role in constants.Char().corp_roles.iteritems():
+            result['roles'][our_role] = {}
+            for role in rowsets[ccp_role]:
+                a = role.attrib
+                role_id = int(a['roleID'])
+                result['roles'][our_role][role_id] = {
+                    'id': role_id,
+                    'name': a['roleName'],
+                }
+
+        result['titles'] = {}
+        for title in rowsets['corporationTitles']:
+            a = title.attrib
+            title_id = int(a['titleID'])
+            result['titles'][title_id] = {
+                'id': title_id,
+                'name': a['titleName'],
+            }
+
         return result
 
     def orders(self):

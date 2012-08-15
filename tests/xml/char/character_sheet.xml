@@ -1,0 +1,76 @@
+<result>
+  <characterID>150337897</characterID>
+  <name>corpslave</name>
+  <DoB>2006-01-01 00:00:00</DoB>
+  <race>Minmatar</race>
+  <bloodLine>Brutor</bloodLine>
+  <ancestry>Slave Child</ancestry>
+  <gender>Female</gender>
+  <corporationName>corpexport Corp</corporationName>
+  <corporationID>150337746</corporationID>
+  <allianceName />
+  <allianceID>0</allianceID>
+  <cloneName>Clone Grade Pi</cloneName>
+  <cloneSkillPoints>54600000</cloneSkillPoints>
+  <balance>190210393.87</balance>
+  <attributeEnhancers>
+    <memoryBonus>
+      <augmentatorName>Memory Augmentation - Basic</augmentatorName>
+      <augmentatorValue>3</augmentatorValue>
+    </memoryBonus>
+    <perceptionBonus>
+      <augmentatorName>Ocular Filter - Basic</augmentatorName>
+      <augmentatorValue>3</augmentatorValue>
+    </perceptionBonus>
+    <willpowerBonus>
+      <augmentatorName>Neural Boost - Basic</augmentatorName>
+      <augmentatorValue>3</augmentatorValue>
+    </willpowerBonus>
+    <intelligenceBonus>
+      <augmentatorName>Snake Delta</augmentatorName>
+      <augmentatorValue>3</augmentatorValue>
+    </intelligenceBonus>
+    <charismaBonus>
+      <augmentatorName>Limited Social Adaptation Chip</augmentatorName>
+      <augmentatorValue>1</augmentatorValue>
+    </charismaBonus>
+  </attributeEnhancers>
+  <attributes>
+    <intelligence>6</intelligence>
+    <memory>4</memory>
+    <charisma>7</charisma>
+    <perception>12</perception>
+    <willpower>10</willpower>
+  </attributes>
+  <rowset name="skills" key="typeID" columns="typeID,skillpoints,level,published">
+    <row typeID="3431" skillpoints="8000" level="3" published="1"/>
+    <row typeID="3413" skillpoints="8000" level="3" published="1"/>
+    <row typeID="21059" skillpoints="500" level="1" published="1"/>
+    <row typeID="3416" skillpoints="8000" level="3" published="1"/>
+    <row typeID="3445" skillpoints="512000" level="5" published="0"/>
+  </rowset>
+  <rowset name="certificates" key="certificateID" columns="certificateID">
+    <row certificateID="1"/>
+    <row certificateID="5"/>
+    <row certificateID="19"/>
+    <row certificateID="239"/>
+    <row certificateID="282"/>
+    <row certificateID="32"/>
+    <row certificateID="258"/>
+  </rowset>
+  <rowset name="corporationRoles" key="roleID" columns="roleID,roleName">
+    <row roleID="1" roleName="roleDirector" />
+  </rowset>
+  <rowset name="corporationRolesAtHQ" key="roleID" columns="roleID,roleName">
+    <row roleID="1" roleName="roleDirector" />
+  </rowset>
+  <rowset name="corporationRolesAtBase" key="roleID" columns="roleID,roleName">
+    <row roleID="1" roleName="roleDirector" />
+  </rowset>
+  <rowset name="corporationRolesAtOther" key="roleID" columns="roleID,roleName">
+    <row roleID="1" roleName="roleDirector" />
+  </rowset>
+  <rowset name="corporationTitles" key="titleID" columns="titleID,titleName">
+    <row titleID="1" titleName="Member" />
+  </rowset>
+</result>

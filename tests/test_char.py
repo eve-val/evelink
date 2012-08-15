@@ -124,8 +124,8 @@ class CharTestCase(APITestCase):
 
         result = self.char.wallet_info()
 
-        self.assertEqual(result, 
-            { 
+        self.assertEqual(result,
+            {
                 'balance': 209127923.31,
                 'id': 1,
                 'key': 1000,
@@ -155,7 +155,7 @@ class CharTestCase(APITestCase):
         self.assertEqual(result, mock.sentinel.industry_jobs)
         self.assertEqual(self.api.mock_calls, [
                 mock.call.get('char/IndustryJobs', {'characterID': 1}),
-            ]) 
+            ])
         self.assertEqual(mock_parse.mock_calls, [
                 mock.call(mock.sentinel.industry_jobs_api_result),
             ])
@@ -190,30 +190,30 @@ class CharTestCase(APITestCase):
                         'destroyed': 1,
                         'dropped': 0,
                         'flag': 0,
-                        'id': 2605}, 
+                        'id': 2605},
                     5531: {
                         'destroyed': 0,
                         'dropped': 1,
                         'flag': 0,
-                        'id': 5531}, 
+                        'id': 5531},
                     16273: {
                         'destroyed': 750,
                         'dropped': 0,
                         'flag': 5,
-                        'id': 16273}, 
+                        'id': 16273},
                     21096: {
                         'destroyed': 1,
                         'dropped': 0,
                         'flag': 0,
-                        'id': 21096}}, 
-                'id': 15640545, 
+                        'id': 21096}},
+                'id': 15640545,
                 'moon_id': 0,
                 'system_id': 30001160,
                 'time': 1290612480,
                 'victim': {
                     'alliance': {
                         'id': 1254074,
-                        'name': 'EVE Gurus'}, 
+                        'name': 'EVE Gurus'},
                     'corp': {
                         'id': 1254875843,
                         'name': 'Starbase Anchoring Corp'},
@@ -273,6 +273,71 @@ class CharTestCase(APITestCase):
         self.char.kills(12345)
         self.assertEqual(self.api.mock_calls, [
                 mock.call.get('char/KillLog', {'characterID': 1, 'beforeKillID': 12345}),
+            ])
+
+    def test_character_sheet(self):
+        self.api.get.return_value = self.make_api_result("char/character_sheet.xml")
+
+        result = self.char.character_sheet()
+
+        self.maxDiff = 10000;
+        self.assertEqual(result, {
+            'id': 150337897,
+            'name': 'corpslave',
+            'create_ts': 1136073600,
+            'race': 'Minmatar',
+            'bloodline': 'Brutor',
+            'ancestry': 'Slave Child',
+            'gender': 'Female',
+            'corp': {
+                'id': 150337746,
+                'name': 'corpexport Corp',
+            },
+            'alliance': {
+                'id': None,
+                'name': None
+            },
+            'clone': {
+                'name': 'Clone Grade Pi',
+                'skillpoints': 54600000,
+            },
+            'balance': 190210393.87,
+            'attributes': {
+                'charisma': {
+                    'base': 7,
+                    'total': 8,
+                    'bonus': {'name': 'Limited Social Adaptation Chip', 'value': 1}},
+                'intelligence': {
+                    'base': 6,
+                    'total': 9,
+                    'bonus': {'name': 'Snake Delta', 'value': 3}},
+                'memory': {
+                    'base': 4,
+                    'total': 7,
+                    'bonus': {'name': 'Memory Augmentation - Basic', 'value': 3}},
+                'perception': {
+                    'base': 12,
+                    'total': 15,
+                    'bonus': {'name': 'Ocular Filter - Basic', 'value': 3}},
+                'willpower': {
+                    'base': 10,
+                    'total': 13,
+                    'bonus': {'name': 'Neural Boost - Basic', 'value': 3}}},
+        'skills': [{'level': 3, 'published': True, 'skillpoints': 8000, 'id': 3431},
+                   {'level': 3, 'published': True, 'skillpoints': 8000, 'id': 3413},
+                   {'level': 1, 'published': True, 'skillpoints': 500, 'id': 21059},
+                   {'level': 3, 'published': True, 'skillpoints': 8000, 'id': 3416},
+                   {'level': 5, 'published': False, 'skillpoints': 512000, 'id': 3445}],
+        'skillpoints': 536500,
+        'certificates': set([1, 5, 19, 239, 282, 32, 258]),
+        'roles': {'roles': {1 : {'id': 1, 'name': 'roleDirector'}},
+                  'at_base': {1: {'id': 1, 'name': 'roleDirector'}},
+                  'at_hq': {1: {'id': 1, 'name': 'roleDirector'}},
+                  'at_other': {1: {'id': 1, 'name': 'roleDirector'}}},
+        'titles': {1: {'id': 1, 'name': 'Member'}},
+        })
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('char/CharacterSheet', {'characterID': 1}),
             ])
 
     @mock.patch('evelink.char.parse_market_orders')
