@@ -227,7 +227,7 @@ class Char(object):
                 'name': _str('corporationName'),
             },
             'alliance': {
-                'id': _int('allianceID'),
+                'id': _int('allianceID') or None,
                 'name': _str('allianceName'),
             },
             'clone': {
@@ -248,10 +248,8 @@ class Char(object):
                 mod = int(bonus.findtext('augmentatorValue'))
                 result['attributes'][attr]['total'] += mod
                 result['attributes'][attr]['bonus'] = {
-                    'bonus': {
-                        'name': bonus.findtext('augmentatorName'),
-                        'value': mod,
-                    }
+                    'name': bonus.findtext('augmentatorName'),
+                    'value': mod,
                 }
 
         rowsets = {}
@@ -272,9 +270,9 @@ class Char(object):
             })
             result['skillpoints'] += sp
 
-        result['certificates'] = []
+        result['certificates'] = set()
         for cert in rowsets['certificates']:
-            result['certificates'].append(int(cert.attrib['certificateID']))
+            result['certificates'].add(int(cert.attrib['certificateID']))
 
         result['roles'] = {}
         for our_role, ccp_role in constants.Char().corp_roles.iteritems():
@@ -287,13 +285,14 @@ class Char(object):
                     'name': a['roleName'],
                 }
 
-        result['titles'] = []
+        result['titles'] = {}
         for title in rowsets['corporationTitles']:
             a = title.attrib
-            result['titles'].append({
-                'id': int(a['titleID']),
+            title_id = int(a['titleID'])
+            result['titles'][title_id] = {
+                'id': title_id,
                 'name': a['titleName'],
-            })
+            }
 
         return result
 

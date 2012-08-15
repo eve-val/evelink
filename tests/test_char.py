@@ -294,7 +294,7 @@ class CharTestCase(APITestCase):
                 'name': 'corpexport Corp',
             },
             'alliance': {
-                'id': 0,
+                'id': None,
                 'name': None
             },
             'clone': {
@@ -306,35 +306,35 @@ class CharTestCase(APITestCase):
                 'charisma': {
                     'base': 7,
                     'total': 8,
-                    'bonus': {'bonus': {'name': 'Limited Social Adaptation Chip', 'value': 1}}},
+                    'bonus': {'name': 'Limited Social Adaptation Chip', 'value': 1}},
                 'intelligence': {
                     'base': 6,
                     'total': 9,
-                    'bonus': {'bonus': {'name': 'Snake Delta', 'value': 3}}},
+                    'bonus': {'name': 'Snake Delta', 'value': 3}},
                 'memory': {
                     'base': 4,
                     'total': 7,
-                    'bonus': {'bonus': {'name': 'Memory Augmentation - Basic', 'value': 3}}},
+                    'bonus': {'name': 'Memory Augmentation - Basic', 'value': 3}},
                 'perception': {
                     'base': 12,
                     'total': 15,
-                    'bonus': {'bonus': {'name': 'Ocular Filter - Basic', 'value': 3}}},
+                    'bonus': {'name': 'Ocular Filter - Basic', 'value': 3}},
                 'willpower': {
                     'base': 10,
                     'total': 13,
-                    'bonus': {'bonus': {'name': 'Neural Boost - Basic', 'value': 3}}}},
+                    'bonus': {'name': 'Neural Boost - Basic', 'value': 3}}},
         'skills': [{'level': 3, 'published': True, 'skillpoints': 8000, 'id': 3431},
                    {'level': 3, 'published': True, 'skillpoints': 8000, 'id': 3413},
                    {'level': 1, 'published': True, 'skillpoints': 500, 'id': 21059},
                    {'level': 3, 'published': True, 'skillpoints': 8000, 'id': 3416},
                    {'level': 5, 'published': False, 'skillpoints': 512000, 'id': 3445}],
         'skillpoints': 536500,
-        'certificates': [1, 5, 19, 239, 282, 32, 258],
+        'certificates': set([1, 5, 19, 239, 282, 32, 258]),
         'roles': {'roles': {1 : {'id': 1, 'name': 'roleDirector'}},
                   'at_base': {1: {'id': 1, 'name': 'roleDirector'}},
                   'at_hq': {1: {'id': 1, 'name': 'roleDirector'}},
                   'at_other': {1: {'id': 1, 'name': 'roleDirector'}}},
-        'titles': [{'id': 1, 'name': 'Member'}],
+        'titles': {1: {'id': 1, 'name': 'Member'}},
         })
         self.assertEqual(self.api.mock_calls, [
                 mock.call.get('char/CharacterSheet', {'characterID': 1}),
