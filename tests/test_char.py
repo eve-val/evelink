@@ -330,10 +330,10 @@ class CharTestCase(APITestCase):
                    {'level': 5, 'published': False, 'skillpoints': 512000, 'id': 3445}],
         'skillpoints': 536500,
         'certificates': [1, 5, 19, 239, 282, 32, 258],
-        'roles': {'corporationRoles': [{'id': 1, 'name': 'roleDirector'}],
-                  'corporationRolesAtBase': [{'id': 1, 'name': 'roleDirector'}],
-                  'corporationRolesAtHQ': [{'id': 1, 'name': 'roleDirector'}],
-                  'corporationRolesAtOther': [{'id': 1, 'name': 'roleDirector'}]},
+        'roles': {'roles': {'roleDirector' : {'id': 1, 'name': 'roleDirector'}},
+                  'at_base': {'roleDirector': {'id': 1, 'name': 'roleDirector'}},
+                  'at_hq': {'roleDirector': {'id': 1, 'name': 'roleDirector'}},
+                  'at_other': {'roleDirector': {'id': 1, 'name': 'roleDirector'}}},
         'titles': [{'id': 1, 'name': 'Member'}],
         })
         self.assertEqual(self.api.mock_calls, [

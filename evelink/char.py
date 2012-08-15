@@ -277,14 +277,15 @@ class Char(object):
             result['certificates'].append(int(cert.attrib['certificateID']))
 
         result['roles'] = {}
-        for roles in constants.Char().corp_roles:
-            result['roles'][roles] = []
-            for role in rowsets[roles]:
+        for our_role, ccp_role in constants.Char().corp_roles.iteritems():
+            result['roles'][our_role] = {}
+            for role in rowsets[ccp_role]:
                 a = role.attrib
-                result['roles'][roles].append({
+                name = a['roleName']
+                result['roles'][our_role][name] = {
                     'id': int(a['roleID']),
-                    'name': a['roleName'],
-                })
+                    'name': name,
+                }
 
         result['titles'] = []
         for title in rowsets['corporationTitles']:
