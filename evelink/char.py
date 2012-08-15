@@ -265,7 +265,7 @@ class Char(object):
             a = skill.attrib
             sp = int(a['skillpoints'])
             result['skills'].append({
-                'type': int(a['typeID']),
+                'id': int(a['typeID']),
                 'skillpoints': sp,
                 'level': int(a['level']),
                 'published': a['published'] == '1',
