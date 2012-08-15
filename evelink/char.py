@@ -281,10 +281,10 @@ class Char(object):
             result['roles'][our_role] = {}
             for role in rowsets[ccp_role]:
                 a = role.attrib
-                name = a['roleName']
-                result['roles'][our_role][name] = {
-                    'id': int(a['roleID']),
-                    'name': name,
+                role_id = int(a['roleID'])
+                result['roles'][our_role][role_id] = {
+                    'id': role_id,
+                    'name': a['roleName'],
                 }
 
         result['titles'] = []
