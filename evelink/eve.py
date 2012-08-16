@@ -285,7 +285,7 @@ class EVE(object):
         
     def conquerable_stations(self):
         
-        api_result = api.get('eve/ConquerableStationlist')
+        api_result = self.api.get('eve/ConquerableStationlist')
         
         results = {}
         rowset = api_result.find('rowset')
