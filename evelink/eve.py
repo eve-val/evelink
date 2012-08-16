@@ -295,10 +295,10 @@ class EVE(object):
                 'name': row.attrib['stationName'],
                 'type_id': int(row.attrib['stationTypeID']),
                 'system_id': int(row.attrib['solarSystemID']),
-                corp = {
+                'corp': {
                     'id': int(row.attrib['corporationID']),
                     'name': row.attrib['corporationName'] }
                 }
             results[station['id']] = station
             
-        return(results)
+        return results
