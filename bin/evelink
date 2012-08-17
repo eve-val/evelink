@@ -23,17 +23,30 @@ def create_cache(cache_path):
 
 
 def get_parameters(args):
+    """Takes a set of command line parameters and parses into posargs and kwargs.
+
+    It assumes that any parameter that includes '=' in the value is a kwarg, and
+    all other parameters are posargs. Order of posargs is preserved, and they
+    may be interspersed with kwargs.
+
+    In addition, allows specification of lists by including commas in the value.
+    For instance, "1,2,3" is a posarg that results in ["1", "2", "3"] (a list
+    of strings) while "foo=1,2,3" results in the same value but as a kwarg.
+    
+    Empty values in a list are omitted, which as a side effect means that single
+    and zero element lists can be specified as "1," and "," respectively.
+    """
     posargs = []
     kwargs = {}
     for arg in args:
         if '=' in arg:
             k,_,v = arg.rpartition('=')
             if ',' in v:
-                v = v.split(',')
+                v = [i for i in v.split(',') if i]
             kwargs[k] = v
         else:
             if ',' in arg:
-                arg = arg.split(',')
+                arg = [i for i in arg.split(',') if i]
             posargs.append(arg)
     return posargs, kwargs
 
