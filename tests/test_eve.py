@@ -238,6 +238,31 @@ class EVETestCase(APITestCase):
                 mock.call.get('eve/FacWarTopStats'),
             ])
 
+    def test_conquerable_stations(self):
+        self.api.get.return_value = self.make_api_result("eve/conquerable_stations.xml")
+
+        result = self.eve.conquerable_stations()
+        self.assertEqual(result, {
+            1:{ 'id':1,
+                'name':"Station station station",
+                'type_id':123,
+                'system_id':512,
+                'corp':{
+                        'id':444,
+                        'name':"Valkyries of Night" }
+                },
+            2:{ 'id':2,
+                'name':"Station the station",
+                'type_id':42,
+                'system_id':503,
+                'corp':{
+                        'id':400,
+                        'name':"Deus Fides Empire"}
+                }
+           })
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('eve/ConquerableStationlist'),
+            ])
 
 if __name__ == "__main__":
     unittest.main()

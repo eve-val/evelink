@@ -282,3 +282,23 @@ class EVE(object):
         }
         
         return results
+        
+    def conquerable_stations(self):
+        
+        api_result = self.api.get('eve/ConquerableStationlist')
+        
+        results = {}
+        rowset = api_result.find('rowset')
+        for row in rowset.findall('row'):
+            station = {
+                'id': int(row.attrib['stationID']),
+                'name': row.attrib['stationName'],
+                'type_id': int(row.attrib['stationTypeID']),
+                'system_id': int(row.attrib['solarSystemID']),
+                'corp': {
+                    'id': int(row.attrib['corporationID']),
+                    'name': row.attrib['corporationName'] }
+                }
+            results[station['id']] = station
+            
+        return results
