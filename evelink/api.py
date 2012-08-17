@@ -87,7 +87,6 @@ class APIError(Exception):
     def __init__(self, code, message):
         self.code = code
         self.message = message
-        _log.error(self)
 
     def __repr__(self):
         return "APIError(%r, %r)" % (self.code, self.message)
