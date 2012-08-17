@@ -4,7 +4,12 @@ import time
 from urllib import urlencode
 import urllib2
 from xml.etree import ElementTree
+import logging
 
+_log = logging.getLogger('evelink.api')
+_stream = logging.StreamHandler()
+_stream.setFormatter(logging.Formatter('%(name)s - %(levelname)s: %(message)s'))
+_log.addHandler(_stream)
 
 def _clean(v):
     """Convert parameters into an acceptable format for the API."""
@@ -85,6 +90,7 @@ class APIError(Exception):
     def __init__(self, code, message):
         self.code = code
         self.message = message
+        _log.error(self)
 
     def __repr__(self):
         return "APIError(%r, %r)" % (self.code, self.message)
