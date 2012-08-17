@@ -90,11 +90,11 @@ class APIError(Exception):
         return "APIError(%r, %r)" % (self.code, self.message)
 
     def __str__(self):
-        return "%s (code=%d)" % (self.message, self.code)
+        return "%s (code=%d)" % (self.message, int(self.code))
 
 class APICache(object):
     """Minimal interface for caching API requests.
-    
+
     This very basic implementation simply stores values in
     memory, with no other persistence. You can subclass it
     to define a more complex/featureful/persistent cache.
