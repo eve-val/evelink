@@ -1,15 +1,12 @@
 import calendar
 import functools
+import logging
 import time
 from urllib import urlencode
 import urllib2
 from xml.etree import ElementTree
-import logging
 
 _log = logging.getLogger('evelink.api')
-_stream = logging.StreamHandler()
-_stream.setFormatter(logging.Formatter('%(name)s - %(levelname)s: %(message)s'))
-_log.addHandler(_stream)
 
 def _clean(v):
     """Convert parameters into an acceptable format for the API."""
