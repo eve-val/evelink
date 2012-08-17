@@ -169,7 +169,9 @@ class API(object):
         params = params or {}
         params = dict((k, _clean(v)) for k,v in params.iteritems())
 
+        _log.debug("Calling %s with params=%r", path, params)
         if self.api_key:
+            _log.debug("keyID and vCode added")
             params['keyID'] = self.api_key[0]
             params['vCode'] = self.api_key[1]
 
@@ -180,6 +182,7 @@ class API(object):
             if isinstance(cached_result, APIError):
                 raise cached_result
             # Normal cached results get returned
+            _log.debug("Cache hit, returning cached payload")
             return cached_result
 
         params = urlencode(params)
@@ -189,9 +192,11 @@ class API(object):
         try:
             if params:
                 # POST request
+                _log.debug("POSTing request")
                 response = urllib2.urlopen(full_path, params)
             else:
                 # GET request
+                _log.debug("GETting request")
                 response = urllib2.urlopen(full_path)
         except urllib2.URLError as e:
             # TODO: Handle this better?
