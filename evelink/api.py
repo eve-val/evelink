@@ -7,6 +7,7 @@ import urllib2
 from xml.etree import ElementTree
 
 _log = logging.getLogger('evelink.api')
+_log.addHandler(logging.NullHandler())
 
 def _clean(v):
     """Convert parameters into an acceptable format for the API."""
@@ -176,6 +177,7 @@ class API(object):
         if cached_result is not None:
             # Cached APIErrors should be re-raised
             if isinstance(cached_result, APIError):
+                _log.error("Raising cached error: %r" % cached_result)
                 raise cached_result
             # Normal cached results get returned
             _log.debug("Cache hit, returning cached payload")
@@ -210,6 +212,7 @@ class API(object):
             exc = APIError(code, message)
 
             self.cache.put(key, exc, expires_time - current_time)
+            _log.error("Raising API error error: %r" % exc)
             raise exc
 
         result = tree.find('result')
