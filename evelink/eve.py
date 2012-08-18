@@ -254,6 +254,10 @@ class EVE(object):
                 'name': g['groupName'],
                 'skills': {}
                 }
+            # Because :ccp: groups can sometimes be listed
+            # multiple times with different skills, and the
+            # correct result is to add the contents together
+            group = results.get(group['id'], group)
 
             # now get the actual skill data
             skills_rs = row.find('rowset') # skills

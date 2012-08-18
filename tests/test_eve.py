@@ -270,6 +270,56 @@ class EVETestCase(APITestCase):
         result = self.eve.skill_tree()
 
         self.assertEqual(result, {
+                255: {
+                    'id': 255,
+                    'name': 'Gunnery',
+                    'skills': {
+                        3300: {
+                            'attributes': {
+                                'primary': 'perception',
+                                 'secondary': 'willpower',
+                            },
+                            'bonuses': {
+                                'turretSpeeBonus': {
+                                    'type': 'turretSpeeBonus',
+                                    'value': -2.0,
+                                },
+                            },
+                            'description': "Basic turret operation skill. 2% Bonus to weapon turrets' rate of fire per skill level.",
+                            'group_id': 255,
+                            'id': 3300,
+                            'name': 'Gunnery',
+                            'published': True,
+                            'rank': 1,
+                            'required_skills': {},
+                        },
+                        3301: {
+                            'attributes': {
+                                'primary': 'perception',
+                                'secondary': 'willpower',
+                            },
+                            'bonuses': {
+                                'damageMultiplierBonus': {
+                                    'type': 'damageMultiplierBonus',
+                                    'value': 5.0,
+                                },
+                            },
+                            'description': 'Operation of small hybrid turrets. 5% Bonus to small hybrid turret damage per level.',
+                            'group_id': 255,
+                            'id': 3301,
+                            'name': 'Small Hybrid Turret',
+                            'published': True,
+                            'rank': 1,
+                            'required_skills': {
+                                3300: {
+                                    'id': 3300,
+                                    'level': 1,
+                                    'name': 'Gunnery',
+                                },
+                            },
+                        },
+                    },
+                },
                 266: {
                     'id': 266,
                     'name': 'Corporation Management',
