@@ -1,10 +1,12 @@
 import calendar
 import functools
+import logging
 import time
 from urllib import urlencode
 import urllib2
 from xml.etree import ElementTree
 
+_log = logging.getLogger('evelink.api')
 
 def _clean(v):
     """Convert parameters into an acceptable format for the API."""
@@ -163,7 +165,9 @@ class API(object):
         params = params or {}
         params = dict((k, _clean(v)) for k,v in params.iteritems())
 
+        _log.debug("Calling %s with params=%r", path, params)
         if self.api_key:
+            _log.debug("keyID and vCode added")
             params['keyID'] = self.api_key[0]
             params['vCode'] = self.api_key[1]
 
@@ -172,8 +176,10 @@ class API(object):
         if cached_result is not None:
             # Cached APIErrors should be re-raised
             if isinstance(cached_result, APIError):
+                _log.error("Raising cached error: %r" % cached_result)
                 raise cached_result
             # Normal cached results get returned
+            _log.debug("Cache hit, returning cached payload")
             return cached_result
 
         params = urlencode(params)
@@ -183,9 +189,11 @@ class API(object):
         try:
             if params:
                 # POST request
+                _log.debug("POSTing request")
                 response = urllib2.urlopen(full_path, params)
             else:
                 # GET request
+                _log.debug("GETting request")
                 response = urllib2.urlopen(full_path)
         except urllib2.URLError as e:
             # TODO: Handle this better?
@@ -203,6 +211,7 @@ class API(object):
             exc = APIError(code, message)
 
             self.cache.put(key, exc, expires_time - current_time)
+            _log.error("Raising API error error: %r" % exc)
             raise exc
 
         result = tree.find('result')
