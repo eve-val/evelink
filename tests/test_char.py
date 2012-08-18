@@ -340,45 +340,19 @@ class CharTestCase(APITestCase):
                 mock.call.get('char/CharacterSheet', {'characterID': 1}),
             ])
 
-    def test_contacts(self):
-        self.api.get.return_value = self.make_api_result("char/contact_list.xml")
+    @mock.patch('evelink.char.parse_contact_list')
+    def test_contacts(self, mock_parse):
+        self.api.get.return_value = mock.sentinel.contacts_api_result
+        mock_parse.return_value = mock.sentinel.parsed_contacts
 
         result = self.char.contacts()
-        expected_result = {
-            'corp': {
-                1082138174: {'standing': 10, 'id': 1082138174,
-                             'name': 'Nomad LLP'},
-                1086308227: {'standing': 0, 'id': 1086308227,
-                             'name': 'Rebel Alliance of New Eden'},
-                1113838907: {'standing': -10, 'id': 1113838907,
-                             'name': 'Significant other'}
-            },
-            'alliance': {
-                2049763943: {'standing': -10, 'id': 2049763943,
-                             'name': 'EntroPraetorian Aegis'},
-                2067199408: {'standing': -10, 'id': 2067199408,
-                             'name': 'Vera Cruz Alliance'},
-                2081065875: {'standing': -7.5, 'id': 2081065875,
-                             'name': 'TheRedMaple'}
-            },
-            'personal': {
-                3009988: {'standing': 0, 'id': 3009988,
-                          'name': 'Navittus Sildbena',
-                          'in_watchlist': True},
-                544497016: {'standing': 10, 'id': 544497016,
-                            'name': 'Valkyries of Night',
-                            'in_watchlist': False}
-            }
-        }
-
+        self.assertEqual(result, mock.sentinel.parsed_contacts)
+        self.assertEqual(mock_parse.mock_calls, [
+                mock.call(mock.sentinel.contacts_api_result),
+            ])
         self.assertEqual(self.api.mock_calls, [
                 mock.call.get('char/ContactList', {'characterID': 1}),
             ])
-
-        self.assertEqual(result['personal'], expected_result['personal'])
-        self.assertEqual(result['alliance'], expected_result['alliance'])
-        self.assertEqual(result['corp'], expected_result['corp'])
-
 
     @mock.patch('evelink.char.parse_market_orders')
     def test_orders(self, mock_parse):
