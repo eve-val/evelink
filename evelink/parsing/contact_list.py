@@ -12,7 +12,7 @@ def parse_contact_list(api_result):
             d = {
                 'id': int(row.get('contactID')),
                 'name': row.get('contactName'),
-                'standing': int(row.get('standing')),
+                'standing': float(row.get('standing')),
             }
             if 'inWatchlist' in row.attrib:
                 d['in_watchlist'] = row.get('inWatchlist', 'False') == 'True'

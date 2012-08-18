@@ -358,7 +358,7 @@ class CharTestCase(APITestCase):
                              'name': 'EntroPraetorian Aegis'},
                 2067199408: {'standing': -10, 'id': 2067199408,
                              'name': 'Vera Cruz Alliance'},
-                2081065875: {'standing': -10, 'id': 2081065875,
+                2081065875: {'standing': -7.5, 'id': 2081065875,
                              'name': 'TheRedMaple'}
             },
             'personal': {
