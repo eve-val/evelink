@@ -82,7 +82,7 @@ def elem_getters(elem):
 class APIError(Exception):
     """Exception raised when the EVE API returns an error."""
 
-    def __init__(self, code, message):
+    def __init__(self, code=None, message=None):
         self.code = code
         self.message = message
 
