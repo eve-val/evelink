@@ -1,10 +1,12 @@
 import calendar
 import functools
+import logging
 import time
 from urllib import urlencode
 import urllib2
 from xml.etree import ElementTree
 
+_log = logging.getLogger('evelink.api')
 
 def _clean(v):
     """Convert parameters into an acceptable format for the API."""
@@ -16,6 +18,8 @@ def _clean(v):
 
 def parse_ts(v):
     """Parse a timestamp from EVE API XML into a unix-ish timestamp."""
+    if v == '':
+        return None
     ts = calendar.timegm(time.strptime(v, "%Y-%m-%d %H:%M:%S"))
     # Deal with EVE's nonexistent 0001-01-01 00:00:00 timestamp
     return ts if ts > 0 else None
@@ -34,7 +38,7 @@ def get_ts_value(elem, field):
     val = get_named_value(elem, field)
     if val:
         return parse_ts(val)
-    return val
+    return None
 
 
 def get_int_value(elem, field):
@@ -80,7 +84,7 @@ def elem_getters(elem):
 class APIError(Exception):
     """Exception raised when the EVE API returns an error."""
 
-    def __init__(self, code, message):
+    def __init__(self, code=None, message=None):
         self.code = code
         self.message = message
 
@@ -88,11 +92,11 @@ class APIError(Exception):
         return "APIError(%r, %r)" % (self.code, self.message)
 
     def __str__(self):
-        return "%s (code=%d)" % (self.message, self.code)
+        return "%s (code=%d)" % (self.message, int(self.code))
 
 class APICache(object):
     """Minimal interface for caching API requests.
-    
+
     This very basic implementation simply stores values in
     memory, with no other persistence. You can subclass it
     to define a more complex/featureful/persistent cache.
@@ -147,7 +151,8 @@ class API(object):
 
     def _cache_key(self, path, params):
         sorted_params = sorted(params.iteritems())
-        return hash((path, tuple(sorted_params)))
+        # Paradoxically, Shelve doesn't like integer keys.
+        return str(hash((path, tuple(sorted_params))))
 
     def get(self, path, params=None):
         """Request a specific path from the EVE API.
@@ -160,7 +165,9 @@ class API(object):
         params = params or {}
         params = dict((k, _clean(v)) for k,v in params.iteritems())
 
+        _log.debug("Calling %s with params=%r", path, params)
         if self.api_key:
+            _log.debug("keyID and vCode added")
             params['keyID'] = self.api_key[0]
             params['vCode'] = self.api_key[1]
 
@@ -169,8 +176,10 @@ class API(object):
         if cached_result is not None:
             # Cached APIErrors should be re-raised
             if isinstance(cached_result, APIError):
+                _log.error("Raising cached error: %r" % cached_result)
                 raise cached_result
             # Normal cached results get returned
+            _log.debug("Cache hit, returning cached payload")
             return cached_result
 
         params = urlencode(params)
@@ -180,9 +189,11 @@ class API(object):
         try:
             if params:
                 # POST request
+                _log.debug("POSTing request")
                 response = urllib2.urlopen(full_path, params)
             else:
                 # GET request
+                _log.debug("GETting request")
                 response = urllib2.urlopen(full_path)
         except urllib2.URLError as e:
             # TODO: Handle this better?
@@ -200,6 +211,7 @@ class API(object):
             exc = APIError(code, message)
 
             self.cache.put(key, exc, expires_time - current_time)
+            _log.error("Raising API error: %r" % exc)
             raise exc
 
         result = tree.find('result')

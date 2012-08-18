@@ -4,9 +4,33 @@ EVELink - Python Bindings for the EVE API
 EVELink provides a means to access the [EVE API](http://wiki.eveonline.com/en/wiki/EVE_API_Functions) from Python.
 
 
+Example Usage
+-------------
+
+```python
+import evelink.api # Raw API access
+import evelink.eve # Wrapped API access for the /eve/ API path
+
+# Using the raw access level to get the name of a character
+api = evelink.api.API()
+result = api.get('eve/CharacterName', {'IDs': [1]})
+print result.find('rowset').findall('row')[0].attrib['name']
+
+# Using the wrapped access level to get the name of a character
+eve = evelink.eve.EVE()
+print eve.character_name_from_id(1)
+
+# Using authenticated calls
+api = evelink.api.API(api_key=(12345, 'longvcodestring'))
+charid = eve.character_id_from_name("Character Name")
+char = evelink.char.Char(char_id = charid, api=api)
+print char.wallet_balance()
+```
+
+
 Dependencies
 ------------
-EVELink does not require any extra dependencies for normal operation.
+**EVELink does not require any extra dependencies for normal operation.**
 
 If you are developing on EVELink, however, the following packages are required in order to run the tests:
 
@@ -37,29 +61,6 @@ Wrapped is the middle layer of access. The methods in the wrapped access layer s
 *(not yet implemented)*
 
 Object access is the highest layer of access and the most encapsulated. Though implementation is being deferred until after the wrapped access layer is more complete, the goal here is to essentially emulate a set of ORM objects, allowing you do to things like `Character(id=1234).corporation.name` to fetch the name of the corporation that the character with ID `1234` is in.
-
-
-Example Usage
--------------
-
-```python
-import evelink.api # Raw API access
-import evelink.eve # Wrapped API access for the /eve/ API path
-
-# Using the raw access level to get the name of a character
-api = evelink.api.API()
-result = api.get('eve/CharacterName', {'IDs': [1]})
-print result.find('rowset').findall('row')[0].attrib['name']
-
-# Using the wrapped access level to get the name of a character
-eve = evelink.eve.EVE()
-print eve.character_name_from_id(1)
-
-# Using authenticated calls
-api = evelink.api.API(api_key=(12345, 'longvcodestring'))
-char = evelink.char.Char(api=api)
-print char.wallet_balance(1234567)
-```
 
 
 Development

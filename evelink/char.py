@@ -1,6 +1,8 @@
-from evelink import api
-from evelink import constants
+from evelink import api, constants
+from evelink.parsing.assets import parse_assets
+from evelink.parsing.contracts import parse_contracts
 from evelink.parsing.industry_jobs import parse_industry_jobs
+from evelink.parsing.orders import parse_market_orders
 
 class Char(object):
     """Wrapper around /char/ of the EVE API.
@@ -12,13 +14,46 @@ class Char(object):
         self.api = api
         self.char_id = char_id
 
+    def assets(self):
+        """Get information about corp assets.
+
+        Each item is a dict, with keys 'id', 'item_type_id',
+        'quantity', 'location_id', 'location_flag', and 'packaged'.
+        'location_flag' denotes additional information about the
+        item's location; see
+        http://wiki.eve-id.net/API_Inventory_Flags for more details.
+
+        If the item corresponds to a container, it will have a key
+        'contents', which is itself a list of items in the same format
+        (potentially recursively holding containers of its own).  If
+        the contents do not have 'location_id's of their own, they
+        inherit the 'location_id' of their parent container, for
+        convenience.
+
+        At the top level, the result is a dict mapping location ID
+        (typically a solar system) to a dict containing a 'contents'
+        key, which maps to a list of items.  That is, you can think of
+        the top-level values as "containers" with no fields except for
+        "contents" and "location_id".
+        """
+        api_result = self.api.get('char/AssetList',
+            {'characterID': self.char_id})
+
+        return parse_assets(api_result)
+
+    def contracts(self):
+        """Returns a record of all contracts for a specified character"""
+        api_result = self.api.get('char/Contracts',
+            {'characterID': self.char_id})
+        return parse_contracts(api_result)
+
     def wallet_journal(self, before_id=None, limit=None):
         """Returns a complete record of all wallet activity for a specified character"""
         params = {'characterID': self.char_id}
         if before_id is not None:
-            params['fromID'] = before_id 
+            params['fromID'] = before_id
         if limit is not None:
-            params['rowCount'] = limit 
+            params['rowCount'] = limit
         api_result = self.api.get('char/WalletJournal', params)
 
         rowset = api_result.find('rowset')
@@ -63,7 +98,7 @@ class Char(object):
 
         rowset = api_result.find('rowset')
         row = rowset.find('row')
-        result = { 
+        result = {
             'balance': float(row.attrib['balance']),
             'id': int(row.attrib['accountID']),
             'key': int(row.attrib['accountKey']),
@@ -170,7 +205,95 @@ class Char(object):
                     'dropped': int(a['qtyDropped']),
                     'destroyed': int(a['qtyDestroyed']),
                 }
-            
+
+        return result
+
+    def character_sheet(self):
+        """Returns attributes relating to a specific character."""
+        api_result = self.api.get('char/CharacterSheet',
+            {'characterID': self.char_id})
+
+        _str, _int, _float, _bool, _ts = api.elem_getters(api_result)
+        result = {
+            'id': _int('characterID'),
+            'name': _str('name'),
+            'create_ts': _ts('DoB'),
+            'race': _str('race'),
+            'bloodline': _str('bloodLine'),
+            'ancestry': _str('ancestry'),
+            'gender': _str('gender'),
+            'corp': {
+                'id': _int('corporationID'),
+                'name': _str('corporationName'),
+            },
+            'alliance': {
+                'id': _int('allianceID') or None,
+                'name': _str('allianceName'),
+            },
+            'clone': {
+                'name': _str('cloneName'),
+                'skillpoints': _int('cloneSkillPoints'),
+            },
+            'balance': _float('balance'),
+            'attributes': {},
+        }
+
+        for attr in ('intelligence', 'memory', 'charisma', 'perception', 'willpower'):
+            result['attributes'][attr] = {}
+            base = int(api_result.findtext('attributes/%s' % attr))
+            result['attributes'][attr]['base'] = base
+            result['attributes'][attr]['total'] = base
+            bonus = api_result.find('attributeEnhancers/%sBonus' % attr)
+            if bonus is not None:
+                mod = int(bonus.findtext('augmentatorValue'))
+                result['attributes'][attr]['total'] += mod
+                result['attributes'][attr]['bonus'] = {
+                    'name': bonus.findtext('augmentatorName'),
+                    'value': mod,
+                }
+
+        rowsets = {}
+        for rowset in api_result.findall('rowset'):
+            key = rowset.attrib['name']
+            rowsets[key] = rowset
+
+        result['skills'] = []
+        result['skillpoints'] = 0
+        for skill in rowsets['skills']:
+            a = skill.attrib
+            sp = int(a['skillpoints'])
+            result['skills'].append({
+                'id': int(a['typeID']),
+                'skillpoints': sp,
+                'level': int(a['level']),
+                'published': a['published'] == '1',
+            })
+            result['skillpoints'] += sp
+
+        result['certificates'] = set()
+        for cert in rowsets['certificates']:
+            result['certificates'].add(int(cert.attrib['certificateID']))
+
+        result['roles'] = {}
+        for our_role, ccp_role in constants.Char().corp_roles.iteritems():
+            result['roles'][our_role] = {}
+            for role in rowsets[ccp_role]:
+                a = role.attrib
+                role_id = int(a['roleID'])
+                result['roles'][our_role][role_id] = {
+                    'id': role_id,
+                    'name': a['roleName'],
+                }
+
+        result['titles'] = {}
+        for title in rowsets['corporationTitles']:
+            a = title.attrib
+            title_id = int(a['titleID'])
+            result['titles'][title_id] = {
+                'id': title_id,
+                'name': a['titleName'],
+            }
+
         return result
 
     def orders(self):
@@ -178,30 +301,7 @@ class Char(object):
         api_result = self.api.get('char/MarketOrders',
             {'characterID': self.char_id})
 
-        rowset = api_result.find('rowset')
-        rows = rowset.findall('row')
-        result = {}
-        for row in rows:
-            a = row.attrib
-            id = int(a['orderID'])
-            result[id] = {
-                'id': id,
-                'char_id': int(a['charID']),
-                'station_id': int(a['stationID']),
-                'amount': int(a['volEntered']),
-                'amount_left': int(a['volRemaining']),
-                'status': constants.Market().order_status[int(a['orderState'])],
-                'type_id': int(a['typeID']),
-                'range': int(a['range']),
-                'account_key': int(a['accountKey']),
-                'duration': int(a['duration']),
-                'escrow': float(a['escrow']),
-                'price': float(a['price']),
-                'type': 'buy' if a['bid'] == '1' else 'sell',
-                'timestamp': api.parse_ts(a['issued']),
-            }
-
-        return result
+        return parse_market_orders(api_result)
 
     def research(self):
         """Returns information about the agents with whom the character is doing research."""

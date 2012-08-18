@@ -115,14 +115,14 @@ class EVE(object):
                 'type_id': _int('shipTypeID'),
                 'type_name': _str('shipTypeName'),
             },
-            
+
             'history': [],
         }
 
         # Add in corp history
         history = api_result.find('rowset')
         for row in history.findall('row'):
-            corp_id = row.attrib['corporationID']
+            corp_id = int(row.attrib['corporationID'])
             start_date = api.parse_ts(row.attrib['startDate'])
             results['history'].append({
                     'corp_id': corp_id,
@@ -236,7 +236,6 @@ class EVE(object):
 
         return results
 
-
     def skill_tree(self):
         """Return a dict of all available skill groups."""
 
@@ -254,7 +253,7 @@ class EVE(object):
                 'name': g['groupName'],
                 'skills': {}
                 }
-            
+
             # now get the actual skill data
             skills_rs = row.find('rowset') # skills
             for skill_row in skills_rs.findall('row'):
@@ -290,7 +289,7 @@ class EVE(object):
                                 'id': int(b['typeID'])
                                 }
                             skill['required_skills'][req['id']] = req
-                    
+
                     if sub_rs.attrib['name'] == 'skillBonusCollection':
                         for sub_row in sub_rs.findall('row'):
                             b = sub_row.attrib
@@ -303,7 +302,6 @@ class EVE(object):
                 group['skills'][skill['id']] = skill
 
             results[group['id']] = group
-        
 
         return results
 
@@ -318,5 +316,72 @@ class EVE(object):
         for row in rowset.findall('row'):
             a = row.attrib
             results[int(a['refTypeID'])] = a['refTypeName']
+
+        return results
+
+    def faction_warfare_leaderboard(self):
+        """Return top-100 lists from Faction Warfare."""
+
+        api_result = self.api.get('eve/FacWarTopStats')
+
+        def parse_top_100(rowset, prefix, attr, attr_name):
+            top100 = []
+            id_field = '%sID' % prefix
+            name_field = '%sName' % prefix
+            for row in rowset.findall('row'):
+                a = row.attrib
+                top100.append({
+                    'id': int(a[id_field]),
+                    'name': a[name_field],
+                    attr_name: int(a[attr]),
+                })
+            return top100
+
+        def parse_section(section, prefix):
+            section_result = {}
+            rowsets = dict((r.attrib['name'], r) for r in section.findall('rowset'))
+
+            section_result['kills'] = {
+                'yesterday': parse_top_100(rowsets['KillsYesterday'], prefix, 'kills', 'kills'),
+                'week': parse_top_100(rowsets['KillsLastWeek'], prefix, 'kills', 'kills'),
+                'total': parse_top_100(rowsets['KillsTotal'], prefix, 'kills', 'kills'),
+            }
+
+            section_result['points'] = {
+                'yesterday': parse_top_100(rowsets['VictoryPointsYesterday'],
+                    prefix, 'victoryPoints', 'points'),
+                'week': parse_top_100(rowsets['VictoryPointsLastWeek'],
+                    prefix, 'victoryPoints', 'points'),
+                'total': parse_top_100(rowsets['VictoryPointsTotal'],
+                    prefix, 'victoryPoints', 'points'),
+            }
+
+            return section_result
+
+        results = {
+            'char': parse_section(api_result.find('characters'), 'character'),
+            'corp': parse_section(api_result.find('corporations'), 'corporation'),
+            'faction': parse_section(api_result.find('factions'), 'faction'),
+        }
+
+        return results
+
+    def conquerable_stations(self):
+
+        api_result = self.api.get('eve/ConquerableStationlist')
+
+        results = {}
+        rowset = api_result.find('rowset')
+        for row in rowset.findall('row'):
+            station = {
+                'id': int(row.attrib['stationID']),
+                'name': row.attrib['stationName'],
+                'type_id': int(row.attrib['stationTypeID']),
+                'system_id': int(row.attrib['solarSystemID']),
+                'corp': {
+                    'id': int(row.attrib['corporationID']),
+                    'name': row.attrib['corporationName'] }
+                }
+            results[station['id']] = station
 
         return results

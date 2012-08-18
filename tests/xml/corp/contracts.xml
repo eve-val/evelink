@@ -1,0 +1,7 @@
+<result>
+  <rowset name="contractList" key="contractID"  columns="contractID,issuerID,issuerCorpID,assigneeID,acceptorID,startStationID,endStationID,type,status,title,forCorp,availability,dateIssued,dateExpired,dateAccepted,numDays,dateCompleted,price,reward,collateral,buyout,volume">
+    <row contractID="5966" issuerID="154416088" issuerCorpID="154430949" assigneeID="0" acceptorID="0" startStationID="60014659" endStationID="60014659" type="ItemExchange" status="Outstanding" title="" forCorp="0" availability="Public" dateIssued="2010-02-23 11:28:00" dateExpired="2010-03-24 11:28:00" dateAccepted="" numDays="0" dateCompleted="" price="5000.00" reward="0.00" collateral="0.00" buyout="0.00" volume="0.01"/>
+    <row contractID="5968" issuerID="154416088" issuerCorpID="154430949" assigneeID="154430949" acceptorID="0" startStationID="60003760" endStationID="60003760" type="ItemExchange" status="Outstanding" title="" forCorp="0" availability="Private" dateIssued="2010-02-25 11:33:00" dateExpired="2010-03-26 11:33:00" dateAccepted="" numDays="0" dateCompleted="" price="0.00" reward="0.00" collateral="0.00" buyout="0.00" volume="0.03"/>
+  </rowset>
+</result>
+

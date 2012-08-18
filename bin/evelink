@@ -1,0 +1,214 @@
+#!/usr/bin/python
+"""Command-line utility for EVELink"""
+
+from ConfigParser import RawConfigParser
+import json
+import logging
+import optparse
+import os
+import pprint
+import sys
+import traceback
+from xml.etree import ElementTree
+
+# Munge sys.path to import evelink
+sys.path.insert(0, os.path.abspath(os.path.join(
+    os.path.dirname(os.path.realpath(__file__)), '..')))
+
+import evelink
+from evelink.cache.shelf import ShelveCache
+
+def create_cache(cache_path):
+    cache_path = os.path.expanduser(cache_path)
+    return ShelveCache(cache_path)
+
+
+def get_parameters(args):
+    """Takes a set of command line parameters and parses into posargs and kwargs.
+
+    It assumes that any parameter that includes '=' in the value is a kwarg, and
+    all other parameters are posargs. Order of posargs is preserved, and they
+    may be interspersed with kwargs.
+
+    In addition, allows specification of lists by including commas in the value.
+    For instance, "1,2,3" is a posarg that results in ["1", "2", "3"] (a list
+    of strings) while "foo=1,2,3" results in the same value but as a kwarg.
+    
+    Empty values in a list are omitted, which as a side effect means that single
+    and zero element lists can be specified as "1," and "," respectively.
+    """
+    posargs = []
+    kwargs = {}
+    for arg in args:
+        if '=' in arg:
+            k,_,v = arg.rpartition('=')
+            if ',' in v:
+                v = [i for i in v.split(',') if i]
+            kwargs[k] = v
+        else:
+            if ',' in arg:
+                arg = [i for i in arg.split(',') if i]
+            posargs.append(arg)
+    return posargs, kwargs
+
+
+def call_raw_api(api_obj, api_path, args):
+    # Raw API calls require all params to be kwargs
+    _, kwargs = get_parameters(args)
+    try:
+        result = api_obj.get(api_path, kwargs)
+    except evelink.api.APIError as e:
+        print >> sys.stderr, e
+        sys.exit(1)
+    print ElementTree.tostring(result)
+
+
+def call_evelink_api(api_obj, api_path, args, use_json=False):
+    args, kwargs = get_parameters(args)
+
+    try:
+        module, cls, method = api_path.rsplit('.', 2)
+    except ValueError:
+        print >> sys.stderr, "EVELink method must be of form: module.Class.method_name"
+        sys.exit(1)
+
+    try:
+        _temp_module = __import__('evelink.%s' % module, globals(), locals(), [cls], 0)
+    except ImportError:
+        print >> sys.stderr, "Couldn't load module evelink.%s" % module
+        sys.exit(1)
+
+    cls_args = []
+    if module in ('char', 'corp'):
+        cls_args.append(args[0])
+        args = args[1:]
+    
+    # Get the specified class from the specified module, and construct it
+    # (possibly passing in a char/corp id) with our api object.
+    try:
+        cls_obj = getattr(_temp_module, cls)(*cls_args, api=api_obj)
+    except AttributeError:
+        print >> sys.stderr, "Couldn't find class '%s' in evelink.%s" % (cls, module)
+        sys.exit(1)
+
+    # Then grab the method from that object...
+    try:
+        method_obj = getattr(cls_obj, method)
+    except AttributeError:
+        print >> sys.stderr, "Couldn't find method '%s' in evelink.%s.%s" % (method, module, cls)
+        sys.exit(1)
+
+    # And call it.
+    try:
+        result = method_obj(*args, **kwargs)
+    except Exception:
+        traceback.print_exc()
+        sys.exit(1)
+
+    if use_json:
+        print json.dumps(result, sort_keys=True, indent=2)
+    else:
+        pprint.pprint(result)
+
+
+def call_api(api_obj, args, use_json=False):
+    api_path = args[0]
+    if '/' in api_path:
+        call_raw_api(api_obj, api_path, args[1:])
+    elif '.' in api_path:
+        call_evelink_api(api_obj, api_path, args[1:], use_json)
+    else:
+        print >> sys.stderr, "API to call must be either a URL path or EVELink method."
+
+
+def main():
+    parser = optparse.OptionParser(
+        usage="%prog [options] <api> [<value>..] [<name>=<value>..]",
+        description=(
+            """A command line interface for the EVELink library. This tool can"""
+            """ be used to make both raw API calls (by specifying an API path,"""
+            """ e.g. eve/SkillTree) or EVELink method calls (by specifying the"""
+            """ path within evelink, e.g. eve.EVE.skills). For corp/char method"""
+            """ calls, the character/corporation ID must be passed as the first"""
+            """ parameter."""
+        ),
+        epilog=(
+            """This tool can also read a config file to easily reuse"""
+            """ certain parameters. The config file (default: ~/.evelinkrc)"""
+            """ is standard INI format. Currently, two sections are supported:"""
+            """ [cache] and [apikey]. Within the cache section, the only valid"""
+            """ key is 'path', which is equivalent to the -c option. In the"""
+            """ apikey section, an API key can be specified via the keys 'id'"""
+            """ and 'vcode', which contain what you would expect."""
+        ),
+    )
+    parser.add_option("-k", "--key", dest="apikey", metavar="KEYID:VCODE",
+        help="The API key to use for authenticated calls.")
+    parser.add_option("-c", "--cache", dest="cache_path", metavar="PATH",
+        help="A path at which to store API cache data. (Default: ~/.evelink_cache)")
+    parser.add_option("-r", "--rcfile", dest="rcfile", metavar="PATH",
+        help="Load an additional configuration file (~/.evelinkrc is also loaded if it exists).")
+    parser.add_option("-j", "--json", dest="json", default=False, action="store_true",
+        help="Output results as JSON instead of Python objects (only applies to EVELink methods).")
+    parser.add_option("-l", "--loglevel", dest="loglevel", metavar="LEVEL",
+        help="Enable logging of messages at or above the provided level (logging.<level>)")
+    options, args = parser.parse_args()
+    
+    if not args:
+        parser.error("No API call specified.")
+
+    config = RawConfigParser()
+    rcfiles = ["~/.evelinkrc"]
+    if options.rcfile:
+        rcfiles.append(options.rcfile)
+    config.read([os.path.expanduser(p) for p in rcfiles])
+
+    cache_path = options.cache_path
+    if cache_path is None:
+        if config.has_section("cache"):
+            if config.has_option("cache", "path"):
+                cache_path = config.get("cache", "path")
+            else:
+                print >> sys.stderr, "[cache] section must include path value."
+                sys.exit(1)
+        else:
+            cache_path = "~/.evelink_cache"
+
+    api_obj_params = {
+        'cache': create_cache(cache_path),
+    }
+
+    if options.apikey is not None:
+        key, _, vcode = options.apikey.rpartition(":")
+        if not key or not vcode:
+            parser.error("API key must be provided in keyid:vcode format.")
+        try:
+            key = int(key)
+        except (ValueError, TypeError):
+            parser.error("API key ID must be an integer.")
+        api_obj_params['api_key'] = (key, vcode)
+
+    elif config.has_section("apikey"):
+        if not config.has_option("apikey", "id") or not config.has_option("apikey", "vcode"):
+            print >> sys.stderr, "[apikey] section must include id and vcode values."
+            sys.exit(1)
+        key = config.getint("apikey", "id")
+        vcode = config.get("apikey", "vcode")
+        api_obj_params['api_key'] = (key, vcode)
+
+    # Initialize EVELink logging, if desired
+    if options.loglevel is not None:
+        log_level = getattr(logging, options.loglevel)
+        evelink_log = logging.getLogger("evelink")
+        log_handler = logging.StreamHandler()
+        log_handler.setLevel(log_level)
+        evelink_log.addHandler(log_handler)
+
+    api_obj = evelink.api.API(**api_obj_params)
+
+    call_api(api_obj, args, options.json)
+
+if __name__ == "__main__":
+    main()
+
+# vim: set sw=4 ts=4 sts=4 et:

@@ -58,8 +58,8 @@ class EVETestCase(APITestCase):
             'bloodline': 'Civire',
             'corp': {'id': 2345, 'name': 'Test Corporation', 'timestamp': 1338689400},
             'history': [
-                {'corp_id': '1', 'start_ts': 1338603000},
-                {'corp_id': '2', 'start_ts': 1318422896}
+                {'corp_id': 1, 'start_ts': 1338603000},
+                {'corp_id': 2, 'start_ts': 1318422896}
             ],
             'id': 1234,
             'isk': None,
@@ -186,6 +186,83 @@ class EVETestCase(APITestCase):
                 mock.call.get('eve/FacWarStats'),
             ])
 
+    def test_faction_warfare_leaderboard(self):
+        self.api.get.return_value = self.make_api_result("eve/faction_warfare_leaderboard.xml")
+
+        result = self.eve.faction_warfare_leaderboard()
+        self.assertEqual(result, {
+                'char': {
+                    'kills': {
+                        'total': [{'id': 673662188, 'kills': 451, 'name': 'Val Erian'}],
+                        'week': [{'id': 187452523,  'kills': 52, 'name': 'Tigrana Blanque'}],
+                        'yesterday': [
+                            {'id': 1007512845, 'kills': 14, 'name': 'StonedBoy'},
+                            {'id': 646053002, 'kills': 11, 'name': 'Erick Voliffe'},
+                        ],
+                    },
+                    'points': {
+                        'total': [{'id': 395923478, 'name': 'sasawong', 'points': 197046}],
+                         'week': [{'id': 161929388, 'name': 'Ankhesentapemkah', 'points': 20851}],
+                         'yesterday': [{'id': 774720050, 'name': 'v3nd3tt4', 'points': 3151}],
+                    },
+                },
+                'corp': {
+                    'kills': {
+                        'total': [{'id': 673662188, 'kills': 451, 'name': 'Val Erian'}],
+                        'week': [{'id': 187452523,  'kills': 52, 'name': 'Tigrana Blanque'}],
+                        'yesterday': [
+                            {'id': 1007512845, 'kills': 14, 'name': 'StonedBoy'},
+                            {'id': 646053002, 'kills': 11, 'name': 'Erick Voliffe'},
+                        ],
+                    },
+                    'points': {
+                        'total': [{'id': 395923478, 'name': 'sasawong', 'points': 197046}],
+                         'week': [{'id': 161929388, 'name': 'Ankhesentapemkah', 'points': 20851}],
+                         'yesterday': [{'id': 774720050, 'name': 'v3nd3tt4', 'points': 3151}],
+                    },
+                },
+                'faction': {
+                    'kills': {
+                        'total': [{'id': 500004, 'kills': 104, 'name': 'Gallente Federation'}],
+                        'week': [{'id': 500004, 'kills': 105, 'name': 'Gallente Federation'}],
+                        'yesterday': [{'id': 500004, 'kills': 106, 'name': 'Gallente Federation'}],
+                    },
+                    'points': {
+                        'total': [{'id': 500004, 'points': 101, 'name': 'Gallente Federation'}],
+                        'week': [{'id': 500004, 'points': 102, 'name': 'Gallente Federation'}],
+                        'yesterday': [{'id': 500004, 'points': 103, 'name': 'Gallente Federation'}],
+                    },
+                },
+            })
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('eve/FacWarTopStats'),
+            ])
+
+    def test_conquerable_stations(self):
+        self.api.get.return_value = self.make_api_result("eve/conquerable_stations.xml")
+
+        result = self.eve.conquerable_stations()
+        self.assertEqual(result, {
+            1:{ 'id':1,
+                'name':"Station station station",
+                'type_id':123,
+                'system_id':512,
+                'corp':{
+                        'id':444,
+                        'name':"Valkyries of Night" }
+                },
+            2:{ 'id':2,
+                'name':"Station the station",
+                'type_id':42,
+                'system_id':503,
+                'corp':{
+                        'id':400,
+                        'name':"Deus Fides Empire"}
+                }
+           })
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('eve/ConquerableStationlist'),
+            ])
 
     def test_skill_tree(self):
         self.api.get.return_value = self.make_api_result("eve/skill_tree.xml")
