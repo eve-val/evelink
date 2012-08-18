@@ -39,6 +39,31 @@ class CorpTestCase(APITestCase):
                 mock.call.get('corp/Contracts'),
             ])
 
+    def test_contact_list(self):
+        self.api.get.return_value = self.make_api_result("corp/contact_list.xml")
+
+        result = self.corp.contact_list()
+        expected_result = {
+            'corp': {
+                1082138174: {'standing': 10, 'id': 1082138174,
+                             'name': 'Nomad LLP'},
+                1086308227: {'standing': 0, 'id': 1086308227,
+                             'name': 'Rebel Alliance of New Eden'},
+                1113838907: {'standing': -10, 'id': 1113838907,
+                             'name': 'Significant other'}
+            },
+            'alliance': {
+                2049763943: {'standing': -10, 'id': 2049763943,
+                             'name': 'EntroPraetorian Aegis'},
+                2067199408: {'standing': -10, 'id': 2067199408,
+                             'name': 'Vera Cruz Alliance'},
+                2081065875: {'standing': -10, 'id': 2081065875,
+                             'name': 'TheRedMaple'}
+            },
+        }
+
+        self.assertEqual(result['alliance'], expected_result['alliance'])
+        self.assertEqual(result['corp'], expected_result['corp'])
 
     def test_wallet_info(self):
         self.api.get.return_value = self.make_api_result("corp/wallet_info.xml")
