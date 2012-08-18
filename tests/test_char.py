@@ -464,6 +464,24 @@ class CharTestCase(APITestCase):
                 mock.call.get('char/MailMessages', {'characterID': 1}),
             ])
 
+    def test_message_bodies(self):
+        self.api.get.return_value = self.make_api_result("char/message_bodies.xml")
+
+        result = self.char.message_bodies([297023723,297023208,297023210,297023211])
+
+        self.assertEqual(result, {
+                297023208: '<p>Another message</p>',
+                297023210: None,
+                297023211: None,
+                297023723: 'Hi.<br><br>This is a message.<br><br>',
+            })
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('char/MailBodies', {
+                    'characterID': 1,
+                    'ids': [297023723,297023208,297023210,297023211],
+                }),
+            ])
+
 
 if __name__ == "__main__":
     unittest.main()

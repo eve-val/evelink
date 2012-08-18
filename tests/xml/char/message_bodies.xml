@@ -1,0 +1,7 @@
+<result>
+  <rowset name="messages" key="messageID" columns="messageID">
+    <row messageID="297023723"><![CDATA[Hi.<br><br>This is a message.<br><br>]]></row>
+    <row messageID="297023208"><![CDATA[<p>Another message</p>]]></row>
+  </rowset>
+  <missingMessageIDs>297023210,297023211</missingMessageIDs>
+</result>
