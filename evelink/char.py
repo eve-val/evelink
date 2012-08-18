@@ -398,3 +398,27 @@ class Char(object):
             results.append(message)
 
         return results
+
+    def message_bodies(self, message_ids):
+        """Returns the actual body content of a set of mail messages.
+
+        NOTE: You *must* have recently looked up the headers of
+        any messages you are requesting bodies for (via the 'messages'
+        method) or else this call will fail.
+        """
+        api_result = self.api.get('char/MailBodies',
+            {'characterID': self.char_id, 'ids': message_ids})
+
+        rowset = api_result.find('rowset')
+        results = {}
+        for row in rowset:
+            message_id = int(row.attrib['messageID'])
+            results[message_id] = row.text
+
+        missing_set = api_result.find('missingMessageIDs')
+        if missing_set is not None:
+            missing_ids = [int(i) for i in missing_set.text.split(',')]
+            for missing_id in missing_ids:
+                results[missing_id] = None
+
+        return results
