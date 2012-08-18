@@ -3,6 +3,7 @@
 
 from ConfigParser import RawConfigParser
 import json
+import logging
 import optparse
 import os
 import pprint
@@ -14,7 +15,7 @@ from xml.etree import ElementTree
 sys.path.insert(0, os.path.abspath(os.path.join(
     os.path.dirname(os.path.realpath(__file__)), '..')))
 
-from evelink import api
+import evelink
 from evelink.cache.shelf import ShelveCache
 
 def create_cache(cache_path):
@@ -56,7 +57,7 @@ def call_raw_api(api_obj, api_path, args):
     _, kwargs = get_parameters(args)
     try:
         result = api_obj.get(api_path, kwargs)
-    except api.APIError as e:
+    except evelink.api.APIError as e:
         print >> sys.stderr, e
         sys.exit(1)
     print ElementTree.tostring(result)
@@ -149,6 +150,8 @@ def main():
         help="Load an additional configuration file (~/.evelinkrc is also loaded if it exists).")
     parser.add_option("-j", "--json", dest="json", default=False, action="store_true",
         help="Output results as JSON instead of Python objects (only applies to EVELink methods).")
+    parser.add_option("-l", "--loglevel", dest="loglevel", metavar="LEVEL",
+        help="Enable logging of messages at or above the provided level (logging.<level>)")
     options, args = parser.parse_args()
     
     if not args:
@@ -193,7 +196,15 @@ def main():
         vcode = config.get("apikey", "vcode")
         api_obj_params['api_key'] = (key, vcode)
 
-    api_obj = api.API(**api_obj_params)
+    # Initialize EVELink logging, if desired
+    if options.loglevel is not None:
+        log_level = getattr(logging, options.loglevel)
+        evelink_log = logging.getLogger("evelink")
+        log_handler = logging.StreamHandler()
+        log_handler.setLevel(log_level)
+        evelink_log.addHandler(log_handler)
+
+    api_obj = evelink.api.API(**api_obj_params)
 
     call_api(api_obj, args, options.json)
 

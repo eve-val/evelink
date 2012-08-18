@@ -211,7 +211,7 @@ class API(object):
             exc = APIError(code, message)
 
             self.cache.put(key, exc, expires_time - current_time)
-            _log.error("Raising API error error: %r" % exc)
+            _log.error("Raising API error: %r" % exc)
             raise exc
 
         result = tree.find('result')
