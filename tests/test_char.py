@@ -340,10 +340,10 @@ class CharTestCase(APITestCase):
                 mock.call.get('char/CharacterSheet', {'characterID': 1}),
             ])
 
-    def test_contact_list(self):
+    def test_contacts(self):
         self.api.get.return_value = self.make_api_result("char/contact_list.xml")
 
-        result = self.char.contact_list()
+        result = self.char.contacts()
         expected_result = {
             'corp': {
                 1082138174: {'standing': 10, 'id': 1082138174,

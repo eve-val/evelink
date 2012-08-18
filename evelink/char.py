@@ -297,7 +297,7 @@ class Char(object):
 
         return result
 
-    def contact_list(self):
+    def contacts(self):
         """Return a character's personal, corp and alliance contact lists."""
         api_result = self.api.get('char/ContactList',
             {'characterID': self.char_id})

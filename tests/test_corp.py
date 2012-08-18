@@ -39,10 +39,10 @@ class CorpTestCase(APITestCase):
                 mock.call.get('corp/Contracts'),
             ])
 
-    def test_contact_list(self):
+    def test_contacts(self):
         self.api.get.return_value = self.make_api_result("corp/contact_list.xml")
 
-        result = self.corp.contact_list()
+        result = self.corp.contacts()
         expected_result = {
             'corp': {
                 1082138174: {'standing': 10, 'id': 1082138174,
