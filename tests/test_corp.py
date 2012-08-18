@@ -61,6 +61,9 @@ class CorpTestCase(APITestCase):
                              'name': 'TheRedMaple'}
             },
         }
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('corp/ContactList'),
+            ])
 
         self.assertEqual(result['alliance'], expected_result['alliance'])
         self.assertEqual(result['corp'], expected_result['corp'])

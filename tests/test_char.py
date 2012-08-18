@@ -371,6 +371,10 @@ class CharTestCase(APITestCase):
             }
         }
 
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('char/ContactList', {'characterID': 1}),
+            ])
+
         self.assertEqual(result['personal'], expected_result['personal'])
         self.assertEqual(result['alliance'], expected_result['alliance'])
         self.assertEqual(result['corp'], expected_result['corp'])
