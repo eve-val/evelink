@@ -9,7 +9,6 @@ from evelink import constants
 from evelink import corp
 from evelink import eve
 from evelink import map
-from evelink import parsing
 from evelink import server
 
 # Implement NullHandler because it was only added in Python 2.7+.
