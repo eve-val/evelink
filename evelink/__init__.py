@@ -1,5 +1,7 @@
 """EVELink - Python bindings for the EVE API."""
 
+import logging
+
 from evelink import account
 from evelink import api
 from evelink import char
@@ -9,6 +11,15 @@ from evelink import eve
 from evelink import map
 from evelink import parsing
 from evelink import server
+
+# reimplement the NullHandler that does nothing. Not needed in python 2.7+
+class NullHandler(logging.Handler):
+    def emit(self, record):
+        pass
+
+# Create a logger, but by default, have it do nothing
+_log = logging.getLogger('evelink')
+_log.addHandler(NullHandler())
 
 __all__ = [
   "account",

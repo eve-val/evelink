@@ -6,11 +6,7 @@ from urllib import urlencode
 import urllib2
 from xml.etree import ElementTree
 
-from evelink import util
-
-# Create a logger, but by default, have it do nothing
 _log = logging.getLogger('evelink.api')
-_log.addHandler(util.NullHandler())
 
 def _clean(v):
     """Convert parameters into an acceptable format for the API."""
