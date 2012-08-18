@@ -289,7 +289,7 @@ class EVETestCase(APITestCase):
                             'bonuses': {
                                 'canNotBeTrainedOnTrial': {
                                     'type': 'canNotBeTrainedOnTrial',
-                                    'value': 1
+                                    'value': 1.0,
                                     }
                                 }
                             },
@@ -306,8 +306,8 @@ class EVETestCase(APITestCase):
                                 'secondary': 'charisma',
                                 },
                             'required_skills': {
-                                3363 : { 'id' : 3363, 'level' : 2 },
-                                3444 : { 'id' : 3444, 'level' : 3 }
+                                3363 : { 'id' : 3363, 'level' : 2, 'name' : None },
+                                3444 : { 'id' : 3444, 'level' : 3, 'name' : None },
                                 },
                             'bonuses': {}
                             }
@@ -324,7 +324,7 @@ class EVETestCase(APITestCase):
         self.api.get.return_value = self.make_api_result("eve/reference_types.xml")
 
         result = self.eve.reference_types()
-        
+
         self.assertEqual(result, {
                 0: 'Undefined',
                 1: 'Player Trading',

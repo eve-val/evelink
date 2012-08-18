@@ -244,6 +244,7 @@ class EVE(object):
         rowset = api_result.find('rowset') # skillGroups
 
         results = {}
+        name_cache = {}
         for row in rowset.findall('row'):
 
             # the skill group data
@@ -273,10 +274,11 @@ class EVE(object):
                     'bonuses': {},
                     'attributes': {
                         'primary': api.get_named_value(req_attrib, 'primaryAttribute'),
-                        'secondary': api.get_named_value(req_attrib, 'secondaryAttribute')
+                        'secondary': api.get_named_value(req_attrib, 'secondaryAttribute'),
                         }
                     }
 
+                name_cache[skill['id']] = skill['name']
 
                 # Check each rowset inside the skill, and branch based on the name attribute
                 for sub_rs in skill_row.findall('rowset'):
@@ -286,22 +288,28 @@ class EVE(object):
                             b = sub_row.attrib
                             req = {
                                 'level': int(b['skillLevel']),
-                                'id': int(b['typeID'])
+                                'id': int(b['typeID']),
                                 }
                             skill['required_skills'][req['id']] = req
 
-                    if sub_rs.attrib['name'] == 'skillBonusCollection':
+                    elif sub_rs.attrib['name'] == 'skillBonusCollection':
                         for sub_row in sub_rs.findall('row'):
                             b = sub_row.attrib
                             bonus = {
                                 'type': b['bonusType'],
-                                'value': b['bonusValue']
+                                'value': float(b['bonusValue']),
                                 }
                             skill['bonuses'][bonus['type']] = bonus
 
                 group['skills'][skill['id']] = skill
 
             results[group['id']] = group
+
+        # Second pass to fill in required skill names
+        for group in results.itervalues():
+            for skill in group['skills'].itervalues():
+                for skill_id, skill_info in skill['required_skills'].iteritems():
+                    skill_info['name'] = name_cache.get(skill_id)
 
         return results
 
