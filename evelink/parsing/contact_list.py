@@ -4,6 +4,8 @@ LABEL_MAP = {
     'corporateContactList': 'corp',
     'contactList': 'personal',
 }
+
+
 def parse_contact_list(api_result):
     result = {}
     for rowset in api_result.findall('rowset'):

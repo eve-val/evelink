@@ -74,5 +74,6 @@ class Corp(object):
         return parse_contracts(api_result)
 
     def contacts(self):
+        """Return the corp's corp and alliance contact lists."""
         api_result = self.api.get('corp/ContactList')
         return parse_contact_list(api_result)

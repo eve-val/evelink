@@ -5,7 +5,7 @@ from tests.utils import make_api_result
 
 from evelink.parsing import contact_list
 
-class OrdersTestCase(unittest.TestCase):
+class ContactsTestCase(unittest.TestCase):
 
     def test_parse_char_contact_list(self):
         api_result = make_api_result("char/contact_list.xml")
