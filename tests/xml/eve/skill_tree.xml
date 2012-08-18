@@ -1,0 +1,67 @@
+<result>
+  <rowset columns="groupName,groupID" key="groupID" name="skillGroups">
+    <row groupID="266" groupName="Corporation Management">
+      <rowset columns="typeName,groupID,typeID,published" key="typeID" name="skills">
+	<row groupID="266" published="1" typeID="11584" typeName="Anchoring">
+	  <description>Skill at Anchoring Deployables. Can not be trained on Trial Accounts.</description>
+	  <rank>3</rank>
+	  <rowset columns="typeID,skillLevel" key="typeID" name="requiredSkills"/>
+	  <requiredAttributes>
+	    <secondaryAttribute>charisma</secondaryAttribute>
+	    <primaryAttribute>memory</primaryAttribute>
+	  </requiredAttributes>
+	  <rowset columns="bonusType,bonusValue" key="bonusType" name="skillBonusCollection">
+	    <row bonusType="canNotBeTrainedOnTrial" bonusValue="1"/>
+	  </rowset>
+	</row>
+	<row groupID="266" published="0" typeID="3369" typeName="CFO Training">
+	  <description>Skill at managing corp finances. 5% discount on all fees at non-hostile NPC station if acting as CFO of a corp. </description>
+	  <rank>3</rank>
+	  <rowset columns="typeID,skillLevel" key="typeID" name="requiredSkills">
+	    <row skillLevel="2" typeID="3363"/>
+	    <row skillLevel="3" typeID="3444"/>
+	  </rowset>
+	  <requiredAttributes>
+	    <secondaryAttribute>charisma</secondaryAttribute>
+	    <primaryAttribute>memory</primaryAttribute>
+	  </requiredAttributes>
+	  <rowset columns="bonusType,bonusValue" key="bonusType" name="skillBonusCollection"/>
+	</row>
+      </rowset>
+    </row>
+    <row groupID="255" groupName="Gunnery">
+      <rowset columns="typeName,groupID,typeID,published" key="typeID" name="skills">
+        <row groupID="255" published="1" typeID="3300" typeName="Gunnery">
+          <description>Basic turret operation skill. 2% Bonus to weapon turrets' rate of fire per skill level.</description>
+          <rank>1</rank>
+          <rowset columns="typeID,skillLevel" key="typeID" name="requiredSkills" />
+          <requiredAttributes>
+            <primaryAttribute>perception</primaryAttribute>
+            <secondaryAttribute>willpower</secondaryAttribute>
+          </requiredAttributes>
+          <rowset columns="bonusType,bonusValue" key="bonusType" name="skillBonusCollection">
+            <row bonusType="turretSpeeBonus" bonusValue="-2" />
+          </rowset>
+        </row>
+      </rowset>
+    </row>
+    <row groupID="255" groupName="Gunnery">
+      <rowset columns="typeName,groupID,typeID,published" key="typeID" name="skills">
+        <row groupID="255" published="1" typeID="3301" typeName="Small Hybrid Turret">
+          <description>Operation of small hybrid turrets. 5% Bonus to small hybrid turret damage per level.</description>
+          <rank>1</rank>
+          <rowset columns="typeID,skillLevel" key="typeID" name="requiredSkills">
+            <row skillLevel="1" typeID="3300" />
+          </rowset>
+          <requiredAttributes>
+            <secondaryAttribute>willpower</secondaryAttribute>
+            <primaryAttribute>perception</primaryAttribute>
+          </requiredAttributes>
+          <rowset columns="bonusType,bonusValue" key="bonusType" name="skillBonusCollection">
+            <row bonusType="damageMultiplierBonus" bonusValue="5" />
+          </rowset>
+        </row>
+      </rowset>
+    </row>
+  </rowset>
+</result>

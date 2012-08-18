@@ -1,0 +1,10 @@
+<result>
+  <rowset name="refTypes" key="refTypeID" columns="refTypeID,refTypeName">
+    <row refTypeID="0" refTypeName="Undefined" />
+    <row refTypeID="1" refTypeName="Player Trading" />
+    <row refTypeID="2" refTypeName="Market Transaction" />
+    <row refTypeID="3" refTypeName="GM Cash Transfer" />
+    <row refTypeID="4" refTypeName="ATM Withdraw" />
+    <row refTypeID="5" refTypeName="ATM Deposit" />
+  </rowset>
+</result>

@@ -264,5 +264,130 @@ class EVETestCase(APITestCase):
                 mock.call.get('eve/ConquerableStationlist'),
             ])
 
+    def test_skill_tree(self):
+        self.api.get.return_value = self.make_api_result("eve/skill_tree.xml")
+
+        result = self.eve.skill_tree()
+
+        self.assertEqual(result, {
+                255: {
+                    'id': 255,
+                    'name': 'Gunnery',
+                    'skills': {
+                        3300: {
+                            'attributes': {
+                                'primary': 'perception',
+                                 'secondary': 'willpower',
+                            },
+                            'bonuses': {
+                                'turretSpeeBonus': {
+                                    'type': 'turretSpeeBonus',
+                                    'value': -2.0,
+                                },
+                            },
+                            'description': "Basic turret operation skill. 2% Bonus to weapon turrets' rate of fire per skill level.",
+                            'group_id': 255,
+                            'id': 3300,
+                            'name': 'Gunnery',
+                            'published': True,
+                            'rank': 1,
+                            'required_skills': {},
+                        },
+                        3301: {
+                            'attributes': {
+                                'primary': 'perception',
+                                'secondary': 'willpower',
+                            },
+                            'bonuses': {
+                                'damageMultiplierBonus': {
+                                    'type': 'damageMultiplierBonus',
+                                    'value': 5.0,
+                                },
+                            },
+                            'description': 'Operation of small hybrid turrets. 5% Bonus to small hybrid turret damage per level.',
+                            'group_id': 255,
+                            'id': 3301,
+                            'name': 'Small Hybrid Turret',
+                            'published': True,
+                            'rank': 1,
+                            'required_skills': {
+                                3300: {
+                                    'id': 3300,
+                                    'level': 1,
+                                    'name': 'Gunnery',
+                                },
+                            },
+                        },
+                    },
+                },
+                266: {
+                    'id': 266,
+                    'name': 'Corporation Management',
+                    'skills': {
+                        11584 : {
+                            'id': 11584,
+                            'group_id': 266,
+                            'name': 'Anchoring',
+                            'description': 'Skill at Anchoring Deployables. Can not be trained on Trial Accounts.',
+                            'published': True,
+                            'rank': 3,
+                            'attributes': {
+                                'primary': 'memory',
+                                'secondary': 'charisma',
+                                },
+                            'required_skills': {},
+                            'bonuses': {
+                                'canNotBeTrainedOnTrial': {
+                                    'type': 'canNotBeTrainedOnTrial',
+                                    'value': 1.0,
+                                    }
+                                }
+                            },
+
+                        3369 : {
+                            'id': 3369,
+                            'group_id': 266,
+                            'name': 'CFO Training',
+                            'description': 'Skill at managing corp finances. 5% discount on all fees at non-hostile NPC station if acting as CFO of a corp. ',
+                            'published': False,
+                            'rank': 3,
+                            'attributes': {
+                                'primary': 'memory',
+                                'secondary': 'charisma',
+                                },
+                            'required_skills': {
+                                3363 : { 'id' : 3363, 'level' : 2, 'name' : None },
+                                3444 : { 'id' : 3444, 'level' : 3, 'name' : None },
+                                },
+                            'bonuses': {}
+                            }
+                        }
+                    }
+                })
+
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('eve/SkillTree')
+                ])
+
+
+    def test_reference_types(self):
+        self.api.get.return_value = self.make_api_result("eve/reference_types.xml")
+
+        result = self.eve.reference_types()
+
+        self.assertEqual(result, {
+                0: 'Undefined',
+                1: 'Player Trading',
+                2: 'Market Transaction',
+                3: 'GM Cash Transfer',
+                4: 'ATM Withdraw',
+                5: 'ATM Deposit'
+                })
+
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('eve/RefTypes')
+                ])
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -115,7 +115,7 @@ class EVE(object):
                 'type_id': _int('shipTypeID'),
                 'type_name': _str('shipTypeName'),
             },
-            
+
             'history': [],
         }
 
@@ -236,6 +236,101 @@ class EVE(object):
 
         return results
 
+    def skill_tree(self):
+        """Return a dict of all available skill groups."""
+
+        api_result = self.api.get('eve/SkillTree')
+
+        rowset = api_result.find('rowset') # skillGroups
+
+        results = {}
+        name_cache = {}
+        for row in rowset.findall('row'):
+
+            # the skill group data
+            g = row.attrib
+            group = {
+                'id': int(g['groupID']),
+                'name': g['groupName'],
+                'skills': {}
+                }
+            # Because :ccp: groups can sometimes be listed
+            # multiple times with different skills, and the
+            # correct result is to add the contents together
+            group = results.get(group['id'], group)
+
+            # now get the actual skill data
+            skills_rs = row.find('rowset') # skills
+            for skill_row in skills_rs.findall('row'):
+                a = skill_row.attrib
+                _str, _int, _float, _bool, _ts = api.elem_getters(skill_row)
+
+                req_attrib = skill_row.find('requiredAttributes')
+
+                skill = {
+                    'id': int(a['typeID']),
+                    'group_id': int(a['groupID']),
+                    'name': a['typeName'],
+                    'published': (a['published'] == '1'),
+                    'description': _str('description'),
+                    'rank': _int('rank'),
+                    'required_skills': {},
+                    'bonuses': {},
+                    'attributes': {
+                        'primary': api.get_named_value(req_attrib, 'primaryAttribute'),
+                        'secondary': api.get_named_value(req_attrib, 'secondaryAttribute'),
+                        }
+                    }
+
+                name_cache[skill['id']] = skill['name']
+
+                # Check each rowset inside the skill, and branch based on the name attribute
+                for sub_rs in skill_row.findall('rowset'):
+
+                    if sub_rs.attrib['name'] == 'requiredSkills':
+                        for sub_row in sub_rs.findall('row'):
+                            b = sub_row.attrib
+                            req = {
+                                'level': int(b['skillLevel']),
+                                'id': int(b['typeID']),
+                                }
+                            skill['required_skills'][req['id']] = req
+
+                    elif sub_rs.attrib['name'] == 'skillBonusCollection':
+                        for sub_row in sub_rs.findall('row'):
+                            b = sub_row.attrib
+                            bonus = {
+                                'type': b['bonusType'],
+                                'value': float(b['bonusValue']),
+                                }
+                            skill['bonuses'][bonus['type']] = bonus
+
+                group['skills'][skill['id']] = skill
+
+            results[group['id']] = group
+
+        # Second pass to fill in required skill names
+        for group in results.itervalues():
+            for skill in group['skills'].itervalues():
+                for skill_id, skill_info in skill['required_skills'].iteritems():
+                    skill_info['name'] = name_cache.get(skill_id)
+
+        return results
+
+
+    def reference_types(self):
+        """Return a dict containing id -> name reference type mappings."""
+
+        api_result = self.api.get('eve/RefTypes')
+        rowset = api_result.find('rowset')
+
+        results = {}
+        for row in rowset.findall('row'):
+            a = row.attrib
+            results[int(a['refTypeID'])] = a['refTypeName']
+
+        return results
+
     def faction_warfare_leaderboard(self):
         """Return top-100 lists from Faction Warfare."""
 
@@ -280,13 +375,13 @@ class EVE(object):
             'corp': parse_section(api_result.find('corporations'), 'corporation'),
             'faction': parse_section(api_result.find('factions'), 'faction'),
         }
-        
+
         return results
-        
+
     def conquerable_stations(self):
-        
+
         api_result = self.api.get('eve/ConquerableStationlist')
-        
+
         results = {}
         rowset = api_result.find('rowset')
         for row in rowset.findall('row'):
@@ -300,5 +395,5 @@ class EVE(object):
                     'name': row.attrib['corporationName'] }
                 }
             results[station['id']] = station
-            
+
         return results
