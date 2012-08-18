@@ -422,3 +422,29 @@ class Char(object):
                 results[missing_id] = None
 
         return results
+
+    def calendar_events(self):
+        """Returns the list of upcoming calendar events for a character."""
+        api_result = self.api.get('char/UpcomingCalendarEvents',
+            {'characterID': self.char_id})
+
+        results = {}
+        rowset = api_result.find('rowset')
+        for row in rowset:
+            a = row.attrib
+            event = {
+                'id': int(a['eventID']),
+                'owner': {
+                    'id': int(a['ownerID']),
+                    'name': a['ownerName'] or None,
+                },
+                'start_ts': api.parse_ts(a['eventDate']),
+                'title': a['eventTitle'],
+                'duration': int(a['duration']),
+                'important': a['importance'] == '1',
+                'description': a['eventText'],
+                'response': a['response'],
+            }
+            results[event['id']] = event
+
+        return results
