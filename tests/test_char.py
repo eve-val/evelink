@@ -280,7 +280,6 @@ class CharTestCase(APITestCase):
 
         result = self.char.character_sheet()
 
-        self.maxDiff = 10000;
         self.assertEqual(result, {
             'id': 150337897,
             'name': 'corpslave',
@@ -479,6 +478,32 @@ class CharTestCase(APITestCase):
                 mock.call.get('char/MailBodies', {
                     'characterID': 1,
                     'ids': [297023723,297023208,297023210,297023211],
+                }),
+            ])
+
+    def test_calendar_events(self):
+        self.api.get.return_value = self.make_api_result("char/calendar_events.xml")
+
+        result = self.char.calendar_events()
+
+        self.assertEqual(result, {
+                93264: {
+                    'description': 'Join us for <a href="http://fanfest.eveonline.com/">     EVE Online\'s Fanfest 2011</a>!',
+                    'duration': 0,
+                    'id': 93264,
+                    'important': False,
+                    'owner': {
+                        'id': 1,
+                        'name': None,
+                    },
+                    'response': 'Undecided',
+                    'start_ts': 1301130000,
+                    'title': 'EVE Online Fanfest 2011',
+                },
+            })
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('char/UpcomingCalendarEvents', {
+                    'characterID': 1,
                 }),
             ])
 
