@@ -448,3 +448,42 @@ class Char(object):
             results[event['id']] = event
 
         return results
+
+    def calendar_attendees(self, event_ids):
+        """Returns the list of attendees for the specified calendar event.
+
+        This function takes a list of event IDs and returns a dict of dicts,
+        with the top-level dict being keyed by event ID and the children
+        keyed by the character IDs of the attendees.
+
+        NOTE: You must have recently fetched the list of calendar events
+        (using the 'calendar_events' method) before calling this method.
+        """
+        api_result = self.api.get('char/CalendarEventAttendees',
+            {'characterID': self.char_id, 'eventIDs': event_ids})
+
+        results = dict((int(i),{}) for i in event_ids)
+        rowset = api_result.find('rowset')
+        for row in rowset:
+            a = row.attrib
+            attendee = {
+                'id': int(a['characterID']),
+                'name': a['characterName'],
+                'response': a['response'],
+            }
+            results[int(a['eventID'])][attendee['id']] = attendee
+
+        return results
+
+    def event_attendees(self, event_id):
+        """Returns the attendees for a single event.
+
+        (This is a convenience wrapper around 'calendar_attendees'.)
+
+        NOTE: You must have recently fetched the list of calendar events
+        (using the 'calendar_events' method) before calling this method.
+        """
+        return self.calendar_attendees([event_id])[int(event_id)]
+
+
+# vim: set ts=4 sts=4 sw=4 et:
