@@ -110,6 +110,46 @@ class Char(object):
 
         return self.wallet_info()['balance']
 
+    def wallet_transactions(self, before_id=None, limit=None):
+        """Returns wallet transactions for a character."""
+
+        params = {'characterID': self.char_id}
+        if before_id is not None:
+            params['fromID'] = before_id
+        if limit is not None:
+            params['rowCount'] = limit
+        api_result = self.api.get('char/WalletTransactions', params)
+
+        rowset = api_result.find('rowset')
+        rows = rowset.findall('row')
+        result = []
+        for row in rows:
+            a = row.attrib
+            entry = {
+                'timestamp': api.parse_ts(a['transactionDateTime']),
+                'id': int(a['transactionID']),
+                'journal_id': int(a['journalTransactionID']),
+                'quantity': int(a['quantity']),
+                'type': {
+                    'id': int(a['typeID']),
+                    'name': a['typeName'],
+                },
+                'price': float(a['price']),
+                'client': {
+                    'id': int(a['clientID']),
+                    'name': a['clientName'],
+                },
+                'station': {
+                    'id': int(a['stationID']),
+                    'name': a['stationName'],
+                },
+                'action': a['transactionType'],
+                'for': a['transactionFor'],
+            }
+            result.append(entry)
+
+        return result
+
     def industry_jobs(self):
         """Get a list of jobs for a character"""
 

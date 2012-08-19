@@ -145,6 +145,77 @@ class CharTestCase(APITestCase):
                 mock.call.get('char/AccountBalance', {'characterID': 1}),
             ])
 
+    def test_wallet_transcations(self):
+        self.api.get.return_value = self.make_api_result("char/wallet_transactions.xml")
+
+        result = self.char.wallet_transactions()
+
+        self.assertEqual(result, [{
+            'client': {'id': 1034922339, 'name': 'Elthana'},
+            'id': 1309776438,
+            'action': 'buy',
+            'for': 'personal',
+            'journal_id': 6256809868L,
+            'price': 34101.06,
+            'quantity': 1,
+            'station': {'id': 60003760,
+                        'name': 'Jita IV - Moon 4 - Caldari Navy Assembly Plant'},
+            'timestamp': 1265513640,
+            'type': {'id': 20495, 'name': 'Information Warfare'}},
+           {'client': {'id': 1979235241, 'name': 'Daeja synn'},
+            'id': 1307711508,
+            'action': 'buy',
+            'for': 'personal',
+            'journal_id': 6256808968L,
+            'price': 1169939.97,
+            'quantity': 1,
+            'station': {'id': 60015027,
+                        'name': 'Uitra VI - Moon 4 - State War Academy School'},
+            'timestamp': 1265392020,
+            'type': {'id': 11574, 'name': 'Wing Command'}},
+           {'client': {'id': 275581519, 'name': 'SPAIDERKA'},
+            'id': 1304203159,
+            'action': 'buy',
+            'for': 'personal',
+            'journal_id': 6256808878L,
+            'price': 13012.01,
+            'quantity': 2,
+            'station': {'id': 60003760,
+                        'name': 'Jita IV - Moon 4 - Caldari Navy Assembly Plant'},
+            'timestamp': 1265135280,
+            'type': {'id': 3349, 'name': 'Skirmish Warfare'}},
+           {'client': {'id': 1703231064, 'name': 'Der Suchende'},
+            'id': 1298649939,
+            'action': 'buy',
+            'for': 'personal',
+            'journal_id': 6256808869L,
+            'price': 556001.01,
+            'quantity': 1,
+            'station': {'id': 60004369,
+                        'name': 'Ohmahailen V - Moon 7 - Corporate Police Force Assembly Plant'},
+            'timestamp': 1264779900,
+            'type': {'id': 2410, 'name': 'Heavy Missile Launcher II'}}]
+        )
+        self.assertEqual(self.api.mock_calls, [
+            mock.call.get('char/WalletTransactions', {'characterID': 1}),
+        ])
+
+    def test_wallet_transactions_paged(self):
+        self.api.get.return_value = self.make_api_result("char/wallet_transactions.xml")
+
+        self.char.wallet_transactions(before_id=1234)
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('char/WalletTransactions', {'characterID': 1, 'fromID': 1234}),
+            ])
+
+    def test_wallet_transactions_limit(self):
+        self.api.get.return_value = self.make_api_result("char/wallet_transactions.xml")
+
+        self.char.wallet_transactions(limit=100)
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('char/WalletTransactions', {'characterID': 1, 'rowCount': 100}),
+            ])
+
     @mock.patch('evelink.char.parse_industry_jobs')
     def test_industry_jobs(self, mock_parse):
         self.api.get.return_value = mock.sentinel.industry_jobs_api_result
