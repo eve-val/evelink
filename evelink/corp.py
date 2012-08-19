@@ -1,5 +1,6 @@
 from evelink import api
 from evelink.parsing.assets import parse_assets
+from evelink.parsing.contact_list import parse_contact_list
 from evelink.parsing.contracts import parse_contracts
 from evelink.parsing.industry_jobs import parse_industry_jobs
 from evelink.parsing.kills import parse_kills
@@ -150,6 +151,11 @@ class Corp(object):
             results['corp'][holder['id']] = holder
 
         return results
+
+    def contacts(self):
+        """Return the corp's corp and alliance contact lists."""
+        api_result = self.api.get('corp/ContactList')
+        return parse_contact_list(api_result)
 
 
 # vim: set ts=4 sts=4 sw=4 et:
