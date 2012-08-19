@@ -222,6 +222,27 @@ class CorpTestCase(APITestCase):
                 mock.call.get('corp/Titles'),
             ])
 
+    def test_starbases(self):
+        self.api.get.return_value = self.make_api_result("corp/starbases.xml")
+
+        result = self.corp.starbases()
+
+        self.assertEqual(result, {
+                100449451: {
+                    'id': 100449451,
+                    'location_id': 30000163,
+                    'moon_id': 40010395,
+                    'online_ts': 1244098851,
+                    'standings_owner_id': 673381830,
+                    'state': 'online',
+                    'state_ts': 1323374621,
+                    'type_id': 27538,
+                },
+            })
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('corp/StarbaseList'),
+            ])
+
 
 if __name__ == "__main__":
     unittest.main()

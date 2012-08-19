@@ -210,4 +210,26 @@ class Corp(object):
 
         return results
 
+    def starbases(self):
+        """Returns information about the corporation's POSes."""
+        api_result = self.api.get('corp/StarbaseList')
+
+        rowset = api_result.find('rowset')
+        results = {}
+        for row in rowset.findall('row'):
+            a = row.attrib
+            starbase = {
+                'id': int(a['itemID']),
+                'type_id': int(a['typeID']),
+                'location_id': int(a['locationID']),
+                'moon_id': int(a['moonID']),
+                'state': constants.Corp.pos_states[int(a['state'])],
+                'state_ts': api.parse_ts(a['stateTimestamp']),
+                'online_ts': api.parse_ts(a['onlineTimestamp']),
+                'standings_owner_id': int(a['standingOwnerID']),
+            }
+            results[starbase['id']] = starbase
+
+        return results
+
 # vim: set ts=4 sts=4 sw=4 et:
