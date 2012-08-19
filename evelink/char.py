@@ -451,7 +451,7 @@ class Char(object):
 
         rowset = api_result.find('rowset')
         results = {}
-        for row in rowset:
+        for row in rowset.findall('row'):
             message_id = int(row.attrib['messageID'])
             results[message_id] = row.text
 
@@ -470,7 +470,7 @@ class Char(object):
 
         results = {}
         rowset = api_result.find('rowset')
-        for row in rowset:
+        for row in rowset.findall('row'):
             a = row.attrib
             event = {
                 'id': int(a['eventID']),
@@ -504,7 +504,7 @@ class Char(object):
 
         results = dict((int(i),{}) for i in event_ids)
         rowset = api_result.find('rowset')
-        for row in rowset:
+        for row in rowset.findall('row'):
             a = row.attrib
             attendee = {
                 'id': int(a['characterID']),
