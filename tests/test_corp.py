@@ -159,6 +159,40 @@ class CorpTestCase(APITestCase):
                 mock.call.get('corp/Shareholders'),
             ])
 
+    def test_titles(self):
+        self.api.get.return_value = self.make_api_result("corp/titles.xml")
+
+        result = self.corp.titles()
+
+        self.assertEqual(result, {
+                1: {
+                    'can_grant': {'at_base': {}, 'at_hq': {}, 'at_other': {}, 'global': {}},
+                    'id': 1,
+                    'name': 'Member',
+                    'roles': {
+                        'at_base': {},
+                        'at_other': {},
+                        'global': {},
+                        'at_hq': {
+                            8192: {
+                                'description': 'Can take items from this divisions hangar',
+                                'id': 8192,
+                                'name': 'roleHangarCanTake1',
+                            },
+                        },
+                    },
+                },
+                2: {
+                    'can_grant': {'at_base': {}, 'at_hq': {}, 'at_other': {}, 'global': {}},
+                    'id': 2,
+                    'name': 'unused 1',
+                    'roles': {'at_base': {}, 'at_hq': {}, 'at_other': {}, 'global': {}},
+                },
+            })
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('corp/Titles'),
+            ])
+
 
 if __name__ == "__main__":
     unittest.main()
