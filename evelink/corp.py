@@ -1,3 +1,4 @@
+from evelink import api
 from evelink.parsing.assets import parse_assets
 from evelink.parsing.contracts import parse_contracts
 from evelink.parsing.industry_jobs import parse_industry_jobs
@@ -66,6 +67,35 @@ class Corp(object):
         """
         api_result = self.api.get('corp/AssetList')
         return parse_assets(api_result)
+
+    def faction_warfare_stats(self):
+        """Returns stats from faction warfare if this corp is enrolled.
+
+        NOTE: This will raise an APIError if the corp is not enrolled in
+        Faction Warfare.
+        """
+        api_result = self.api.get('corp/FacWarStats')
+
+        _str, _int, _float, _bool, _ts = api.elem_getters(api_result)
+
+        return {
+            'faction': {
+                'id': _int('factionID'),
+                'name': _str('factionName'),
+            },
+            'start_ts': _ts('enlisted'),
+            'pilots': _int('pilots'),
+            'kills': {
+                'yesterday': _int('killsYesterday'),
+                'week': _int('killsLastWeek'),
+                'total': _int('killsTotal'),
+            },
+            'points': {
+                'yesterday': _int('victoryPointsYesterday'),
+                'week': _int('victoryPointsLastWeek'),
+                'total': _int('victoryPointsTotal'),
+            },
+        }
 
     def contracts(self):
         """Get information about corp contracts."""
