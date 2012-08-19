@@ -1,11 +1,19 @@
 CHARACTER = 'char'
 CORPORATION = 'corp'
 
+_role_type_bases = {
+    'global': '',
+    'at_hq': 'AtHQ',
+    'at_base': 'AtBase',
+    'at_other': 'AtOther',
+}
+
 class Char(object):
-    corp_roles = {'roles': 'corporationRoles',
-                  'at_hq': 'corporationRolesAtHQ',
-                  'at_base': 'corporationRolesAtBase',
-                  'at_other': 'corporationRolesAtOther'}
+    corp_roles = dict((k, 'corporationRoles' + v) for k,v in _role_type_bases.iteritems())
+
+class Corp(object):
+    role_types = dict((k, 'roles' + v) for k,v in _role_type_bases.iteritems())
+    grantable_types = dict((k, 'grantableRoles' + v) for k,v in _role_type_bases.iteritems())
 
 class Industry(object):
     job_status = ('failed', 'delivered', 'gm-aborted', 'inflight-unanchored', 'destroyed')

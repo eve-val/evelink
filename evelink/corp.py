@@ -1,4 +1,4 @@
-from evelink import api
+from evelink import api, constants
 from evelink.parsing.assets import parse_assets
 from evelink.parsing.contact_list import parse_contact_list
 from evelink.parsing.contracts import parse_contracts
@@ -157,5 +157,44 @@ class Corp(object):
         api_result = self.api.get('corp/ContactList')
         return parse_contact_list(api_result)
 
+    def titles(self):
+        """Returns information about the corporation's titles."""
+        api_result = self.api.get('corp/Titles')
+
+        rowset = api_result.find('rowset')
+        results = {}
+        for row in rowset.findall('row'):
+            a = row.attrib
+            title = {
+                'id': int(a['titleID']),
+                'name': a['titleName'],
+                'roles': {},
+                'can_grant': {},
+            }
+            rowsets = dict((r.attrib['name'], r) for r in row.findall('rowset'))
+
+            def get_roles(rowset_name):
+                roles = {}
+                for role_row in rowsets[rowset_name].findall('row'):
+                    ra = role_row.attrib
+                    role = {
+                        'id': int(ra['roleID']),
+                        'name': ra['roleName'],
+                        'description': ra['roleDescription'],
+                    }
+                    roles[role['id']] = role
+                return roles
+
+            for key, rowset_name in constants.Corp.role_types.iteritems():
+                roles = get_roles(rowset_name)
+                title['roles'][key] = roles
+
+            for key, rowset_name in constants.Corp.grantable_types.iteritems():
+                roles = get_roles(rowset_name)
+                title['can_grant'][key] = roles
+
+            results[title['id']] = title
+
+        return results
 
 # vim: set ts=4 sts=4 sw=4 et:
