@@ -52,7 +52,7 @@ def get_parameters(args):
     return posargs, kwargs
 
 
-def call_raw_api(api_obj, api_path, args):
+def call_raw_api(api_obj, api_path, args, config):
     # Raw API calls require all params to be kwargs
     _, kwargs = get_parameters(args)
     try:
@@ -63,7 +63,7 @@ def call_raw_api(api_obj, api_path, args):
     print ElementTree.tostring(result)
 
 
-def call_evelink_api(api_obj, api_path, args, use_json=False):
+def call_evelink_api(api_obj, api_path, args, config, use_json=False):
     args, kwargs = get_parameters(args)
 
     try:
@@ -79,9 +79,12 @@ def call_evelink_api(api_obj, api_path, args, use_json=False):
         sys.exit(1)
 
     cls_args = []
-    if module in ('char', 'corp'):
-        cls_args.append(args[0])
-        args = args[1:]
+    if module == 'char':
+        if config.has_section(module) and config.has_option(module, 'id'):
+            cls_args.append(config.getint(module, 'id'))
+        else:
+            cls_args.append(args[0])
+            args = args[1:]
     
     # Get the specified class from the specified module, and construct it
     # (possibly passing in a char/corp id) with our api object.
@@ -111,12 +114,12 @@ def call_evelink_api(api_obj, api_path, args, use_json=False):
         pprint.pprint(result)
 
 
-def call_api(api_obj, args, use_json=False):
+def call_api(api_obj, args, config, use_json=False):
     api_path = args[0]
     if '/' in api_path:
-        call_raw_api(api_obj, api_path, args[1:])
+        call_raw_api(api_obj, api_path, args[1:], config)
     elif '.' in api_path:
-        call_evelink_api(api_obj, api_path, args[1:], use_json)
+        call_evelink_api(api_obj, api_path, args[1:], config, use_json)
     else:
         print >> sys.stderr, "API to call must be either a URL path or EVELink method."
 
@@ -128,20 +131,18 @@ def main():
             """A command line interface for the EVELink library. This tool can"""
             """ be used to make both raw API calls (by specifying an API path,"""
             """ e.g. eve/SkillTree) or EVELink method calls (by specifying the"""
-            """ path within evelink, e.g. eve.EVE.skills). For corp/char method"""
-            """ calls, the character/corporation ID must be passed as the first"""
-            """ parameter."""
+            """ path within evelink, e.g. eve.EVE.skills). For char method calls"""
+            """ the character ID must be passed as the first parameter if it is"""
+            """ not specified in a config file."""
         ),
         epilog=(
             """This tool can also read a config file to easily reuse"""
             """ certain parameters. The config file (default: ~/.evelinkrc)"""
-            """ is standard INI format. Currently, two sections are supported:"""
-            """ [cache] and [apikey]. Within the cache section, the only valid"""
-            """ key is 'path', which is equivalent to the -c option. In the"""
-            """ apikey section, an API key can be specified via the keys 'id'"""
-            """ and 'vcode', which contain what you would expect."""
+            """ is standard INI format. See --helpconfig for details."""
         ),
     )
+    parser.add_option("--helpconfig", dest="helpconfig", action="store_true",
+        help="Display information about the format of a config file.")
     parser.add_option("-k", "--key", dest="apikey", metavar="KEYID:VCODE",
         help="The API key to use for authenticated calls.")
     parser.add_option("-c", "--cache", dest="cache_path", metavar="PATH",
@@ -153,6 +154,27 @@ def main():
     parser.add_option("-l", "--loglevel", dest="loglevel", metavar="LEVEL",
         help="Enable logging of messages at or above the provided level (logging.<level>)")
     options, args = parser.parse_args()
+
+    if options.helpconfig:
+        print
+        print """By default, this tool attempts to read from ~/.evelinkrc for"""
+        print """configuration data. Any path specified via the -r flag will be"""
+        print """read *in addition* to this. Options set in the additional config"""
+        print """will override values in the default config. If this file exists"""
+        print """and has the proper INI format, the following items can be loaded"""
+        print """from it (every section is optional):"""
+        print
+        print """[cache]"""
+        print """path=<path to file in which to store cached api results>"""
+        print
+        print """[apikey]"""
+        print """id=<id of API key to use>"""
+        print """vcode=<verification code of API key to use>"""
+        print
+        print """[char]"""
+        print """id=<id of character to use for Char API calls>"""
+        print
+        sys.exit(0)
     
     if not args:
         parser.error("No API call specified.")
@@ -206,7 +228,7 @@ def main():
 
     api_obj = evelink.api.API(**api_obj_params)
 
-    call_api(api_obj, args, options.json)
+    call_api(api_obj, args, config, options.json)
 
 if __name__ == "__main__":
     main()
