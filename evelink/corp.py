@@ -2,6 +2,7 @@ from evelink import api
 from evelink.parsing.assets import parse_assets
 from evelink.parsing.contracts import parse_contracts
 from evelink.parsing.industry_jobs import parse_industry_jobs
+from evelink.parsing.kills import parse_kills
 from evelink.parsing.orders import parse_market_orders
 
 class Corp(object):
@@ -19,6 +20,20 @@ class Corp(object):
         api_result = self.api.get('corp/IndustryJobs')
 
         return parse_industry_jobs(api_result)
+
+    def kills(self, before_kill=None):
+        """Look up recent kills for a corporation.
+
+        before_kill:
+            Optional. Only show kills before this kill id. (Used for paging.)
+        """
+
+        params = {}
+        if before_kill is not None:
+            params['beforeKillID'] = before_kill
+        api_result = self.api.get('corp/KillLog', params)
+
+        return parse_kills(api_result)
 
     def wallet_info(self):
         """Get information about corp wallets."""
