@@ -11,14 +11,16 @@ def parse_contact_list(api_result):
     for rowset in api_result.findall('rowset'):
         contact_list = result[LABEL_MAP[rowset.get('name')]] = {}
         for row in rowset.findall('row'):
-            d = {
-                'id': int(row.get('contactID')),
+            in_watchlist = (row.get('inWatchlist') == 'True'
+                            if 'inWatchlist' in row.attrib
+                            else None)
+            contact_id = int(row.get('contactID'))
+            contact_list[contact_id] = {
+                'id': contact_id,
                 'name': row.get('contactName'),
                 'standing': float(row.get('standing')),
+                'in_watchlist': in_watchlist
             }
-            if 'inWatchlist' in row.attrib:
-                d['in_watchlist'] = row.get('inWatchlist', 'False') == 'True'
-            contact_list[d['id']] = d
 
     return result
         
