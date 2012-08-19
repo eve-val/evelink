@@ -1,0 +1,22 @@
+<result>
+  <state>4</state>
+  <stateTimestamp>2009-05-02 21:31:36</stateTimestamp>
+  <onlineTimestamp>2009-04-18 23:30:29</onlineTimestamp>
+  <generalSettings>
+    <usageFlags>3</usageFlags>
+    <deployFlags>0</deployFlags>
+    <allowCorporationMembers>1</allowCorporationMembers>
+    <allowAllianceMembers>1</allowAllianceMembers>
+  </generalSettings>
+  <combatSettings>
+    <useStandingsFrom ownerID="154683985" />
+    <onStandingDrop standing="990" />
+    <onStatusDrop enabled="0" standing="0" />
+    <onAggression enabled="0" />
+    <onCorporationWar enabled="1" />
+  </combatSettings>
+  <rowset name="fuel" key="typeID" columns="typeID,quantity">
+    <row typeID="16275" quantity="2447" />
+    <row typeID="16274" quantity="18758" />
+  </rowset>
+</result>
