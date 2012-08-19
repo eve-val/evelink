@@ -5,6 +5,7 @@ from evelink.parsing.contact_list import parse_contact_list
 from evelink.parsing.industry_jobs import parse_industry_jobs
 from evelink.parsing.kills import parse_kills
 from evelink.parsing.orders import parse_market_orders
+from evelink.parsing.wallet_transactions import parse_wallet_transactions
 
 class Char(object):
     """Wrapper around /char/ of the EVE API.
@@ -122,35 +123,7 @@ class Char(object):
             params['rowCount'] = limit
         api_result = self.api.get('char/WalletTransactions', params)
 
-        rowset = api_result.find('rowset')
-        rows = rowset.findall('row')
-        result = []
-        for row in rows:
-            a = row.attrib
-            entry = {
-                'timestamp': api.parse_ts(a['transactionDateTime']),
-                'id': int(a['transactionID']),
-                'journal_id': int(a['journalTransactionID']),
-                'quantity': int(a['quantity']),
-                'type': {
-                    'id': int(a['typeID']),
-                    'name': a['typeName'],
-                },
-                'price': float(a['price']),
-                'client': {
-                    'id': int(a['clientID']),
-                    'name': a['clientName'],
-                },
-                'station': {
-                    'id': int(a['stationID']),
-                    'name': a['stationName'],
-                },
-                'action': a['transactionType'],
-                'for': a['transactionFor'],
-            }
-            result.append(entry)
-
-        return result
+        return parse_wallet_transactions(api_result)
 
     def industry_jobs(self):
         """Get a list of jobs for a character"""
