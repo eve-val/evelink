@@ -578,6 +578,51 @@ class CharTestCase(APITestCase):
                 }),
             ])
 
+    def test_calendar_attendees(self):
+        self.api.get.return_value = self.make_api_result("char/calendar_attendees.xml")
+
+        result = self.char.calendar_attendees([123, 234, 345])
+
+        self.assertEqual(result, {
+                123: {
+                    123456789: {
+                        'id': 123456789,
+                        'name': 'Jane Doe',
+                        'response': 'Accepted',
+                    },
+                    987654321: {
+                        'id': 987654321,
+                        'name': 'John Doe',
+                        'response': 'Tentative',
+                    },
+                },
+                234: {
+                    192837645: {
+                        'id': 192837645,
+                        'name': 'Another Doe',
+                        'response': 'Declined',
+                    },
+                    918273465: {
+                        'id': 918273465,
+                        'name': 'Doe the Third',
+                        'response': 'Undecided',
+                    },
+                },
+                345: {},
+            })
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('char/CalendarEventAttendees', {
+                    'characterID': 1,
+                    'eventIDs': [123, 234, 345],
+                }),
+            ])
+
+    @mock.patch('evelink.char.Char.calendar_attendees')
+    def test_event_attendees(self, mock_calendar):
+        mock_calendar.return_value = {42: mock.sentinel.attendees}
+        result = self.char.event_attendees(42)
+        self.assertEqual(result, mock.sentinel.attendees)
+
 
 if __name__ == "__main__":
     unittest.main()

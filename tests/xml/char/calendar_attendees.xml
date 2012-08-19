@@ -1,0 +1,8 @@
+<result>
+  <rowset name="eventAttendees" key="characterID" columns="characterID,characterName,response">
+    <row characterID="123456789" eventID="123" characterName="Jane Doe" response="Accepted" />
+    <row characterID="987654321" eventID="123" characterName="John Doe" response="Tentative" />
+    <row characterID="192837645" eventID="234" characterName="Another Doe" response="Declined" />
+    <row characterID="918273465" eventID="234" characterName="Doe the Third" response="Undecided" />
+  </rowset>
+</result>
