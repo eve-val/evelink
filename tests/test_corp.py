@@ -20,7 +20,7 @@ class CorpTestCase(APITestCase):
         self.assertEqual(result, mock.sentinel.industry_jobs)
         self.assertEqual(self.api.mock_calls, [
                 mock.call.get('corp/IndustryJobs'),
-            ]) 
+            ])
         self.assertEqual(mock_parse.mock_calls, [
                 mock.call(mock.sentinel.industry_jobs_api_result),
             ])
@@ -85,6 +85,36 @@ class CorpTestCase(APITestCase):
         self.assertEqual(self.api.mock_calls, [
                 mock.call.get('corp/AssetList'),
             ])
+
+    def test_shareholders(self):
+        self.api.get.return_value = self.make_api_result("corp/shareholders.xml")
+
+        result = self.corp.shareholders()
+
+        self.assertEqual(result, {
+                'char': {
+                    126891489: {
+                        'corp': {
+                            'id': 632257314,
+                            'name': 'Corax.',
+                        },
+                        'id': 126891489,
+                        'name': 'Dragonaire',
+                        'shares': 1,
+                    },
+                },
+                'corp': {
+                    126891482: {
+                        'id': 126891482,
+                        'name': 'DragonaireCorp',
+                        'shares': 1,
+                    },
+                },
+            })
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('corp/Shareholders'),
+            ])
+
 
 if __name__ == "__main__":
     unittest.main()
