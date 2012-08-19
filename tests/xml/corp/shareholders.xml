@@ -1,0 +1,8 @@
+<result>
+  <rowset name="characters" key="shareholderID" columns="shareholderID,shareholderName,shareholderCorporationID,shareholderCorporationName,shares">
+    <row shareholderID="126891489" shareholderName="Dragonaire" shareholderCorporationID="632257314" shareholderCorporationName="Corax." shares="1" />
+  </rowset>
+  <rowset name="corporations" key="shareholderID" columns="shareholderID,shareholderName,shares">
+    <row shareholderID="126891482" shareholderName="DragonaireCorp" shares="1" />
+  </rowset>
+</result>

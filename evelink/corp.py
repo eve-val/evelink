@@ -71,3 +71,40 @@ class Corp(object):
         """Get information about corp contracts."""
         api_result = self.api.get('corp/Contracts')
         return parse_contracts(api_result)
+
+    def shareholders(self):
+        """Get information about a corp's shareholders."""
+        api_result = self.api.get('corp/Shareholders')
+
+        results = {
+            'char': {},
+            'corp': {},
+        }
+        rowsets = dict((r.attrib['name'], r) for r in api_result.findall('rowset'))
+
+        for row in rowsets['characters'].findall('row'):
+            a = row.attrib
+            holder = {
+                'id': int(a['shareholderID']),
+                'name': a['shareholderName'],
+                'corp': {
+                    'id': int(a['shareholderCorporationID']),
+                    'name': a['shareholderCorporationName'],
+                },
+                'shares': int(a['shares']),
+            }
+            results['char'][holder['id']] = holder
+
+        for row in rowsets['corporations'].findall('row'):
+            a = row.attrib
+            holder = {
+                'id': int(a['shareholderID']),
+                'name': a['shareholderName'],
+                'shares': int(a['shares']),
+            }
+            results['corp'][holder['id']] = holder
+
+        return results
+
+
+# vim: set ts=4 sts=4 sw=4 et:
