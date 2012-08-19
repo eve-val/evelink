@@ -15,6 +15,8 @@ class Corp(object):
     role_types = dict((k, 'roles' + v) for k,v in _role_type_bases.iteritems())
     grantable_types = dict((k, 'grantableRoles' + v) for k,v in _role_type_bases.iteritems())
 
+    pos_states = ('unanchored', 'anchored', 'onlining', 'reinforced', 'online')
+
 class Industry(object):
     job_status = ('failed', 'delivered', 'gm-aborted', 'inflight-unanchored', 'destroyed')
 

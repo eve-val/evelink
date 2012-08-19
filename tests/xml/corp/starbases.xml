@@ -1,0 +1,5 @@
+<result>
+  <rowset name="starbases" key="itemID" columns="itemID,typeID,locationID,moonID,state,stateTimestamp,onlineTimestamp,standingOwnerID">
+    <row itemID="100449451" typeID="27538" locationID="30000163" moonID="40010395" state="4" stateTimestamp="2011-12-08 20:03:41" onlineTimestamp="2009-06-04 07:00:51" standingOwnerID="673381830"/>
+  </rowset>
+</result>
