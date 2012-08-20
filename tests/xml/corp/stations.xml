@@ -1,0 +1,14 @@
+<result>
+  <rowset name="corporationStarbases">
+    <row stationID="61000368" 
+    ownerID="857174087" 
+    stationName="Station Name Goes Here" 
+    solarSystemID="30004181" 
+    dockingCostPerShipVolume="0" 
+    officeRentalCost="25000000" 
+    stationTypeID="21645" 
+    reprocessingEfficiency="0.5" 
+    reprocessingStationTake="0.025" 
+    standingOwnerID="673381830" /> 
+  </rowset>
+</result>

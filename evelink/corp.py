@@ -321,5 +321,31 @@ class Corp(object):
 
         return result
 
+    def stations(self):
+        """Returns information about the corporation's (non-POS) stations."""
+        api_result = self.api.get('corp/OutpostList')
+
+        rowset = api_result.find('rowset')
+        results = {}
+        for row in rowset.findall('row'):
+            a = row.attrib
+            station = {
+                'id': int(a['stationID']),
+                'owner_id': int(a['ownerID']),
+                'name': a['stationName'],
+                'system_id': int(a['solarSystemID']),
+                'docking_fee_per_volume': float(a['dockingCostPerShipVolume']),
+                'office_fee': int(a['officeRentalCost']),
+                'type_id': int(a['stationTypeID']),
+                'reprocessing': {
+                    'efficiency': float(a['reprocessingEfficiency']),
+                    'cut': float(a['reprocessingStationTake']),
+                },
+                'standing_owner_id': int(a['standingOwnerID']),
+            }
+            results[station['id']] = station
+
+        return results
+
 
 # vim: set ts=4 sts=4 sw=4 et:
