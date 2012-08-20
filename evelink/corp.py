@@ -368,6 +368,49 @@ class Corp(object):
 
         return result
 
+    def members(self, extended=True):
+        """Returns details about each member of the corporation."""
+        api_result = self.api.get('corp/MemberTracking', {'extended': int(extended)})
+
+        rowset = api_result.find('rowset')
+        results = {}
+        for row in rowset.findall('row'):
+            a = row.attrib
+            member = {
+                'id': int(a['characterID']),
+                'name': a['name'],
+                'join_ts': api.parse_ts(a['startDateTime']),
+                'base': {
+                    # TODO(aiiane): Maybe remove this?
+                    # It doesn't seem to ever have a useful value.
+                    'id': int(a['baseID']),
+                    'name': a['base'],
+                },
+                # Note that title does not include role titles,
+                # only ones like 'CEO'
+                'title': a['title'],
+            }
+            if extended:
+                member.update({
+                    'logon_ts': api.parse_ts(a['logonDateTime']),
+                    'logoff_ts': api.parse_ts(a['logoffDateTime']),
+                    'location': {
+                        'id': int(a['locationID']),
+                        'name': a['location'],
+                    },
+                    'ship_type': {
+                        # "Not available" = -1 ship id; we change to None
+                        'id': max(int(a['shipTypeID']), 0) or None,
+                        'name': a['shipType'] or None,
+                    },
+                    'roles': int(a['roles']),
+                    'can_grant': int(a['grantableRoles']),
+                })
+
+            results[member['id']] = member
+
+        return results
+
     def stations(self):
         """Returns information about the corporation's (non-POS) stations."""
         api_result = self.api.get('corp/OutpostList')
