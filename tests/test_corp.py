@@ -86,6 +86,36 @@ class CorpTestCase(APITestCase):
                 mock.call.get('corp/AccountBalance'),
             ])
 
+    @mock.patch('evelink.corp.parse_wallet_journal')
+    def test_wallet_journal(self, mock_parse):
+        self.api.get.return_value = mock.sentinel.journal_api_result
+        mock_parse.return_value = mock.sentinel.parsed_journal
+
+        result = self.corp.wallet_journal()
+        self.assertEqual(result, mock.sentinel.parsed_journal)
+        self.assertEqual(mock_parse.mock_calls, [
+                mock.call(mock.sentinel.journal_api_result),
+            ])
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('corp/WalletJournal', {}),
+            ])
+
+    def test_wallet_journal_paged(self):
+        self.api.get.return_value = self.make_api_result("char/wallet_journal.xml")
+
+        self.corp.wallet_journal(before_id=1234)
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('corp/WalletJournal', {'fromID': 1234}),
+            ])
+
+    def test_wallet_journal_limit(self):
+        self.api.get.return_value = self.make_api_result("char/wallet_journal.xml")
+
+        self.corp.wallet_journal(limit=100)
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('corp/WalletJournal', {'rowCount': 100}),
+            ])
+
     @mock.patch('evelink.corp.parse_wallet_transactions')
     def test_wallet_transcations(self, mock_parse):
         self.api.get.return_value = mock.sentinel.transactions_api_result
@@ -99,6 +129,7 @@ class CorpTestCase(APITestCase):
         self.assertEqual(self.api.mock_calls, [
                 mock.call.get('corp/WalletTransactions', {}),
             ])
+
     def test_wallet_transactions_paged(self):
         self.api.get.return_value = self.make_api_result("char/wallet_transactions.xml")
 

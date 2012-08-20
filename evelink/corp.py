@@ -5,6 +5,7 @@ from evelink.parsing.contracts import parse_contracts
 from evelink.parsing.industry_jobs import parse_industry_jobs
 from evelink.parsing.kills import parse_kills
 from evelink.parsing.orders import parse_market_orders
+from evelink.parsing.wallet_journal import parse_wallet_journal
 from evelink.parsing.wallet_transactions import parse_wallet_transactions
 
 class Corp(object):
@@ -53,6 +54,18 @@ class Corp(object):
             results[wallet['key']] = wallet
 
         return results
+
+    def wallet_journal(self, before_id=None, limit=None):
+        """Returns wallet journal for a corporation."""
+
+        params = {}
+        if before_id is not None:
+            params['fromID'] = before_id
+        if limit is not None:
+            params['rowCount'] = limit
+        api_result = self.api.get('corp/WalletJournal', params)
+
+        return parse_wallet_journal(api_result)
 
     def wallet_transactions(self, before_id=None, limit=None):
         """Returns wallet transactions for a corporation."""
