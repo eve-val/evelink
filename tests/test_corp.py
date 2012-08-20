@@ -280,6 +280,49 @@ class CorpTestCase(APITestCase):
                 mock.call.get('corp/StarbaseDetail', {'itemID': 123}),
             ])
 
+    def test_members(self):
+        self.api.get.return_value = self.make_api_result("corp/members.xml")
+
+        result = self.corp.members()
+
+        self.assertEqual(result, {
+                150336922: {
+                    'base': {'id': 0, 'name': ''},
+                    'can_grant': 0,
+                    'id': 150336922,
+                    'join_ts': 1181745540,
+                    'location': {
+                        'id': 60011566,
+                        'name': 'Bourynes VII - Moon 2 - University of Caille School',
+                    },
+                    'logoff_ts': 1182029760,
+                    'logon_ts': 1182028320,
+                    'name': 'corpexport',
+                    'roles': 0,
+                    'ship_type': {'id': 606, 'name': 'Velator'},
+                    'title': 'asdf',
+                },
+                150337897: {
+                    'base': {'id': 0, 'name': ''},
+                    'can_grant': 0,
+                    'id': 150337897,
+                    'join_ts': 1181826840,
+                    'location': {
+                        'id': 60011566,
+                        'name': 'Bourynes VII - Moon 2 - University of Caille School',
+                    },
+                    'logoff_ts': 1182029700,
+                    'logon_ts': 1182028440,
+                    'name': 'corpslave',
+                    'roles': 22517998271070336,
+                    'ship_type': {'id': 670, 'name': 'Capsule'},
+                    'title': '',
+                },
+            })
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('corp/MemberTracking', {'extended': 1}),
+            ])
+
     def test_stations(self):
         self.api.get.return_value = self.make_api_result("corp/stations.xml")
 
