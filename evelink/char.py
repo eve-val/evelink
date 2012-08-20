@@ -5,6 +5,7 @@ from evelink.parsing.contact_list import parse_contact_list
 from evelink.parsing.industry_jobs import parse_industry_jobs
 from evelink.parsing.kills import parse_kills
 from evelink.parsing.orders import parse_market_orders
+from evelink.parsing.wallet_journal import parse_wallet_journal
 from evelink.parsing.wallet_transactions import parse_wallet_transactions
 
 class Char(object):
@@ -59,40 +60,7 @@ class Char(object):
             params['rowCount'] = limit
         api_result = self.api.get('char/WalletJournal', params)
 
-        rowset = api_result.find('rowset')
-        result = []
-
-        for row in rowset.findall('row'):
-            a = row.attrib
-            entry = {
-                'timestamp': api.parse_ts(a['date']),
-                'id': int(a['refID']),
-                'type_id': int(a['refTypeID']),
-                'party_1': {
-                    'name': a['ownerName1'],
-                    'id': int(a['ownerID1']),
-                },
-                'party_2': {
-                    'name': a['ownerName2'],
-                    'id': int(a['ownerID2']),
-                },
-                'arg': {
-                    'name': a['argName1'],
-                    'id': int(a['argID1']),
-                },
-                'amount': float(a['amount']),
-                'balance': float(a['balance']),
-                'reason': a['reason'],
-                'tax': {
-                    'taxer_id': int(a['taxReceiverID'] or 0),
-                    'amount': float(a['taxAmount'] or 0),
-                },
-            }
-
-            result.append(entry)
-
-        result.sort(key=lambda x: x['id'])
-        return result
+        return parse_wallet_journal(api_result)
 
     def wallet_info(self):
         """Return a given character's wallet."""
