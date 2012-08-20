@@ -25,6 +25,38 @@ class CorpTestCase(APITestCase):
                 mock.call(mock.sentinel.industry_jobs_api_result),
             ])
 
+    def test_npc_standings(self):
+        self.api.get.return_value = self.make_api_result("corp/npc_standings.xml")
+
+        result = self.corp.npc_standings()
+
+        self.assertEqual(result, {
+                'agents': {
+                    3008416: {
+                        'id': 3008416,
+                        'name': 'Antaken Kamola',
+                        'standing': 2.71,
+                    },
+                },
+                'corps': {
+                    1000003: {
+                        'id': 1000003,
+                        'name': 'Prompt Delivery',
+                        'standing': 0.97,
+                    },
+                },
+                'factions': {
+                    500019: {
+                        'id': 500019,
+                        'name': "Sansha's Nation",
+                        'standing': -4.07,
+                    },
+                },
+            })
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('corp/Standings'),
+            ])
+
     @mock.patch('evelink.corp.parse_kills')
     def test_kills(self, mock_parse):
         self.api.get.return_value = mock.sentinel.kills_api_result
