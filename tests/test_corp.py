@@ -243,6 +243,43 @@ class CorpTestCase(APITestCase):
                 mock.call.get('corp/StarbaseList'),
             ])
 
+    def test_starbase_details(self):
+        self.api.get.return_value = self.make_api_result("corp/starbase_details.xml")
+
+        result = self.corp.starbase_details(123)
+
+        self.assertEqual(result, {
+                'combat': {
+                    'hostility': {
+                        'aggression': {'enabled': False},
+                        'sec_status': {'enabled': False, 'threshold': 0.0},
+                        'standing': {'enabled': True, 'threshold': 9.9},
+                        'war': {'enabled': True},
+                    },
+                    'standings_owner_id': 154683985,
+                },
+                'fuel': {16274: 18758, 16275: 2447},
+                'online_ts': 1240097429,
+                'permissions': {
+                    'deploy': {
+                        'anchor': 'Starbase Config',
+                        'offline': 'Starbase Config',
+                        'online': 'Starbase Config',
+                        'unanchor': 'Starbase Config',
+                    },
+                    'forcefield': {'alliance': True, 'corp': True},
+                    'fuel': {
+                        'take': 'Alliance Members',
+                        'view': 'Starbase Config',
+                    },
+                },
+                'state': 'online',
+                'state_ts': 1241299896,
+            })
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('corp/StarbaseDetail', {'itemID': 123}),
+            ])
+
 
 if __name__ == "__main__":
     unittest.main()

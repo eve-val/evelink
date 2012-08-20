@@ -232,4 +232,94 @@ class Corp(object):
 
         return results
 
+    def starbase_details(self, starbase_id):
+        """Returns details about the specified POS."""
+        api_result = self.api.get('corp/StarbaseDetail', {'itemID': starbase_id})
+
+        _str, _int, _float, _bool, _ts = api.elem_getters(api_result)
+
+        general_settings = api_result.find('generalSettings')
+        combat_settings = api_result.find('combatSettings')
+
+        def get_fuel_bay_perms(settings):
+            # Two 2-bit fields
+            usage_flags = int(settings.find('usageFlags').text)
+            take_value = usage_flags % 4
+            view_value = (usage_flags >> 2) % 4
+            return {
+                'view': constants.Corp.pos_permission_entities[view_value],
+                'take': constants.Corp.pos_permission_entities[take_value],
+            }
+
+        def get_deploy_perms(settings):
+            # Four 2-bit fields
+            deploy_flags = int(settings.find('deployFlags').text)
+            anchor_value = (deploy_flags >> 6) % 4
+            unanchor_value = (deploy_flags >> 4) % 4
+            online_value = (deploy_flags >> 2) % 4
+            offline_value = deploy_flags % 4
+            return {
+                'anchor': constants.Corp.pos_permission_entities[anchor_value],
+                'unanchor': constants.Corp.pos_permission_entities[unanchor_value],
+                'online': constants.Corp.pos_permission_entities[online_value],
+                'offline': constants.Corp.pos_permission_entities[offline_value],
+            }
+
+        def get_combat_settings(settings):
+            result = {
+                'standings_owner_id': int(settings.find('useStandingsFrom').attrib['ownerID']),
+                'hostility': {},
+            }
+
+            hostility = result['hostility']
+
+            # TODO(ayust): The fields returned by the API don't completely match up with
+            # the fields available in-game. May want to revisit this in the future.
+
+            standing = settings.find('onStandingDrop')
+            hostility['standing'] = {
+                'threshold': float(standing.attrib['standing']) / 100,
+                'enabled': standing.attrib.get('enabled') != '0',
+            }
+
+            sec_status = settings.find('onStatusDrop')
+            hostility['sec_status'] = {
+                'threshold': float(sec_status.attrib['standing']) / 100,
+                'enabled': sec_status.attrib.get('enabled') != '0',
+            }
+
+            hostility['aggression'] = {
+                'enabled': settings.find('onAggression').get('enabled') != '0',
+            }
+
+            hostility['war'] = {
+                'enabled': settings.find('onCorporationWar').get('enabled') != '0',
+            }
+
+            return result
+
+        result = {
+            'state': constants.Corp.pos_states[_int('state')],
+            'state_ts': _ts('stateTimestamp'),
+            'online_ts': _ts('onlineTimestamp'),
+            'permissions': {
+                'fuel': get_fuel_bay_perms(general_settings),
+                'deploy': get_deploy_perms(general_settings),
+                'forcefield': {
+                    'corp': general_settings.find('allowCorporationMembers').text == '1',
+                    'alliance': general_settings.find('allowAllianceMembers').text == '1',
+                },
+            },
+            'combat': get_combat_settings(combat_settings),
+            'fuel': {},
+        }
+
+        rowset = api_result.find('rowset')
+        for row in rowset.findall('row'):
+            a = row.attrib
+            result['fuel'][int(a['typeID'])] = int(a['quantity'])
+
+        return result
+
+
 # vim: set ts=4 sts=4 sw=4 et:

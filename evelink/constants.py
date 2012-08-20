@@ -17,6 +17,13 @@ class Corp(object):
 
     pos_states = ('unanchored', 'anchored', 'onlining', 'reinforced', 'online')
 
+    pos_permission_entities = (
+            'Starbase Config',
+            'Starbase Fuel Tech',
+            'Corporation Members',
+            'Alliance Members',
+        )
+
 class Industry(object):
     job_status = ('failed', 'delivered', 'gm-aborted', 'inflight-unanchored', 'destroyed')
 
