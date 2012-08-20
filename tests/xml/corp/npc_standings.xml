@@ -1,0 +1,13 @@
+<result>
+  <corporationNPCStandings>
+    <rowset name="agents" key="fromID" columns="fromID,fromName,standing">
+      <row fromID="3008416" fromName="Antaken Kamola" standing="2.71" />
+    </rowset>
+    <rowset name="NPCCorporations" key="fromID" columns="fromID,fromName,standing">
+      <row fromID="1000003" fromName="Prompt Delivery" standing="0.97" />
+    </rowset>
+    <rowset name="factions" key="fromID" columns="fromID,fromName,standing">
+      <row fromID="500019" fromName="Sansha's Nation" standing="-4.07" />
+    </rowset>
+  </corporationNPCStandings>
+</result>

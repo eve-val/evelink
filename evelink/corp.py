@@ -24,6 +24,40 @@ class Corp(object):
 
         return parse_industry_jobs(api_result)
 
+    def npc_standings(self):
+        """Returns information about the corporation's standings towards NPCs.
+
+        NOTE: This is *only* NPC standings. Player standings are accessed
+        via the 'contacts' method.
+        """
+        api_result = self.api.get('corp/Standings')
+        container = api_result.find('corporationNPCStandings')
+
+        rowsets = dict((r.attrib['name'], r) for r in container.findall('rowset'))
+        results = {
+            'agents': {},
+            'corps': {},
+            'factions': {},
+        }
+
+        _standing_types = {
+            'agents': 'agents',
+            'corps': 'NPCCorporations',
+            'factions': 'factions',
+        }
+
+        for key, rowset_name in _standing_types.iteritems():
+            for row in rowsets[rowset_name].findall('row'):
+                a = row.attrib
+                standing = {
+                    'id': int(a['fromID']),
+                    'name': a['fromName'],
+                    'standing': float(a['standing']),
+                }
+                results[key][standing['id']] = standing
+
+        return results
+
     def kills(self, before_kill=None):
         """Look up recent kills for a corporation.
 
