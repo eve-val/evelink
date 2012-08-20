@@ -280,6 +280,28 @@ class CorpTestCase(APITestCase):
                 mock.call.get('corp/StarbaseDetail', {'itemID': 123}),
             ])
 
+    def test_stations(self):
+        self.api.get.return_value = self.make_api_result("corp/stations.xml")
+
+        result = self.corp.stations()
+
+        self.assertEqual(result, {
+                61000368: {
+                    'docking_fee_per_volume': 0.0,
+                    'id': 61000368,
+                    'name': 'Station Name Goes Here',
+                    'office_fee': 25000000,
+                    'owner_id': 857174087,
+                    'reprocessing': {'cut': 0.025, 'efficiency': 0.5},
+                    'standing_owner_id': 673381830,
+                    'system_id': 30004181,
+                    'type_id': 21645,
+                },
+            })
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('corp/OutpostList'),
+            ])
+
 
 if __name__ == "__main__":
     unittest.main()
