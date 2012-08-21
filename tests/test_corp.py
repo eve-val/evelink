@@ -386,6 +386,37 @@ class CorpTestCase(APITestCase):
                 mock.call.get('corp/MemberTracking', {'extended': 1}),
             ])
 
+    def test_permissions(self):
+        self.api.get.return_value = self.make_api_result("corp/permissions.xml")
+
+        result = self.corp.permissions()
+
+        self.assertEqual(result, {
+                123456789: {
+                    'can_grant': {
+                        'at_base': {4: 'Bar'},
+                        'at_hq': {},
+                        'at_other': {},
+                        'global': {},
+                    },
+                    'id': 123456789,
+                    'name': 'Tester',
+                    'roles': {
+                        'at_base': {},
+                        'at_hq': {},
+                        'at_other': {},
+                        'global': {1: 'Foo'},
+                    },
+                    'titles': {
+                        1: 'Member ',
+                        512: 'Gas Attendant',
+                    },
+                },
+            })
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('corp/MemberSecurity'),
+            ])
+
     def test_stations(self):
         self.api.get.return_value = self.make_api_result("corp/stations.xml")
 

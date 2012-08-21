@@ -1,0 +1,22 @@
+<result>
+  <rowset name="members" key="characterID" columns="characterID, name">
+    <row characterID="123456789" name="Tester">
+      <rowset name="roles" key="roleID" columns="roleID,roleName">
+        <row roleID="1" roleName="Foo" />
+      </rowset>
+      <rowset name="grantableRoles" key="roleID" columns="roleID,roleName" />
+      <rowset name="rolesAtHQ" key="roleID" columns="roleID,roleName" />
+      <rowset name="grantableRolesAtHQ" key="roleID" columns="roleID,roleName" />
+      <rowset name="rolesAtBase" key="roleID" columns="roleID,roleName" />
+      <rowset name="grantableRolesAtBase" key="roleID" columns="roleID,roleName">
+        <row roleID="4" roleName="Bar" />
+      </rowset>
+      <rowset name="rolesAtOther" key="roleID" columns="roleID,roleName" />
+      <rowset name="grantableRolesAtOther" key="roleID" columns="roleID,roleName" />
+      <rowset name="titles" key="titleID" columns="titleID,titleName">
+        <row titleID="1" titleName="Member " />
+        <row titleID="512" titleName="Gas Attendant" />
+      </rowset>
+    </row>
+  </rowset>
+</result>

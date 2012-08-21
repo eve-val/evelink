@@ -411,6 +411,44 @@ class Corp(object):
 
         return results
 
+    def permissions(self):
+        """Returns information about corporation member permissions."""
+        api_result = self.api.get('corp/MemberSecurity')
+
+        results = {}
+        rowset = api_result.find('rowset')
+        for row in rowset.findall('row'):
+            a = row.attrib
+            member = {
+                'id': int(a['characterID']),
+                'name': a['name'],
+                'titles': {},
+            }
+
+            rowsets = dict((r.attrib['name'], r) for r in row.findall('rowset'))
+
+            for title_row in rowsets['titles'].findall('row'):
+                a = title_row.attrib
+                member['titles'][int(a['titleID'])] = a['titleName']
+
+            def get_roleset(roles_dict):
+                roles_group = {}
+                for key, rowset_name in roles_dict.iteritems():
+                    roles = {}
+                    roles_rowset = rowsets[rowset_name]
+                    for role_row in roles_rowset.findall('row'):
+                        a = role_row.attrib
+                        roles[int(a['roleID'])] = a['roleName']
+                    roles_group[key] = roles
+                return roles_group
+
+            member['roles'] = get_roleset(constants.Corp.role_types)
+            member['can_grant'] = get_roleset(constants.Corp.grantable_types)
+
+            results[member['id']] = member
+
+        return results
+
     def stations(self):
         """Returns information about the corporation's (non-POS) stations."""
         api_result = self.api.get('corp/OutpostList')
