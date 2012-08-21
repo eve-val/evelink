@@ -1,6 +1,7 @@
 from evelink import api, constants
 from evelink.parsing.assets import parse_assets
 from evelink.parsing.contact_list import parse_contact_list
+from evelink.parsing.contract_items import parse_contract_items
 from evelink.parsing.contracts import parse_contracts
 from evelink.parsing.industry_jobs import parse_industry_jobs
 from evelink.parsing.kills import parse_kills
@@ -172,6 +173,13 @@ class Corp(object):
                 'total': _int('victoryPointsTotal'),
             },
         }
+
+    def contract_items(self, contract_id):
+        """Lists items that a specified contract contains"""
+        api_result = self.api.get('corp/ContractItems',
+            {'contractID': contract_id})
+
+        return parse_contract_items(api_result)
 
     def contracts(self):
         """Get information about corp contracts."""

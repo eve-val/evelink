@@ -1,7 +1,8 @@
 from evelink import api, constants
 from evelink.parsing.assets import parse_assets
-from evelink.parsing.contracts import parse_contracts
 from evelink.parsing.contact_list import parse_contact_list
+from evelink.parsing.contract_items import parse_contract_items
+from evelink.parsing.contracts import parse_contracts
 from evelink.parsing.industry_jobs import parse_industry_jobs
 from evelink.parsing.kills import parse_kills
 from evelink.parsing.orders import parse_market_orders
@@ -44,6 +45,13 @@ class Char(object):
             {'characterID': self.char_id})
 
         return parse_assets(api_result)
+
+    def contract_items(self, contract_id):
+        """Lists items that a specified contract contains"""
+        api_result = self.api.get('char/ContractItems',
+            {'characterID': self.char_id, 'contractID': contract_id})
+
+        return parse_contract_items(api_result)
 
     def contracts(self):
         """Returns a record of all contracts for a specified character"""
