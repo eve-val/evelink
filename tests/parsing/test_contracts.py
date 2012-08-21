@@ -1,14 +1,12 @@
 import unittest2 as unittest
-import time
 
 from tests.utils import make_api_result
 
 from evelink import api
 from evelink.parsing import contracts as evelink_c
 
-class AssetsTestCase(unittest.TestCase):
+class ContractsTestCase(unittest.TestCase):
     def test_parse_contracts(self):
-        self.maxDiff = None
         api_result = make_api_result("corp/contracts.xml")
         result = evelink_c.parse_contracts(api_result)
         self.assertEqual(result, {
