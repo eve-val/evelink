@@ -431,6 +431,67 @@ class CorpTestCase(APITestCase):
                 mock.call.get('corp/MemberSecurity'),
             ])
 
+    def test_permissions_log(self):
+        self.api.get.return_value = self.make_api_result("corp/permissions_log.xml")
+
+        result = self.corp.permissions_log()
+
+        self.assertEqual(result, [
+                {
+                    'timestamp': 1218131820,
+                    'recipient': {'id': 1234567890, 'name': 'Tester'},
+                    'roles': {
+                        'after': {},
+                        'before': {
+                            8192: 'roleHangarCanTake1',
+                            4398046511104: 'roleContainerCanTake1',
+                        },
+                    },
+                    'role_type': 'at_other',
+                    'issuer': {'id': 1234567890, 'name': 'Tester'},
+                },
+                {
+                    'timestamp': 1218131820,
+                    'recipient': {'id': 1234567890, 'name': 'Tester'},
+                    'roles': {
+                        'after': {},
+                        'before': {
+                            8192: 'roleHangarCanTake1',
+                        },
+                    },
+                    'role_type': 'at_other',
+                    'issuer': {'id': 1234567890, 'name': 'Tester'},
+                },
+                {
+                    'timestamp': 1218131820,
+                    'recipient': {'id': 1234567890, 'name': 'Tester'},
+                    'roles': {
+                        'after': {
+                            16777216: 'roleHangarCanQuery5',
+                        },
+                        'before': {},
+                    },
+                    'role_type': 'at_other',
+                    'issuer': {'id': 1234567890, 'name': 'Tester'},
+                },
+                {
+                    'timestamp': 1215452820,
+                    'recipient': {'id': 1234567890, 'name': 'Tester'},
+                    'roles': {
+                        'after': {},
+                        'before': {
+                            2199023255552: 'roleEquipmentConfig',
+                            4503599627370496: 'roleJuniorAccountant',
+                        },
+                    },
+                    'role_type': 'at_other',
+                    'issuer': {'id': 1234567890, 'name': 'Tester'},
+                },
+            ])
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('corp/MemberSecurityLog'),
+            ])
+
     def test_stations(self):
         self.api.get.return_value = self.make_api_result("corp/stations.xml")
 

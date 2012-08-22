@@ -1,0 +1,30 @@
+<result>
+  <rowset name="roleHistory" key="changeTime" columns="changeTime,characterID,issuerID,roleLocationType">
+    <row changeTime="2008-08-07 17:57:00" characterID="1234567890" characterName="Tester" issuerID="1234567890" issuerName="Tester" roleLocationType="rolesAtOther">
+      <rowset name="oldRoles" key="roleID" columns="roleID,roleName">
+        <row roleID="8192" roleName="roleHangarCanTake1" />
+        <row roleID="4398046511104" roleName="roleContainerCanTake1" />
+      </rowset>
+      <rowset name="newRoles" key="roleID" columns="roleID,roleName" />
+    </row>
+    <row changeTime="2008-08-07 17:57:00" characterID="1234567890" characterName="Tester" issuerID="1234567890" issuerName="Tester" roleLocationType="rolesAtOther">
+      <rowset name="oldRoles" key="roleID" columns="roleID,roleName">
+        <row roleID="8192" roleName="roleHangarCanTake1" />
+      </rowset>
+      <rowset name="newRoles" key="roleID" columns="roleID,roleName" />
+    </row>
+    <row changeTime="2008-08-07 17:57:00" characterID="1234567890" characterName="Tester" issuerID="1234567890" issuerName="Tester" roleLocationType="rolesAtOther">
+      <rowset name="oldRoles" key="roleID" columns="roleID,roleName" />
+      <rowset name="newRoles" key="roleID" columns="roleID,roleName">
+        <row roleID="16777216" roleName="roleHangarCanQuery5" />
+      </rowset>
+    </row>
+    <row changeTime="2008-07-07 17:47:00" characterID="1234567890" characterName="Tester" issuerID="1234567890" issuerName="Tester" roleLocationType="rolesAtOther">
+      <rowset name="oldRoles" key="roleID" columns="roleID,roleName">
+        <row roleID="2199023255552" roleName="roleEquipmentConfig" />
+        <row roleID="4503599627370496" roleName="roleJuniorAccountant" />
+      </rowset>
+      <rowset name="newRoles" key="roleID" columns="roleID,roleName" />
+    </row>
+  </rowset>
+</result>
