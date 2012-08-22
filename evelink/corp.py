@@ -457,6 +457,49 @@ class Corp(object):
 
         return results
 
+    def permissions_log(self):
+        """Returns information about changes to member permissions."""
+        api_result = self.api.get('corp/MemberSecurityLog')
+
+        inverse_role_types = dict((v,k) for k,v in constants.Corp.role_types.iteritems())
+
+        results = []
+        rowset = api_result.find('rowset')
+        for row in rowset.findall('row'):
+            a = row.attrib
+            change = {
+                'timestamp': api.parse_ts(a['changeTime']),
+                'recipient': {
+                    'id': int(a['characterID']),
+                    'name': a['characterName'],
+                },
+                'issuer': {
+                    'id': int(a['issuerID']),
+                    'name': a['issuerName'],
+                },
+                'role_type': inverse_role_types[a['roleLocationType']],
+                'roles': {
+                    'before': {},
+                    'after': {},
+                },
+            }
+
+            rowsets = dict((r.attrib['name'], r) for r in row.findall('rowset'))
+            old, new = change['roles']['before'], change['roles']['after']
+
+            for role_row in rowsets['oldRoles'].findall('row'):
+                a = role_row.attrib
+                old[int(a['roleID'])] = a['roleName']
+
+            for role_row in rowsets['newRoles'].findall('row'):
+                a = role_row.attrib
+                new[int(a['roleID'])] = a['roleName']
+
+            results.append(change)
+
+        results.sort(key=lambda r: r['timestamp'], reverse=True)
+        return results
+
     def stations(self):
         """Returns information about the corporation's (non-POS) stations."""
         api_result = self.api.get('corp/OutpostList')
