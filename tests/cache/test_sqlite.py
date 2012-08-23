@@ -18,7 +18,11 @@ class SqliteCacheTestCase(unittest.TestCase):
 
     def test_cache(self):
         self.cache.put('foo', 'bar', 3600)
+        self.cache.put('bar', 1, 3600)
+        self.cache.put('baz', True, 3600)
         self.assertEqual(self.cache.get('foo'), 'bar')
+        self.assertEqual(self.cache.get('bar'), 1)
+        self.assertEqual(self.cache.get('baz'), True)
 
     def test_expire(self):
         self.cache.put('baz', 'qux', -1)

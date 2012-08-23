@@ -1,3 +1,4 @@
+import pickle
 import time
 import sqlite3
 
@@ -11,7 +12,7 @@ class SqliteCache(api.APICache):
         self.connection = sqlite3.connect(path)
         cursor = self.connection.cursor()
         cursor.execute('create table if not exists cache ("key" text primary key on conflict replace,'
-                       'value text, expiration integer)')
+                       'value blob, expiration integer)')
 
     def get(self, key):
         cursor = self.connection.cursor()
@@ -25,11 +26,11 @@ class SqliteCache(api.APICache):
             self.connection.commit()
             return None
         cursor.close()
-        return value
+        return pickle.loads(str(value))
 
     def put(self, key, value, duration):
         expiration = time.time() + duration
-        value_tuple = (key, value, expiration)
+        value_tuple = (key, sqlite3.Binary(pickle.dumps(value, 2)), expiration)
         cursor = self.connection.cursor()
         cursor.execute('insert into cache values (?, ?, ?)', value_tuple)
         self.connection.commit()
