@@ -1,6 +1,3 @@
-from evelink import api
-from evelink import constants
-
 def parse_assets(api_result):
     def handle_rowset(rowset, parent_location):
         results = []
