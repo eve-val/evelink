@@ -10,14 +10,12 @@ class SqliteCache(api.APICache):
         super(SqliteCache, self).__init__()
         self.connection = sqlite3.connect(path)
         cursor = self.connection.cursor()
-        cursor.execute('create table if not exists cache ('
-                       '"key" text primary key on conflict replace,'
+        cursor.execute('create table if not exists cache ("key" text primary key on conflict replace,'
                        'value text, expiration integer)')
 
     def get(self, key):
         cursor = self.connection.cursor()
-        cursor.execute('select value, expiration from cache where "key"=?',
-                       (key,))
+        cursor.execute('select value, expiration from cache where "key"=?',(key,))
         result = cursor.fetchone()
         if not result:
             return None
@@ -33,7 +31,6 @@ class SqliteCache(api.APICache):
         expiration = time.time() + duration
         value_tuple = (key, value, expiration)
         cursor = self.connection.cursor()
-        cursor.execute('insert into cache values (?, ?, ?)',
-                       value_tuple)
+        cursor.execute('insert into cache values (?, ?, ?)', value_tuple)
         self.connection.commit()
         cursor.close()
