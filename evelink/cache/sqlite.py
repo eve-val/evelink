@@ -33,7 +33,7 @@ class SqliteCache(api.APICache):
         expiration = time.time() + duration
         value_tuple = (key, value, expiration)
         cursor = self.connection.cursor()
-        cursor.execute('insert or replace into cache values (?, ?, ?)',
+        cursor.execute('insert into cache values (?, ?, ?)',
                        value_tuple)
         self.connection.commit()
         cursor.close()
