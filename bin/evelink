@@ -16,11 +16,11 @@ sys.path.insert(0, os.path.abspath(os.path.join(
     os.path.dirname(os.path.realpath(__file__)), '..')))
 
 import evelink
-from evelink.cache.shelf import ShelveCache
+from evelink.cache.sqlite import SqliteCache
 
 def create_cache(cache_path):
     cache_path = os.path.expanduser(cache_path)
-    return ShelveCache(cache_path)
+    return SqliteCache(cache_path)
 
 
 def get_parameters(args):
@@ -33,7 +33,7 @@ def get_parameters(args):
     In addition, allows specification of lists by including commas in the value.
     For instance, "1,2,3" is a posarg that results in ["1", "2", "3"] (a list
     of strings) while "foo=1,2,3" results in the same value but as a kwarg.
-    
+
     Empty values in a list are omitted, which as a side effect means that single
     and zero element lists can be specified as "1," and "," respectively.
     """
@@ -85,7 +85,7 @@ def call_evelink_api(api_obj, api_path, args, config, use_json=False):
         else:
             cls_args.append(args[0])
             args = args[1:]
-    
+
     # Get the specified class from the specified module, and construct it
     # (possibly passing in a char/corp id) with our api object.
     try:
@@ -175,7 +175,7 @@ def main():
         print """id=<id of character to use for Char API calls>"""
         print
         sys.exit(0)
-    
+
     if not args:
         parser.error("No API call specified.")
 
