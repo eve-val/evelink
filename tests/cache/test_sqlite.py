@@ -2,14 +2,14 @@ import os
 import tempfile
 import unittest2 as unittest
 
-from evelink.cache.sqlite import SQLCache
+from evelink.cache.sqlite import SqliteCache
 
-class SQLCacheTestCase(unittest.TestCase):
+class SqliteCacheTestCase(unittest.TestCase):
 
     def setUp(self):
         self.cache_dir = tempfile.mkdtemp()
         self.cache_path = os.path.join(self.cache_dir, 'sqlite')
-        self.cache = SQLCache(self.cache_path)
+        self.cache = SqliteCache(self.cache_path)
 
     def tearDown(self):
         self.cache.connection.close()

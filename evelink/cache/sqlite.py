@@ -3,16 +3,16 @@ import sqlite3
 
 from evelink import api
 
-class SQLCache(api.APICache):
+class SqliteCache(api.APICache):
     """An implementation of APICache using sqlite."""
 
     def __init__(self, path):
-        super(SQLCache, self).__init__()
+        super(SqliteCache, self).__init__()
         self.connection = sqlite3.connect(path)
         cursor = self.connection.cursor()
         cursor.execute('create table if not exists cache ('
-                       '"key" primary key on conflict replace,'
-                       'value, expiration integer)')
+                       '"key" text primary key on conflict replace,'
+                       'value text, expiration integer)')
 
     def get(self, key):
         cursor = self.connection.cursor()
