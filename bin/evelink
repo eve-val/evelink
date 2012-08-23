@@ -16,11 +16,11 @@ sys.path.insert(0, os.path.abspath(os.path.join(
     os.path.dirname(os.path.realpath(__file__)), '..')))
 
 import evelink
-from evelink.cache.shelf import ShelveCache
+from evelink.cache.sqlite import SQLCache
 
 def create_cache(cache_path):
     cache_path = os.path.expanduser(cache_path)
-    return ShelveCache(cache_path)
+    return SQLCache(cache_path)
 
 
 def get_parameters(args):
