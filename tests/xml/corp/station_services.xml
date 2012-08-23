@@ -1,0 +1,16 @@
+<result>
+  <rowset name="outpostServiceDetails" key="stationID, serviceName" columns="stationID,ownerID,serviceName,minStanding,surchargePerBadStanding,discountPerGoodStanding">
+    <row stationID="61000368" 
+      ownerID="857174087" 
+      serviceName="Market" 
+      minStanding="10" 
+      surchargePerBadStanding="10" 
+      discountPerGoodStanding="0" /> 
+    <row stationID="61000368" 
+      ownerID="857174087" 
+      serviceName="Repair Facilities" 
+      minStanding="10" 
+      surchargePerBadStanding="10" 
+      discountPerGoodStanding="10" /> 
+  </rowset>
+</result>

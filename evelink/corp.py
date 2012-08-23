@@ -526,5 +526,26 @@ class Corp(object):
 
         return results
 
+    def station_services(self, station_id):
+        """Returns information about a given station's services."""
+        api_result = self.api.get('corp/OutpostServiceDetail', {'itemID': station_id})
+
+        rowset = api_result.find('rowset')
+        results = {}
+        for row in rowset.findall('row'):
+            a = row.attrib
+            service = {
+                'name': a['serviceName'],
+                'owner_id': int(a['ownerID']),
+                'standing': {
+                    'minimum': float(a['minStanding']),
+                    'bad_surcharge': float(a['surchargePerBadStanding']),
+                    'good_discount': float(a['discountPerGoodStanding']),
+                },
+            }
+            results[service['name']] = service
+
+        return results
+
 
 # vim: set ts=4 sts=4 sw=4 et:
