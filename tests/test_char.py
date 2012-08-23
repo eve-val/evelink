@@ -24,6 +24,20 @@ class CharTestCase(APITestCase):
                 mock.call.get('char/AssetList', {'characterID': 1}),
             ])
 
+    @mock.patch('evelink.char.parse_contract_bids')
+    def test_contract_bids(self, mock_parse):
+        self.api.get.return_value = mock.sentinel.contract_bids_api_result
+        mock_parse.return_value = mock.sentinel.parsed_contract_bids
+
+        result = self.char.contract_bids()
+        self.assertEqual(result, mock.sentinel.parsed_contract_bids)
+        self.assertEqual(mock_parse.mock_calls, [
+                mock.call(mock.sentinel.contract_bids_api_result),
+            ])
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('char/ContractBids', {'characterID': 1}),
+            ])
+
     @mock.patch('evelink.char.parse_contract_items')
     def test_contract_items(self, mock_parse):
         self.api.get.return_value = mock.sentinel.contract_items_api_result

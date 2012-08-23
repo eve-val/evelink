@@ -1,0 +1,9 @@
+<result>
+  <rowset name="bidList" key="bidID" columns="bidID,contractID,bidderID,dateBid,amount"> 
+    <row bidID="123456" contractID="8439234" bidderID="984127"
+         dateBid="2007-05-09 06:34:30" amount="1958.12" />
+    <row amount="14.00" bidID="4025870" bidderID="91397530"
+         contractID="58777338" dateBid="2012-08-23 05:03:21" />
+  </rowset>
+</result>
+
