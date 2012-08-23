@@ -514,6 +514,35 @@ class CorpTestCase(APITestCase):
                 mock.call.get('corp/OutpostList'),
             ])
 
+    def test_station_services(self):
+        self.api.get.return_value = self.make_api_result("corp/station_services.xml")
+
+        result = self.corp.station_services(123)
+
+        self.assertEqual(result, {
+                'Market': {
+                    'name': 'Market',
+                    'owner_id': 857174087,
+                    'standing': {
+                        'bad_surcharge': 10.0,
+                        'good_discount': 0.0,
+                        'minimum': 10.0,
+                    },
+                },
+                'Repair Facilities': {
+                    'name': 'Repair Facilities',
+                    'owner_id': 857174087,
+                    'standing': {
+                        'bad_surcharge': 10.0,
+                        'good_discount': 10.0,
+                        'minimum': 10.0,
+                    },
+                },
+            })
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('corp/OutpostServiceDetail', {'itemID': 123}),
+            ])
+
 
 if __name__ == "__main__":
     unittest.main()
