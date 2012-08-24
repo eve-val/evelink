@@ -1,0 +1,10 @@
+<result>
+    <rowset name="currentCorporation" key="medalID" columns="medalID,reason,status,issuerID,issued" />
+    <rowset name="otherCorporations" key="medalID" columns="medalID,reason,status,issuerID,issued,corporationID,title,description">
+        <row medalID="4106" reason="For continued support, loyalty..."
+            status="private" issuerID="132533870" issued="2008-11-25 10:36:01"
+            corporationID="1711141370" title="Medal of Service"
+            description="For taking initiative and..."/> 
+    </rowset>
+</result>
+

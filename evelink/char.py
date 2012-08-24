@@ -489,5 +489,34 @@ class Char(object):
             },
         }
 
+    def medals(self):
+        """Returns a list of medals the character has."""
+
+        api_result = self.api.get('char/Medals',
+            {'characterID': self.char_id})
+
+        result = {'current': {}, 'other': {}}
+        _map = {
+            'currentCorporation': 'current',
+            'otherCorporations': 'other',
+        }
+
+        for rowset in api_result.findall('rowset'):
+            name = _map[rowset.attrib['name']]
+            for row in rowset.findall('row'):
+                a = row.attrib
+                medal_id = int(a['medalID'])
+                result[name][medal_id] = {
+                    'id': medal_id,
+                    'reason': a['reason'],
+                    'public': a['status'] == 'public',
+                    'issuer_id': int(a['issuerID']),
+                    'corp_id': int(a['corporationID']),
+                    'title': a['title'],
+                    'description': a['description'],
+                }
+
+        return result
+
 
 # vim: set ts=4 sts=4 sw=4 et:
