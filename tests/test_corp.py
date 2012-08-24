@@ -10,6 +10,76 @@ class CorpTestCase(APITestCase):
         super(CorpTestCase, self).setUp()
         self.corp = evelink_corp.Corp(api=self.api)
 
+    def test_corporation_sheet_public(self):
+        self.api.get.return_value = self.make_api_result("corp/corporation_sheet.xml")
+
+        result = self.corp.corporation_sheet(123)
+
+        self.assertEqual(result, {
+                'alliance': {'id': 150430947, 'name': 'The Dead Rabbits'},
+                'ceo': {'id': 150208955, 'name': 'Mark Roled'},
+                'description': "Garth's testing corp of awesome sauce, win sauce as it were. In this\n"
+                    "    corp...<br><br>IT HAPPENS ALL OVER",
+                'hq': {'id': 60003469,
+                       'name': 'Jita IV - Caldari Business Tribunal Information Center'},
+                'id': 150212025,
+                'logo': {'graphic_id': 0,
+                         'shapes': [{'color': 681, 'id': 448},
+                                    {'color': 676, 'id': 0},
+                                    {'color': 0, 'id': 418}]},
+                'members': {'current': 3},
+                'name': 'Banana Republic',
+                'shares': 1,
+                'tax_percent': 93.7,
+                'ticker': 'BR',
+                'url': 'some url',
+            })
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('corp/CorporationSheet', {'corporationID': 123}),
+            ])
+
+    def test_corporation_sheet(self):
+        self.api.get.return_value = self.make_api_result("corp/corporation_sheet.xml")
+
+        result = self.corp.corporation_sheet()
+
+        self.assertEqual(result, {
+                'alliance': {'id': 150430947, 'name': 'The Dead Rabbits'},
+                'ceo': {'id': 150208955, 'name': 'Mark Roled'},
+                'description': "Garth's testing corp of awesome sauce, win sauce as it were. In this\n"
+                    "    corp...<br><br>IT HAPPENS ALL OVER",
+                'hangars': {1000: 'Division 1',
+                              1001: 'Division 2',
+                              1002: 'Division 3',
+                              1003: 'Division 4',
+                              1004: 'Division 5',
+                              1005: 'Division 6',
+                              1006: 'Division 7'},
+                'hq': {'id': 60003469,
+                       'name': 'Jita IV - Caldari Business Tribunal Information Center'},
+                'id': 150212025,
+                'logo': {'graphic_id': 0,
+                         'shapes': [{'color': 681, 'id': 448},
+                                    {'color': 676, 'id': 0},
+                                    {'color': 0, 'id': 418}]},
+                'members': {'current': 3, 'limit': 6300},
+                'name': 'Banana Republic',
+                'shares': 1,
+                'tax_percent': 93.7,
+                'ticker': 'BR',
+                'url': 'some url',
+                'wallets': {1000: 'Wallet Division 1',
+                                     1001: 'Wallet Division 2',
+                                     1002: 'Wallet Division 3',
+                                     1003: 'Wallet Division 4',
+                                     1004: 'Wallet Division 5',
+                                     1005: 'Wallet Division 6',
+                                     1006: 'Wallet Division 7'}
+            })
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('corp/CorporationSheet', {}),
+            ])
+
     @mock.patch('evelink.corp.parse_industry_jobs')
     def test_industry_jobs(self, mock_parse):
         self.api.get.return_value = mock.sentinel.industry_jobs_api_result
