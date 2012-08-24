@@ -1,0 +1,5 @@
+<result>
+  <rowset name="issuedMedals" key="medalID" columns="medalID,characterID,reason,status,issuerID,issued">
+    <row medalID="24216" characterID="1302462525" reason="Its True" status="public" issuerID="1824523597" issued="2009-05-03 03:03:55" />
+  </rowset>
+</result>

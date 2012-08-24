@@ -575,6 +575,27 @@ class CorpTestCase(APITestCase):
                 mock.call.get('corp/Medals'),
             ])
 
+    def test_member_medals(self):
+        self.api.get.return_value = self.make_api_result("corp/member_medals.xml")
+
+        result = self.corp.member_medals()
+
+        self.assertEqual(result, {
+                1302462525: {
+                    24216: {
+                        'char_id': 1302462525,
+                        'issuer_id': 1824523597,
+                        'medal_id': 24216,
+                        'public': True,
+                        'reason': 'Its True',
+                        'timestamp': 1241319835,
+                    },
+                },
+            })
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('corp/MemberMedals'),
+            ])
+
 
 if __name__ == "__main__":
     unittest.main()

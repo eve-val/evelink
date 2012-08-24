@@ -573,5 +573,25 @@ class Corp(object):
 
         return results
 
+    def member_medals(self):
+        """Returns information about medals assigned to corporation members."""
+        api_result = self.api.get("corp/MemberMedals")
+
+        rowset = api_result.find('rowset')
+        results = {}
+        for row in rowset.findall('row'):
+            a = row.attrib
+            award = {
+                'medal_id': int(a['medalID']),
+                'char_id': int(a['characterID']),
+                'reason': a['reason'],
+                'public': a['status'] == 'public',
+                'issuer_id': int(a['issuerID']),
+                'timestamp': api.parse_ts(a['issued']),
+            }
+            results.setdefault(award['char_id'], {})[award['medal_id']] = award
+
+        return results
+
 
 # vim: set ts=4 sts=4 sw=4 et:
