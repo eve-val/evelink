@@ -304,6 +304,43 @@ class CharTestCase(APITestCase):
                 mock.call.get('char/Notifications', {'characterID': 1}),
             ])
 
+    def test_notification_texts(self):
+        self.api.get.return_value = self.make_api_result("char/notification_texts.xml")
+
+        result = self.char.notification_texts(1234)
+
+        self.assertEqual(result, {
+            374044083: {'shipTypeID': 606,
+                        'id': 374044083,
+                        'isHouseWarmingGift': 1},
+            374067406: {'dueDate': 1336342200L,
+                        'amount': 25000000,
+                        'id': 374067406},
+            374106507: {'cost': None,
+                        'declaredByID': 98105019,
+                        'delayHours': None,
+                        'hostileState': None,
+                        'againstID': 673381830,
+                        'id': 374106507},
+            374119034: {'aggressorCorpID': 785714366,
+                        'aggressorID': 1746208390,
+                        'armorValue': 1.0,
+                        'hullValue': 1.0,
+                        'moonID': 40264916,
+                        'shieldValue': 0.995,
+                        'solarSystemID': 30004181,
+                        'typeID': 16688,
+                        'aggressorAllianceID': 673381830,
+                        'id': 374119034},
+            374133265: {'itemID': 1005888572647,
+                        'payout': 1,
+                        'amount': 5125528.4,
+                        'id': 374133265}})
+
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('char/NotificationTexts', {'characterID': 1, 'IDs': 1234}),
+            ])
+
     def test_standings(self):
         self.api.get.return_value = self.make_api_result("char/standings.xml")
 
@@ -584,7 +621,7 @@ class CharTestCase(APITestCase):
         self.assertEqual(result, {
                 308734131: {
                     'data': {
-                        'level': '10',
+                        'level': 10,
                         'message': 'Hi, I want to social network with you!',
                     },
                     'id': 308734131,

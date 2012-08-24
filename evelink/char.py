@@ -151,6 +151,26 @@ class Char(object):
 
         return result
 
+    def notification_texts(self, notification_ids):
+        """Returns the message bodies for notifications."""
+        api_result = self.api.get('char/NotificationTexts',
+            {'characterID': self.char_id, 'IDs': notification_ids})
+
+        result = {}
+        rowset = api_result.find('rowset')
+        for row in rowset.findall('row'):
+            notification_id = int(row.attrib['notificationID'])
+            notification = {'id': notification_id}
+            notification.update(api.parse_keyval_data(row.text))
+            result[notification_id] = notification
+
+        missing_ids = api_result.find('missingIDs')
+        if missing_ids is not None:
+            for missing_id in missing_ids.text.split(","):
+                result[missing_id] = None
+
+        return result
+
     def standings(self):
         """Returns the standings towards a character from NPC entities."""
         api_result = self.api.get('char/Standings',
