@@ -131,6 +131,35 @@ class Char(object):
 
         return parse_kills(api_result)
 
+    def standings(self):
+        """Returns the standings towards a character from NPC entities."""
+        api_result = self.api.get('char/Standings',
+            {'characterID': self.char_id})
+
+        result = {}
+        rowsets = {}
+        for rowset in api_result.find('characterNPCStandings').findall('rowset'):
+            rowsets[rowset.attrib['name']] = rowset
+
+        _name_map = {
+            'agents': 'agents',
+            'corps': 'NPCCorporations',
+            'factions': 'factions',
+        }
+
+        for key, rowset_name in _name_map.iteritems():
+            result[key] = {}
+            for row in rowsets[rowset_name].findall('row'):
+                a = row.attrib
+                from_id = int(a['fromID'])
+                result[key][from_id] = {
+                    'id': from_id,
+                    'name': a['fromName'],
+                    'standing': float(a['standing']),
+                }
+
+        return result
+
     def character_sheet(self):
         """Returns attributes relating to a specific character."""
         api_result = self.api.get('char/CharacterSheet',
