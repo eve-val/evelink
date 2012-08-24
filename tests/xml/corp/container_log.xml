@@ -1,0 +1,8 @@
+<result>
+  <rowset name="containerLog" key="logTime" columns="logTime,itemID,itemTypeID,actorID,actorName,flag,locationID,action,passwordType,typeID,quantity,oldConfiguration,newConfiguration">
+    <row logTime="2008-12-21 08:10:00" itemID="2051471251" itemTypeID="17366" actorID="783037732" actorName="Halo Glory" flag="4" locationID="60011728" action="Set Name" passwordType="" typeID="" quantity="" oldConfiguration="" newConfiguration="" />
+    <row logTime="2008-12-21 08:09:00" itemID="2051471251" itemTypeID="17366" actorID="783037732" actorName="Halo Glory" flag="4" locationID="60011728" action="Set Password" passwordType="Config" typeID="" quantity="" oldConfiguration="" newConfiguration="" />
+    <row logTime="2008-12-21 08:09:00" itemID="2051471251" itemTypeID="17366" actorID="783037732" actorName="Halo Glory" flag="4" locationID="60011728" action="Configure" passwordType="" typeID="" quantity="" oldConfiguration="0" newConfiguration="0" />
+    <row logTime="2008-12-21 08:08:00" itemID="2051471251" itemTypeID="17366" actorID="783037732" actorName="Halo Glory" flag="4" locationID="60011728" action="Assemble" passwordType="" typeID="" quantity="" oldConfiguration="" newConfiguration="" />
+  </rowset>
+</result>

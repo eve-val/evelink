@@ -666,6 +666,57 @@ class CorpTestCase(APITestCase):
                 mock.call.get('corp/MemberMedals'),
             ])
 
+    def test_container_log(self):
+        self.api.get.return_value = self.make_api_result("corp/container_log.xml")
+
+        result = self.corp.container_log()
+
+        self.assertEqual(result, [
+                {'action': 'Set Name',
+                 'actor': {'id': 783037732, 'name': 'Halo Glory'},
+                 'details': {'config': {'new': None, 'old': None},
+                             'flag': 4,
+                             'password_type': None,
+                             'quantity': None,
+                             'type_id': None},
+                 'item': {'id': 2051471251, 'type_id': 17366},
+                 'location_id': 60011728,
+                 'timestamp': 1229847000},
+                {'action': 'Set Password',
+                 'actor': {'id': 783037732, 'name': 'Halo Glory'},
+                 'details': {'config': {'new': None, 'old': None},
+                             'flag': 4,
+                             'password_type': 'Config',
+                             'quantity': None,
+                             'type_id': None},
+                 'item': {'id': 2051471251, 'type_id': 17366},
+                 'location_id': 60011728,
+                 'timestamp': 1229846940},
+                {'action': 'Configure',
+                 'actor': {'id': 783037732, 'name': 'Halo Glory'},
+                 'details': {'config': {'new': 0, 'old': 0},
+                             'flag': 4,
+                             'password_type': None,
+                             'quantity': None,
+                             'type_id': None},
+                 'item': {'id': 2051471251, 'type_id': 17366},
+                 'location_id': 60011728,
+                 'timestamp': 1229846940},
+                {'action': 'Assemble',
+                 'actor': {'id': 783037732, 'name': 'Halo Glory'},
+                 'details': {'config': {'new': None, 'old': None},
+                             'flag': 4,
+                             'password_type': None,
+                             'quantity': None,
+                             'type_id': None},
+                 'item': {'id': 2051471251, 'type_id': 17366},
+                 'location_id': 60011728,
+                 'timestamp': 1229846880}
+            ])
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('corp/ContainerLog'),
+            ])
+
 
 if __name__ == "__main__":
     unittest.main()
