@@ -576,5 +576,28 @@ class CharTestCase(APITestCase):
                 }),
             ])
 
+    def test_contact_notifications(self):
+        self.api.get.return_value = self.make_api_result("char/contact_notifications.xml")
+
+        result = self.char.contact_notifications()
+
+        self.assertEqual(result, {
+                308734131: {
+                    'data': {
+                        'level': '10',
+                        'message': 'Hi, I want to social network with you!',
+                    },
+                    'id': 308734131,
+                    'sender': {
+                        'id': 797400947,
+                        'name': 'CCP Garthagk',
+                    },
+                    'timestamp': 1275174240,
+                },
+            })
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('char/ContactNotifications', {'characterID': 1}),
+            ])
+
 if __name__ == "__main__":
     unittest.main()
