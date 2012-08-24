@@ -557,6 +557,24 @@ class CorpTestCase(APITestCase):
                 mock.call.get('corp/OutpostServiceDetail', {'itemID': 123}),
             ])
 
+    def test_medals(self):
+        self.api.get.return_value = self.make_api_result("corp/medals.xml")
+
+        result = self.corp.medals()
+
+        self.assertEqual(result, {
+                1: {
+                    'create_ts': 1345740633,
+                    'creator_id': 2,
+                    'description': 'A test medal.',
+                    'id': 1,
+                    'title': 'Test Medal',
+                },
+            })
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('corp/Medals'),
+            ])
+
 
 if __name__ == "__main__":
     unittest.main()
