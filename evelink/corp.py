@@ -19,6 +19,81 @@ class Corp(object):
     def __init__(self, api):
         self.api = api
 
+    def corporation_sheet(self, corp_id=None):
+        """Get information about a corporation.
+
+        NOTE: This method may be called with or without specifying
+        a corporation ID. If a corporation ID is specified, the public
+        information for that corporation will be returned, and no api
+        key is necessary. If a corporation ID is *not* specified,
+        a corp api key *must* be provided, and the private information
+        for that corporation will be returned along with the public info.
+        """
+        params = {}
+        if corp_id is not None:
+            params['corporationID'] = corp_id
+
+        api_result = self.api.get("corp/CorporationSheet", params)
+
+        def get_logo_details(logo_result):
+            _str, _int, _float, _bool, _ts = api.elem_getters(logo_result)
+            return {
+                'graphic_id': _int('graphicID'),
+                'shapes': [
+                    {'id': _int('shape1'), 'color': _int('color1')},
+                    {'id': _int('shape2'), 'color': _int('color2')},
+                    {'id': _int('shape3'), 'color': _int('color3')},
+                ],
+            }
+
+        _str, _int, _float, _bool, _ts = api.elem_getters(api_result)
+
+        result = {
+            'id': _int('corporationID'),
+            'name': _str('corporationName'),
+            'ticker': _str('ticker'),
+            'ceo': {
+                'id': _int('ceoID'),
+                'name': _str('ceoName'),
+            },
+            'hq': {
+                'id': _int('stationID'),
+                'name': _str('stationName'),
+            },
+            'description': _str('description'),
+            'url': _str('url'),
+            'alliance': {
+                'id': _int('allianceID') or None,
+                'name': _str('allianceName') or None,
+            },
+            'tax_percent': _float('taxRate'),
+            'members': {
+                'current': _int('memberCount'),
+            },
+            'shares': _int('shares'),
+            'logo': get_logo_details(api_result.find('logo')),
+        }
+
+        if corp_id is None:
+            result['members']['limit'] = _int('memberLimit')
+
+            rowsets = dict((r.attrib['name'], r) for r in api_result.findall('rowset'))
+
+            division_types = {
+                'hangars': 'divisions',
+                'wallets': 'walletDivisions',
+            }
+
+            for key, rowset_name in division_types.iteritems():
+                divisions = {}
+                for row in rowsets[rowset_name].findall('row'):
+                    a = row.attrib
+                    divisions[int(a['accountKey'])] = a['description']
+
+                result[key] = divisions
+
+        return result
+
     def industry_jobs(self):
         """Get a list of jobs for a corporation."""
 
