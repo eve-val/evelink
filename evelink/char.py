@@ -382,6 +382,18 @@ class Char(object):
 
         return results
 
+    def mailing_lists(self):
+        """Returns the mailing lists to which a character is subscribed."""
+        api_result = self.api.get('char/MailingLists')
+
+        rowset = api_result.find('rowset')
+        results = {}
+        for row in rowset.findall('row'):
+            a = row.attrib
+            results[int(a['listID'])] = a['displayName']
+
+        return results
+
     def calendar_events(self):
         """Returns the list of upcoming calendar events for a character."""
         api_result = self.api.get('char/UpcomingCalendarEvents',

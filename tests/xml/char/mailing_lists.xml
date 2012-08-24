@@ -1,0 +1,7 @@
+<result>
+  <rowset name="mailingLists" key="listID" columns="listID,displayName">
+    <row listID="128250439" displayName="EVETycoonMail" />
+    <row listID="128783669" displayName="EveMarketScanner" />
+    <row listID="141157801" displayName="Exploration Wormholes" />
+  </rowset>
+</result>
