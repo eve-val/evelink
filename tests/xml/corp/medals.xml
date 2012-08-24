@@ -1,0 +1,5 @@
+<result>
+  <rowset name="medals" key="medalID" columns="medalID,title,description,creatorID,created">
+    <row medalID="1" title="Test Medal" description="A test medal." creatorID="2" created="2012-08-23 16:50:33" />
+  </rowset>
+</result>
