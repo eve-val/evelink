@@ -131,6 +131,26 @@ class Char(object):
 
         return parse_kills(api_result)
 
+    def notifications(self):
+        """Returns the message headers for notifications."""
+        api_result = self.api.get('char/Notifications',
+            {'characterID': self.char_id})
+
+        result = {}
+        rowset = api_result.find('rowset')
+        for row in rowset.findall('row'):
+            a = row.attrib
+            notification_id = int(a['notificationID'])
+            result[notification_id] = {
+                'id': notification_id,
+                'type_id': a['typeID'],
+                'sender_id': int(a['senderID']),
+                'timestamp': api.parse_ts(a['sentDate']),
+                'read': a['read'] == '1',
+            }
+
+        return result
+
     def standings(self):
         """Returns the standings towards a character from NPC entities."""
         api_result = self.api.get('char/Standings',

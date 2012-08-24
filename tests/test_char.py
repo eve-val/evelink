@@ -282,6 +282,28 @@ class CharTestCase(APITestCase):
                 mock.call.get('char/MarketOrders', {'characterID': 1}),
             ])
 
+    def test_notifications(self):
+        self.api.get.return_value = self.make_api_result("char/notifications.xml")
+
+        result = self.char.notifications()
+
+        self.assertEqual(result, {
+            303795523: {'id': 303795523,
+                        'read': True,
+                        'sender_id': 671216635,
+                        'timestamp': 1270836240,
+                        'type_id': '16'},
+            304084087: {'id': 304084087,
+                        'read': False,
+                        'sender_id': 797400947,
+                        'timestamp': 1271075520,
+                        'type_id': '16'}
+            })
+
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('char/Notifications', {'characterID': 1}),
+            ])
+
     def test_standings(self):
         self.api.get.return_value = self.make_api_result("char/standings.xml")
 
