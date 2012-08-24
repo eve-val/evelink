@@ -282,6 +282,25 @@ class CharTestCase(APITestCase):
                 mock.call.get('char/MarketOrders', {'characterID': 1}),
             ])
 
+    def test_standings(self):
+        self.api.get.return_value = self.make_api_result("char/standings.xml")
+
+        result = self.char.standings()
+
+        self.assertEqual(result, {
+                'agents': {3009841: {'id': 3009841, 'name': 'Pausent Ansin', 'standing': 0.1},
+                           3009846: {'id': 3009846, 'name': 'Charie Octienne', 'standing': 0.19}},
+                'corps': {1000061: {'id': 1000061, 'name': 'Freedom Extension', 'standing': 0},
+                          1000064: {'id': 1000064, 'name': 'Carthum Conglomerate', 'standing': 0.34},
+                          1000094: {'id': 1000094, 'name': 'TransStellar Shipping', 'standing': 0.02}},
+                'factions': {500003: {'id': 500003, 'name': 'Amarr Empire', 'standing': -0.1},
+                             500020: {'id': 500020, 'name': 'Serpentis', 'standing': -1}}},
+                )
+
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('char/Standings', {'characterID': 1}),
+            ])
+
     def test_research(self):
         self.api.get.return_value = self.make_api_result("char/research.xml")
 
