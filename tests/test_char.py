@@ -429,6 +429,20 @@ class CharTestCase(APITestCase):
                 }),
             ])
 
+    def test_mailing_lists(self):
+        self.api.get.return_value = self.make_api_result("char/mailing_lists.xml")
+
+        result = self.char.mailing_lists()
+
+        self.assertEqual(result, {
+                128250439: "EVETycoonMail",
+                128783669: "EveMarketScanner",
+                141157801: "Exploration Wormholes",
+            })
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('char/MailingLists'),
+            ])
+
     def test_calendar_events(self):
         self.api.get.return_value = self.make_api_result("char/calendar_events.xml")
 
