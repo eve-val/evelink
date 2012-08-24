@@ -1,6 +1,7 @@
 import calendar
 import functools
 import logging
+import re
 import time
 from urllib import urlencode
 import urllib2
@@ -86,10 +87,24 @@ def parse_keyval_data(data_string):
     keyval_pairs = data_string.strip().split('\n')
     results = {}
     for pair in keyval_pairs:
-        key, _, val = pair.partition(': ')
+        key, _, val = pair.strip().partition(': ')
+
+        if 'Date' in key:
+            val = parse_ms_date(val)
+        elif val == 'null':
+            val = None
+        elif re.match(r"^-?\d+$", val):
+            val = int(val)
+        elif re.match(r"-?\d+\.\d+", val):
+            val = float(val)
+
         results[key] = val
     return results
 
+def parse_ms_date(date_string):
+    """Convert MS date format into epoch"""
+
+    return int(date_string)/10000000 - 11644473600;
 
 class APIError(Exception):
     """Exception raised when the EVE API returns an error."""
