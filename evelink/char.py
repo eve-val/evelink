@@ -456,5 +456,38 @@ class Char(object):
         """
         return self.calendar_attendees([event_id])[int(event_id)]
 
+    def faction_warfare_stats(self):
+        """Returns FW stats for this character, if enrolled in FW.
+
+        NOTE: This will return an error instead if the character
+        is not enrolled in Faction Warfare.
+        """
+        api_result = self.api.get('char/FacWarStats',
+            {'characterID': self.char_id})
+
+        _str, _int, _float, _bool, _ts = api.elem_getters(api_result)
+
+        return {
+            'faction': {
+                'id': _int('factionID'),
+                'name': _str('factionName'),
+            },
+            'enlist_ts': _ts('enlisted'),
+            'rank': {
+                'current': _int('currentRank'),
+                'highest': _int('highestRank'),
+            },
+            'kills': {
+                'yesterday': _int('killsYesterday'),
+                'week': _int('killsLastWeek'),
+                'total': _int('killsTotal'),
+            },
+            'points': {
+                'yesterday': _int('victoryPointsYesterday'),
+                'week': _int('victoryPointsLastWeek'),
+                'total': _int('victoryPointsTotal'),
+            },
+        }
+
 
 # vim: set ts=4 sts=4 sw=4 et:

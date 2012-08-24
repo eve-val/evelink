@@ -514,6 +514,22 @@ class CharTestCase(APITestCase):
         result = self.char.event_attendees(42)
         self.assertEqual(result, mock.sentinel.attendees)
 
+    def test_faction_warfare_stats(self):
+        self.api.get.return_value = self.make_api_result("char/faction_warfare_stats.xml")
+
+        result = self.char.faction_warfare_stats()
+
+        self.assertEqual(result, {
+                'enlist_ts': 1213135800,
+                'faction': {'id': 500001, 'name': 'Caldari State'},
+                'kills': {'total': 0, 'week': 0, 'yesterday': 0},
+                'points': {'total': 0, 'week': 1044, 'yesterday': 0},
+                'rank': {'current': 4, 'highest': 4},
+            })
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('char/FacWarStats', {'characterID': 1}),
+            ])
+
 
 if __name__ == "__main__":
     unittest.main()
