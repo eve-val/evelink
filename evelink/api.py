@@ -81,6 +81,16 @@ def elem_getters(elem):
     return _str, _int, _float, _bool, _ts
 
 
+def parse_keyval_data(data_string):
+    """Parse 'key: value' lines from a LF-delimited string."""
+    keyval_pairs = data_string.strip().split('\n')
+    results = {}
+    for pair in keyval_pairs:
+        key, _, val = pair.partition(': ')
+        results[key] = val
+    return results
+
+
 class APIError(Exception):
     """Exception raised when the EVE API returns an error."""
 
@@ -234,3 +244,6 @@ def auto_api(func):
             kwargs['api'] = API()
         return func(*args, **kwargs)
     return wrapper
+
+
+# vim: set ts=4 sts=4 sw=4 et:

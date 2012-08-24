@@ -518,5 +518,27 @@ class Char(object):
 
         return result
 
+    def contact_notifications(self):
+        """Returns pending contact notifications."""
+        api_result = self.api.get('char/ContactNotifications',
+            {'characterID': self.char_id})
+
+        results = {}
+        rowset = api_result.find('rowset')
+        for row in rowset.findall('row'):
+            a = row.attrib
+            note = {
+                'id': int(a['notificationID']),
+                'sender': {
+                    'id': int(a['senderID']),
+                    'name': a['senderName'],
+                },
+                'timestamp': api.parse_ts(a['sentDate']),
+                'data': api.parse_keyval_data(a['messageData']),
+            }
+            results[note['id']] = note
+
+        return results
+
 
 # vim: set ts=4 sts=4 sw=4 et:

@@ -1,0 +1,6 @@
+<result>
+  <rowset name="contactNotifications" key="notificationID" columns="notificationID,senderID,senderName,sentDate,messageData">
+    <row notificationID="308734131" senderID="797400947" senderName="CCP Garthagk" sentDate="2010-05-29 23:04:00" 
+messageData="level: 10&#xA;message: Hi, I want to social network with you!&#xA;" />
+  </rowset>
+</result>
