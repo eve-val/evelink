@@ -668,5 +668,45 @@ class Corp(object):
 
         return results
 
+    def container_log(self):
+        """Returns a log of actions performed on corporation containers."""
+        api_result = self.api.get("corp/ContainerLog")
+
+        results = []
+        rowset = api_result.find('rowset')
+
+        def int_or_none(val):
+            return int(val) if val else None
+
+        for row in rowset.findall('row'):
+            a = row.attrib
+            action = {
+                'timestamp': api.parse_ts(a['logTime']),
+                'item': {
+                    'id': int(a['itemID']),
+                    'type_id': int(a['itemTypeID']),
+                },
+                'actor': {
+                    'id': int(a['actorID']),
+                    'name': a['actorName'],
+                },
+                'location_id': int(a['locationID']),
+                'action': a['action'],
+                'details': {
+                    # TODO(aiiane): Find a translation for this flag field
+                    'flag': int(a['flag']),
+                    'password_type': a['passwordType'] or None,
+                    'type_id': int_or_none(a['typeID']),
+                    'quantity': int_or_none(a['quantity']),
+                    'config': {
+                        'old': int_or_none(a['oldConfiguration']),
+                        'new': int_or_none(a['newConfiguration']),
+                    },
+                },
+            }
+            results.append(action)
+
+        return results
+
 
 # vim: set ts=4 sts=4 sw=4 et:
