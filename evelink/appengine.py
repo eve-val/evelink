@@ -30,7 +30,7 @@ class AppengineAPI(api.API):
                         if params else {}
                 )
         if result.status_code != 200:
-            raise ValueError, "Bad result from server: {}".format(result.status_code)
+            raise ValueError("Bad result from server: {}".format(result.status_code))
         return io.BytesIO(result.content)
 
 
