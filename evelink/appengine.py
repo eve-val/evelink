@@ -40,7 +40,9 @@ class AppengineCache(api.APICache):
         memcache.get(key)
 
     def put(self, key, value, duration):
-        memcache.set(key, value, duration)
+        if duration < 0:
+            duration = time.time() + duration
+        memcache.set(key, value, time=duration)
 
 
 class EveApiCache(ndb.Model):
@@ -51,7 +53,7 @@ class EveApiCache(ndb.Model):
 class AppengineDatastoreCache(api.APICache):
     """An implementation of APICache using the AppEngine datastore."""
 
-    def __init__(self, path):
+    def __init__(self):
         super(AppengineDatastoreCache, self).__init__()
 
     def get(self, cache_key):
@@ -65,7 +67,7 @@ class AppengineDatastoreCache(api.APICache):
         return result.value
 
     def put(self, cache_key, value, duration):
-        expiration = time.time() + duration
+        expiration = int(time.time() + duration)
         cache = EveApiCache.get_or_insert(cache_key)
         cache.value = value
         cache.expiration = expiration
