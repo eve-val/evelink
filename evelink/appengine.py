@@ -1,7 +1,9 @@
 from google.appengine.api import memcache
 from google.appengine.api import urlfetch
+from google.appengine.ext import ndb
 from evelink import api
 import io
+import time
 
 
 class AppengineAPI(api.API):
@@ -13,7 +15,7 @@ class AppengineAPI(api.API):
 
     def send_request(self, url, params):
         """Send a request via the urlfetch API.
-        
+
         url:
             The url to fetch
         params:
@@ -39,4 +41,32 @@ class AppengineCache(api.APICache):
 
     def put(self, key, value, duration):
         memcache.set(key, value, duration)
-    
+
+
+class EveApiCache(ndb.Model):
+    value = ndb.PickleProperty()
+    expiration = ndb.IntegerProperty()
+
+
+class AppengineDatastoreCache(api.APICache):
+    """An implementation of APICache using the AppEngine datastore."""
+
+    def __init__(self, path):
+        super(AppengineDatastoreCache, self).__init__()
+
+    def get(self, cache_key):
+        db_key = ndb.Key(EveApiCache, cache_key)
+        result = db_key.get()
+        if not result:
+            return None
+        if result.expiration < time.time():
+            db_key.delete()
+            return None
+        return result.value
+
+    def put(self, cache_key, value, duration):
+        expiration = time.time() + duration
+        cache = EveApiCache.get_or_insert(cache_key)
+        cache.value = value
+        cache.expiration = expiration
+        cache.put()
