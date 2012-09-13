@@ -15,7 +15,7 @@ if '--with-gae' in sys.argv:
             self.testbed.deactivate()
 
         def test_cache_datastore(self):
-            cache = appengine.AppengineDatastoreCache()
+            cache = appengine.AppEngineDatastoreCache()
             cache.put('foo', 'bar', 3600)
             cache.put('bar', 1, 3600)
             cache.put('baz', True, 3600)
@@ -24,7 +24,7 @@ if '--with-gae' in sys.argv:
             self.assertEqual(cache.get('baz'), True)
 
         def test_expire_datastore(self):
-            cache = appengine.AppengineDatastoreCache()
+            cache = appengine.AppEngineDatastoreCache()
             cache.put('baz', 'qux', -1)
             self.assertEqual(cache.get('baz'), None)
 
@@ -39,7 +39,7 @@ if '--with-gae' in sys.argv:
             self.testbed.deactivate()
 
         def test_cache_memcache(self):
-            cache = appengine.AppengineCache()
+            cache = appengine.AppEngineCache()
             cache.put('foo', 'bar', 3600)
             cache.put('bar', 1, 3600)
             cache.put('baz', True, 3600)
@@ -48,7 +48,7 @@ if '--with-gae' in sys.argv:
             self.assertEqual(cache.get('baz'), True)
 
         def test_expire_memcache(self):
-            cache = appengine.AppengineCache()
+            cache = appengine.AppEngineCache()
             cache.put('baz', 'qux', -1)
             self.assertEqual(cache.get('baz'), None)
 

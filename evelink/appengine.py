@@ -6,11 +6,11 @@ import io
 import time
 
 
-class AppengineAPI(api.API):
+class AppEngineAPI(api.API):
     """Subclass of api.API that is compatible with Google Appengine."""
     def __init__(self, base_url="api.eveonline.com", cache=None, api_key=None):
-        cache = cache or AppengineCache()
-        super(AppengineAPI, self).__init__(base_url=base_url,
+        cache = cache or AppEngineAPI()
+        super(AppEngineAPI, self).__init__(base_url=base_url,
                 cache=cache, api_key=api_key)
 
     def send_request(self, url, params):
@@ -34,7 +34,7 @@ class AppengineAPI(api.API):
         return io.BytesIO(result.content)
 
 
-class AppengineCache(api.APICache):
+class AppEngineCache(api.APICache):
     """Memcache backed APICache implementation."""
     def get(self, key):
         memcache.get(key)
@@ -45,19 +45,19 @@ class AppengineCache(api.APICache):
         memcache.set(key, value, time=duration)
 
 
-class EveApiCache(ndb.Model):
+class EveAPICache(ndb.Model):
     value = ndb.PickleProperty()
     expiration = ndb.IntegerProperty()
 
 
-class AppengineDatastoreCache(api.APICache):
+class AppEngineDatastoreCache(api.APICache):
     """An implementation of APICache using the AppEngine datastore."""
 
     def __init__(self):
-        super(AppengineDatastoreCache, self).__init__()
+        super(AppEngineDatastoreCache, self).__init__()
 
     def get(self, cache_key):
-        db_key = ndb.Key(EveApiCache, cache_key)
+        db_key = ndb.Key(EveAPICache, cache_key)
         result = db_key.get()
         if not result:
             return None
@@ -68,7 +68,7 @@ class AppengineDatastoreCache(api.APICache):
 
     def put(self, cache_key, value, duration):
         expiration = int(time.time() + duration)
-        cache = EveApiCache.get_or_insert(cache_key)
+        cache = EveAPICache.get_or_insert(cache_key)
         cache.value = value
         cache.expiration = expiration
         cache.put()
