@@ -25,6 +25,9 @@ setup(
         "evelink.cache",
         "evelink.parsing",
     ],
+    data_files=[
+        ('', ['README.md', 'LICENSE']),
+    ],
     scripts=["bin/evelink"],
     provides=["evelink"],
     classifiers=[
