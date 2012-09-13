@@ -211,18 +211,7 @@ class API(object):
 
         full_path = "https://%s/%s.xml.aspx" % (self.base_url, path)
 
-        try:
-            if params:
-                # POST request
-                _log.debug("POSTing request")
-                response = urllib2.urlopen(full_path, params)
-            else:
-                # GET request
-                _log.debug("GETting request")
-                response = urllib2.urlopen(full_path)
-        except urllib2.URLError as e:
-            # TODO: Handle this better?
-            raise e
+        response = self.send_request(full_path, params)
 
         tree = ElementTree.parse(response)
 
@@ -244,6 +233,19 @@ class API(object):
         self.cache.put(key, result, expires_time - current_time)
         return result
 
+    def send_request(self, full_path, params):
+        try:
+            if params:
+                # POST request
+                _log.debug("POSTing request")
+                return urllib2.urlopen(full_path, params)
+            else:
+                # GET request
+                _log.debug("GETting request")
+                return urllib2.urlopen(full_path)
+        except urllib2.URLError as e:
+            # TODO: Handle this better?
+            raise e
 
 def auto_api(func):
     """A decorator to automatically provide an API instance.

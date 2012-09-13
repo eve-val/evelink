@@ -80,4 +80,11 @@ To run the tests:
 $ nosetests
 ```
 
+To run the tests, including the appengine ones (this requires that you have Google AppEngine's python SDK installed):
+
+```bash
+$ cd tests
+$ nosetests --with-gae
+```
+
 Additional information for developers is available [here](https://github.com/eve-val/evelink/wiki/DevelopmentGuidelines).
