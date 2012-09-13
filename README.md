@@ -87,4 +87,4 @@ $ cd tests
 $ nosetests --with-gae
 ```
 
-Additional information for developers is available [here](https://github.com/eve-val/evelink/wiki/DevelopmentGuidelines).
+Additional information for developers is available [here](https://github.com/eve-val/evelink/wiki/Development-Guidelines).
