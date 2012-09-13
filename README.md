@@ -79,7 +79,16 @@ $ pip install -r requirements.txt
 To run the tests:
 
 ```bash
+$ nosetests
+```
+
+To run the tests, including the appengine ones:
+
+```bash
+$ cd tests
 $ nosetests --with-gae
 ```
+
+(this requires that you have Google AppEngine's python SDK installed.)
 
 Additional information for developers is available [here](https://github.com/eve-val/evelink/wiki/DevelopmentGuidelines).
