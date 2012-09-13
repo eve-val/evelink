@@ -45,7 +45,7 @@ class AppEngineCache(api.APICache):
         memcache.set(key, value, time=duration)
 
 
-class EveAPICache(ndb.Model):
+class EveLinkCache(ndb.Model):
     value = ndb.PickleProperty()
     expiration = ndb.IntegerProperty()
 
@@ -57,7 +57,7 @@ class AppEngineDatastoreCache(api.APICache):
         super(AppEngineDatastoreCache, self).__init__()
 
     def get(self, cache_key):
-        db_key = ndb.Key(EveAPICache, cache_key)
+        db_key = ndb.Key(EveLinkCache, cache_key)
         result = db_key.get()
         if not result:
             return None
@@ -68,7 +68,7 @@ class AppEngineDatastoreCache(api.APICache):
 
     def put(self, cache_key, value, duration):
         expiration = int(time.time() + duration)
-        cache = EveAPICache.get_or_insert(cache_key)
+        cache = EveLinkCache.get_or_insert(cache_key)
         cache.value = value
         cache.expiration = expiration
         cache.put()
