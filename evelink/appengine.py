@@ -9,7 +9,7 @@ import time
 class AppEngineAPI(api.API):
     """Subclass of api.API that is compatible with Google Appengine."""
     def __init__(self, base_url="api.eveonline.com", cache=None, api_key=None):
-        cache = cache or AppEngineAPI()
+        cache = cache or AppEngineCache()
         super(AppEngineAPI, self).__init__(base_url=base_url,
                 cache=cache, api_key=api_key)
 
