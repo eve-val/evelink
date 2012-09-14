@@ -24,6 +24,7 @@ setup(
         "evelink",
         "evelink.cache",
         "evelink.parsing",
+        "evelink.thirdparty",
     ],
     data_files=[
         ('', ['README.md', 'LICENSE']),

@@ -1,0 +1,40 @@
+<?xml version='1.0' encoding='utf-8'?>
+<evec_api method="quicklook" version="2.0">
+  <quicklook>
+    <item>1877</item>
+    <itemname>Rapid Light Missile Launcher II</itemname>
+    <regions>
+    <region>Curse</region>
+    </regions>
+    <hours>360</hours>
+    <minqty>1</minqty>
+    <sell_orders>
+      <order id="2534467565">
+        <region>10000012</region>
+        <station>60012904</station>
+        <station_name>Litom XI - Moon 2 - Guardian Angels Assembly Plant</station_name>
+        <security>-0.0417728879761037</security>
+        <range>32767</range>
+        <price>559000.00</price>
+        <vol_remain>12</vol_remain>
+        <min_volume>1</min_volume>
+        <expires>2012-09-14</expires>
+        <reported_time>09-06 22:06:36</reported_time>
+      </order>
+    </sell_orders>
+    <buy_orders>
+      <order id="2534467564">
+        <region>10000012</region>
+        <station>60012904</station>
+        <station_name>Litom XI - Moon 2 - Guardian Angels Assembly Plant</station_name>
+        <security>-0.0417728879761037</security>
+        <range>32767</range>
+        <price>559000.00</price>
+        <vol_remain>12</vol_remain>
+        <min_volume>1</min_volume>
+        <expires>2012-09-14</expires>
+        <reported_time>09-06 22:06:36</reported_time>
+      </order>
+    </buy_orders>
+  </quicklook>
+</evec_api>
