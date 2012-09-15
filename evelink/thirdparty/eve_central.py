@@ -1,4 +1,5 @@
 import datetime
+import json
 import urllib
 from xml.etree import ElementTree
 
@@ -102,6 +103,30 @@ class EVECentral(object):
         url = '%s/quicklook?%s' % (self.api_base, query)
 
         response = self.url_fetch(url)
+        return self._parse_item_orders(response)
+
+    def item_orders_on_route(self, type_id, start, dest, hours=360,
+        quantity_threshold=None):
+        """Fetches market orders for a given item along a shortest-path route.
+
+        Optional filters:
+            hours (int) - The time period from which to fetch posted orders.
+            quantity_threshold (int) - minimum size of order to consider.
+        """
+
+        params = [('sethours', hours)]
+        if quantity_threshold:
+            params.append(('setminQ', quantity_threshold))
+
+        query = urllib.urlencode(params, True)
+        url = '%s/quicklook/onpath/from/%s/to/%s/fortype/%s?%s' % (
+            self.api_base, start, dest, type_id, query)
+
+        response = self.url_fetch(url)
+        return self._parse_item_orders(response)
+
+    def _parse_item_orders(self, response):
+        """Shared parsing functionality for market order data from EVE-Central."""
         api_result = ElementTree.fromstring(response)
 
         res = api_result.find('quicklook')
@@ -157,6 +182,35 @@ class EVECentral(object):
             results['orders'][act] = sub_result
 
         return results
+
+    def route(self, start, dest):
+        """Returns a shortest-path route between two systems.
+
+        Both start and dest can be either exact system names or
+        system IDs.
+        """
+
+        url = '%s/route/from/%s/to/%s' % (self.api_base, start, dest)
+        response = self.url_fetch(url)
+
+        stops = json.loads(response)
+
+        results = []
+        for stop in stops:
+            results.append({
+                'from': {
+                    'id': stop['fromid'],
+                    'name': stop['from'],
+                },
+                'to': {
+                    'id': stop['toid'],
+                    'name': stop['to'],
+                },
+                'security_change': stop['secchange'],
+            })
+
+        return results
+
 
 
 # vim: set et ts=4 sts=4 sw=4:
