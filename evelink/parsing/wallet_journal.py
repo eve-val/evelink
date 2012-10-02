@@ -26,8 +26,8 @@ def parse_wallet_journal(api_result):
             'balance': float(a['balance']),
             'reason': a['reason'],
             'tax': {
-                'taxer_id': int(a['taxReceiverID'] or 0),
-                'amount': float(a['taxAmount'] or 0),
+                'taxer_id': int(a.get('taxReceiverID', 0)),
+                'amount': float(a.get('taxAmount', 0)),
             },
         }
 
