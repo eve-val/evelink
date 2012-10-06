@@ -15,7 +15,34 @@
                     damageDone="446" finalBlow="1"
                     weaponTypeID="2881" shipTypeID="17932" />
             </rowset>
-            <rowset name="items" columns="typeID,flag,qtyDropped,qtyDestroyed" />
+            <rowset name="items">
+                <row typeID="1319" flag="14" qtyDropped="0" qtyDestroyed="1"
+                    singleton="0"/>
+                <row typeID="11370" flag="28" qtyDropped="0" qtyDestroyed="1"
+                    singleton="0"/>
+                <row typeID="31119" flag="93" qtyDropped="0" qtyDestroyed="1"
+                    singleton="0"/>
+                <row typeID="3467" flag="5" qtyDropped="0" qtyDestroyed="1"
+                    singleton="0">
+                    <rowset name="items">
+                        <row typeID="819" flag="0" qtyDropped="0" qtyDestroyed="1"
+                            singleton="0"/>
+                        <row typeID="4394" flag="0" qtyDropped="0" qtyDestroyed="2"
+                            singleton="0"/>
+                    </rowset>
+                </row>
+                <row typeID="11489" flag="5" qtyDropped="1" qtyDestroyed="0"
+                    singleton="0">
+                    <rowset name="items">
+                        <row typeID="9213" flag="0" qtyDropped="7" qtyDestroyed="0"
+                            singleton="0"/>
+                        <row typeID="4260" flag="0" qtyDropped="1" qtyDestroyed="0"
+                            singleton="0"/>
+                        <row typeID="9141" flag="0" qtyDropped="1" qtyDestroyed="0"
+                            singleton="0"/>
+                    </rowset>
+                </row>
+            </rowset>
         </row>
         <row killID="15640545" solarSystemID="30001160" killTime="2010-11-24 15:28:00" moonID="0"> 
             <victim characterID="150080271" characterName="Pilot 333"
