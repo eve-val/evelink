@@ -66,15 +66,24 @@ def parse_kills(api_result):
                 'ship_type_id': int(a['shipTypeID']),
             }
 
-        result[kill_id]['items'] = {}
-        for item in rowsets['items'].findall('row'):
-            a = item.attrib
-            type_id = int(a['typeID'])
-            result[kill_id]['items'][type_id] = {
-                'id': type_id,
-                'flag': int(a['flag']),
-                'dropped': int(a['qtyDropped']),
-                'destroyed': int(a['qtyDestroyed']),
-            }
+        def _get_items(rowset):
+            items = []
+            for item in rowset.findall('row'):
+                a = item.attrib
+                type_id = int(a['typeID'])
+                items.append({
+                    'id': type_id,
+                    'flag': int(a['flag']),
+                    'dropped': int(a['qtyDropped']),
+                    'destroyed': int(a['qtyDestroyed']),
+                })
+
+                containers = item.findall('rowset')
+                for container in containers:
+                    items.extend(_get_items(container))
+
+            return items
+
+        result[kill_id]['items'] = _get_items(rowsets['items'])
 
     return result
