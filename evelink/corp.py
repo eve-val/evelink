@@ -460,7 +460,10 @@ class Corp(object):
 
     def members(self, extended=True):
         """Returns details about each member of the corporation."""
-        api_result = self.api.get('corp/MemberTracking', {'extended': int(extended)})
+        args = {}
+        if extended:
+            args['extended'] = 1
+        api_result = self.api.get('corp/MemberTracking', args)
 
         rowset = api_result.find('rowset')
         results = {}
