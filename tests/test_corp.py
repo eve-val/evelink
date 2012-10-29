@@ -484,6 +484,13 @@ class CorpTestCase(APITestCase):
                 mock.call.get('corp/MemberTracking', {'extended': 1}),
             ])
 
+    def test_members_not_extended(self):
+        self.api.get.return_value = self.make_api_result("corp/members.xml")
+        result = self.corp.members(extended=False)
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('corp/MemberTracking', {}),
+            ])
+
     def test_permissions(self):
         self.api.get.return_value = self.make_api_result("corp/permissions.xml")
 
