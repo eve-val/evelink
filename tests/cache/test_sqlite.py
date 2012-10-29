@@ -13,8 +13,14 @@ class SqliteCacheTestCase(unittest.TestCase):
 
     def tearDown(self):
         self.cache.connection.close()
-        os.remove(self.cache_path)
-        os.rmdir(self.cache_dir)
+        try:
+          os.remove(self.cache_path)
+        except OSError:
+          pass
+        try:
+          os.rmdir(self.cache_dir)
+        except OSError:
+          pass
 
     def test_cache(self):
         self.cache.put('foo', 'bar', 3600)
