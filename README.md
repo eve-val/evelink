@@ -52,8 +52,6 @@ Raw is the lowest level of access - it's basically just a small class that takes
 
 ### Wrapped access
 
-*(work in progress)*
-
 Wrapped is the middle layer of access. The methods in the wrapped access layer still map directly to EVE API endpoints, but are "nicer" to work with. They're actual Python functions, so you can be sure you're passing the right arguments. They return basic Python types which makes the results simple to use.
 
 ### Object access
@@ -82,4 +80,11 @@ To run the tests:
 $ nosetests
 ```
 
-Additional information for developers is available [here](https://github.com/eve-val/evelink/wiki/DevelopmentGuidelines).
+To run the tests, including the appengine ones (this requires that you have Google AppEngine's python SDK installed):
+
+```bash
+$ cd tests
+$ nosetests --with-gae
+```
+
+Additional information for developers is available [here](https://github.com/eve-val/evelink/wiki/Development-Guidelines).

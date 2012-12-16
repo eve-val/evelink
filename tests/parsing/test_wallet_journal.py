@@ -66,3 +66,46 @@ class WalletJournalTestCase(unittest.TestCase):
             'tax': {'amount': 0.0, 'taxer_id': 0},
             'type_id': 72},
         ])
+
+    def test_corp_wallet_journal(self):
+        api_result = make_api_result("corp/wallet_journal.xml")
+
+        result = evelink_w.parse_wallet_journal(api_result)
+
+        self.assertEqual(result, [{
+            'amount': 3843.75, 
+            'balance': 119691201.37, 
+            'party_2': {'name': 'Varax Artrald', 'id': 92229838},
+            'type_id': 85,
+            'reason': '24156:1,',
+            'timestamp': 1349149240,
+            'tax': {'taxer_id': 0, 'amount': 0.0},
+            'party_1': {'name': 'CONCORD', 'id': 1000125},
+            'arg': {'name': '9-F0B2', 'id': 30003704},
+            'id': 6421767712},
+        {
+            'amount': 97500.0,
+            'balance': 119802845.12,
+            'party_2': {'name': 'Valkyries of Night', 'id': 544497016},
+            'type_id': 60,
+            'reason': '',
+            'timestamp': 1349155785,
+            'tax': {'taxer_id': 0, 'amount': 0.0},
+            'party_1': {'name': 'Valkyries of Night', 'id': 544497016},
+            'arg': {'name': '153187659', 'id': 0},
+            'id': 6421966585},
+        {
+            'amount': 6250.0,
+            'balance': 119858095.12,
+            'party_2': {'name': 'Valkyries of Night', 'id': 544497016},
+            'type_id': 57,
+            'reason': '',
+            'timestamp': 1349189425,
+            'tax': {'taxer_id': 0, 'amount': 0.0},
+            'party_1': {'name': 'Valkyries of Night', 'id': 544497016},
+            'arg': {'name': '153219782', 'id': 0}, 'id': 6422968336}
+        ])
+
+
+        
+

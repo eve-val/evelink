@@ -1,3 +1,4 @@
+ACCOUNT = 'account'
 CHARACTER = 'char'
 CORPORATION = 'corp'
 
@@ -33,6 +34,7 @@ class Market(object):
 class APIKey(object):
     key_types = {
         # This maps from EVE API values (keys) to our local constants (values)
+        'Account': ACCOUNT,
         'Character': CHARACTER,
         'Corporation': CORPORATION,
     }

@@ -11,6 +11,8 @@ from evelink import eve
 from evelink import map
 from evelink import server
 
+__version__ = "0.2.0"
+
 # Implement NullHandler because it was only added in Python 2.7+.
 class NullHandler(logging.Handler):
     def emit(self, record):

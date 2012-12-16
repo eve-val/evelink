@@ -1,3 +1,5 @@
+dist
 venv
+MANIFEST
 *.py[co]
 .*.swp
