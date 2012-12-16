@@ -292,12 +292,12 @@ class CharTestCase(APITestCase):
                         'read': True,
                         'sender_id': 671216635,
                         'timestamp': 1270836240,
-                        'type_id': '16'},
+                        'type_id': 16},
             304084087: {'id': 304084087,
                         'read': False,
                         'sender_id': 797400947,
                         'timestamp': 1271075520,
-                        'type_id': '16'}
+                        'type_id': 16}
             })
 
         self.assertEqual(self.api.mock_calls, [

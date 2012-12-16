@@ -143,7 +143,7 @@ class Char(object):
             notification_id = int(a['notificationID'])
             result[notification_id] = {
                 'id': notification_id,
-                'type_id': a['typeID'],
+                'type_id': int(a['typeID']),
                 'sender_id': int(a['senderID']),
                 'timestamp': api.parse_ts(a['sentDate']),
                 'read': a['read'] == '1',
