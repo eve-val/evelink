@@ -99,7 +99,7 @@ class EVEWho(object):
 
             info = data['info']
             if info:
-                member_count = int(info['member_count'])
+                member_count = int(info['member_count']) - 1    # workaround for numbers divisible by 200
             else:
                 return members
 
