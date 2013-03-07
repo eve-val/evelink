@@ -7,7 +7,7 @@ from urllib import urlencode
 import urllib2
 from xml.etree import ElementTree
 
-log = logging.getLogger('evelink.api')
+_log = logging.getLogger('evelink.api')
 
 def _clean(v):
     """Convert parameters into an acceptable format for the API."""
@@ -190,9 +190,9 @@ class API(object):
         params = params or {}
         params = dict((k, _clean(v)) for k,v in params.iteritems())
 
-        log.debug("Calling %s with params=%r", path, params)
+        _log.debug("Calling %s with params=%r", path, params)
         if self.api_key:
-            log.debug("keyID and vCode added")
+            _log.debug("keyID and vCode added")
             params['keyID'] = self.api_key[0]
             params['vCode'] = self.api_key[1]
 
@@ -201,10 +201,10 @@ class API(object):
         if cached_result is not None:
             # Cached APIErrors should be re-raised
             if isinstance(cached_result, APIError):
-                log.error("Raising cached error: %r" % cached_result)
+                _log.error("Raising cached error: %r" % cached_result)
                 raise cached_result
             # Normal cached results get returned
-            log.debug("Cache hit, returning cached payload")
+            _log.debug("Cache hit, returning cached payload")
             return cached_result
 
         params = urlencode(params)
@@ -225,7 +225,7 @@ class API(object):
             exc = APIError(code, message)
 
             self.cache.put(key, exc, expires_time - current_time)
-            log.error("Raising API error: %r" % exc)
+            _log.error("Raising API error: %r" % exc)
             raise exc
 
         result = tree.find('result')
@@ -237,11 +237,11 @@ class API(object):
         try:
             if params:
                 # POST request
-                log.debug("POSTing request")
+                _log.debug("POSTing request")
                 return urllib2.urlopen(full_path, params)
             else:
                 # GET request
-                log.debug("GETting request")
+                _log.debug("GETting request")
                 return urllib2.urlopen(full_path)
         except urllib2.URLError as e:
             # TODO: Handle this better?

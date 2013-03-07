@@ -1,8 +1,12 @@
 import json
 import urllib
 import re
-from evelink import api
+import logging
 from time import sleep
+
+from evelink import api
+
+_log = logging.getLogger('evelink.api')
 
 try:
     import urllib2
@@ -11,11 +15,12 @@ except ImportError:
 
 
 class EVEWho(object):
-    def __init__(self, url_fetch_func=None, cache=None,
+    def __init__(self, url_fetch_func=None, cache=None, wait=True,
                  api_base='http://evewho.com/api.php'):
         super(EVEWho, self).__init__()
 
         self.api_base = api_base
+        self.wait = wait
 
         if url_fetch_func is not None:
             self.url_fetch = url_fetch_func
@@ -51,10 +56,10 @@ class EVEWho(object):
         if cached_result is not None:
             # Cached APIErrors should be re-raised
             if isinstance(cached_result, api.APIError):
-                api.log.error("Raising cached error: %r" % cached_result)
+                _log.error("Raising cached error: %r" % cached_result)
                 raise cached_result
                 # Normal cached results get returned
-            api.log.debug("Cache hit, returning cached payload")
+            _log.debug("Cache hit, returning cached payload")
             return cached_result
 
         query = urllib.urlencode(params, True)
@@ -62,18 +67,23 @@ class EVEWho(object):
         response = None
 
         regexp = re.compile("^hammering a website isn't very nice ya know.... please wait (\d+) seconds")
-        wait = True
-        while wait:
+        hammering = True
+        while hammering:
             response = self.url_fetch(url)
-            wait = regexp.findall(response)
-            if wait:
-                sleep(float(wait[0]))
+            hammering = regexp.findall(response)
+            if hammering:
+                if self.wait:
+                    _log.debug("Fetch page waiting: %s (%s)" % (url, response))
+                    sleep(int(hammering[0]))
+                else:
+                    _log.error("Fetch page error: %s (%s)" % (url, response))
+                    raise Exception(response)
 
         result = json.loads(response)
         self.cache.put(key, result, self.cachetime)
         return result
 
-    def member_list(self, ext_id, api_type):
+    def _member_list(self, ext_id, api_type):
         """Fetches member list for corporation or alliance.
 
         Valid api_types: 'corplist', 'allilist'.
@@ -86,7 +96,12 @@ class EVEWho(object):
         members = []
         while page <= (member_count // 200):
             data = self._get(ext_id, api_type, page)
-            member_count = int(data['info']['member_count'])
+
+            info = data['info']
+            if info:
+                member_count = int(info['member_count'])
+            else:
+                return members
 
             for member in data['characters']:
                 members.append({'name': str(member['name']),
@@ -102,13 +117,13 @@ class EVEWho(object):
 
         (Convenience wrapper for member_list.)
         """
-        return self.member_list(corp_id, api_type='corplist')
+        return self._member_list(corp_id, api_type='corplist')
 
-    def alli_member_list(self, alli_id):
+    def alliance_member_list(self, alli_id):
         """Fetch member list for a alliance.
 
         (Convenience wrapper for member_list.)
         """
-        return self.member_list(alli_id, api_type='allilist')
+        return self._member_list(alli_id, api_type='allilist')
 
 # vim: set et ts=4 sts=4 sw=4:

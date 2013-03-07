@@ -36,7 +36,7 @@ class EVEWhoTestCase(unittest.TestCase):
             """.strip()
 
         evewho = evelink_evewho.EVEWho(url_fetch_func=mock_fetch)
-        results = evewho.member_list(869043665, 'corplist')
+        results = evewho._member_list(869043665, 'corplist')
 
         self.assertEqual(results, [
             {
