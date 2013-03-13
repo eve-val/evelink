@@ -5,37 +5,20 @@ import mock
 
 import evelink.api as evelink_api
 
-class HelperTestCase(unittest.TestCase):
 
-    def test_parse_ts(self):
-        self.assertEqual(
-            evelink_api.parse_ts("2012-06-12 12:04:33"),
-            1339502673,
-        )
+class DummyResponse(object):
+    def __init__(self, content):
+        self.content = content
 
-class CacheTestCase(unittest.TestCase):
 
-    def setUp(self):
-        self.cache = evelink_api.APICache()
-
-    def test_cache(self):
-        self.cache.put('foo', 'bar', 3600)
-        self.assertEqual(self.cache.get('foo'), 'bar')
-
-    def test_expire(self):
-        self.cache.put('baz', 'qux', -1)
-        self.assertEqual(self.cache.get('baz'), None)
-
-class APITestCase(unittest.TestCase):
+@unittest.skipIf(not evelink_api._has_requests, '`requests` not available')
+class RequestsAPITestCase(unittest.TestCase):
 
     def setUp(self):
         self.cache = mock.MagicMock(spec=evelink_api.APICache)
         self.api = evelink_api.API(cache=self.cache)
-        # force disable requests if enabled.
-        self._has_requests = evelink_api._has_requests
-        evelink_api._has_requests = False
 
-        self.test_xml = StringIO(r"""
+        self.test_xml = r"""
                 <?xml version='1.0' encoding='UTF-8'?>
                 <eveapi version="2">
                     <currentTime>2009-10-18 17:05:31</currentTime>
@@ -47,9 +30,9 @@ class APITestCase(unittest.TestCase):
                     </result>
                     <cachedUntil>2009-11-18 17:05:31</cachedUntil>
                 </eveapi>
-            """.strip())
+            """.strip()
 
-        self.error_xml = StringIO(r"""
+        self.error_xml = r"""
                 <?xml version='1.0' encoding='UTF-8'?>
                 <eveapi version="2">
                     <currentTime>2009-10-18 17:05:31</currentTime>
@@ -58,10 +41,16 @@ class APITestCase(unittest.TestCase):
                     </error>
                     <cachedUntil>2009-11-18 19:05:31</cachedUntil>
                 </eveapi>
-            """.strip())
+            """.strip()
+
+        requests_patcher = mock.patch('requests.Session')
+        requests_patcher.start()
+        import requests
+        self.mock_sessions = requests.Session()
+        self.requests_patcher = requests_patcher
 
     def tearDown(self):
-        evelink_api._has_requests = self._has_requests
+        self.requests_patcher.stop()
 
     def test_cache_key(self):
         assert self.api._cache_key('foo/bar', {})
@@ -89,34 +78,37 @@ class APITestCase(unittest.TestCase):
             self.api._cache_key('foo/baz', {}),
         )
 
-    @mock.patch('urllib2.urlopen')
-    def test_get(self, mock_urlopen):
-        mock_urlopen.return_value = self.test_xml
+    def test_raw_get(self):
+        self.mock_sessions.post.return_value = DummyResponse(self.test_xml)
 
         # Pretend we don't have a cached result
         self.cache.get.return_value = None
 
-        result = self.api.get('foo/Bar', {'a':[1,2,3]})
+        tree = self.api.raw_get('foo/Bar', {'a':[1,2,3]})
 
+        result = tree.find('result')
         rowset = result.find('rowset')
         rows = rowset.findall('row')
         self.assertEqual(len(rows), 2)
         self.assertEqual(rows[0].attrib['foo'], 'bar')
+        self.assertEqual(self.api.last_timestamps, (1255885531, 1258563931))
 
-    @mock.patch('urllib2.urlopen')
-    def test_cached_get(self, mock_urlopen):
+    @mock.patch('evelink.api.get_ts_value')
+    def test_cached_raw_get(self, mock_ts):
         """Make sure that we don't try to call the API if the result is cached."""
-        mock_urlopen.return_value = self.test_xml
+        self.mock_sessions.post.return_value = DummyResponse(self.test_xml)
+        mock_ts.return_value = 123456
         self.cache.get.return_value = mock.sentinel.cached_result
 
-        result = self.api.get('foo/Bar', {'a':[1,2,3]})
+        result = self.api.raw_get('foo/Bar', {'a':[1,2,3]})
 
         self.assertEqual(result, mock.sentinel.cached_result)
-        self.assertFalse(mock_urlopen.called)
+        self.assertFalse(self.mock_sessions.post.called)
+        # timestamp attempted to be extracted.
+        self.assertEqual(self.api.last_timestamps, (123456, 123456))
 
-    @mock.patch('urllib2.urlopen')
-    def test_get_with_apikey(self, mock_urlopen):
-        mock_urlopen.return_value = self.test_xml
+    def test_raw_get_with_apikey(self):
+        self.mock_sessions.post.return_value = DummyResponse(self.test_xml)
 
         api_key = (1, 'code')
         api = evelink_api.API(cache=self.cache, api_key=api_key)
@@ -124,36 +116,36 @@ class APITestCase(unittest.TestCase):
         # Pretend we don't have a cached result
         self.cache.get.return_value = None
 
-        api.get('foo', {'a':[2,3,4]})
+        api.raw_get('foo', {'a':[2,3,4]})
 
         # Make sure the api key id and verification code were passed
-        self.assertEqual(mock_urlopen.mock_calls, [
+        self.assertEqual(self.mock_sessions.post.mock_calls, [
                 mock.call(
                     'https://api.eveonline.com/foo.xml.aspx',
-                    'a=2%2C3%2C4&vCode=code&keyID=1',
+                    params='a=2%2C3%2C4&vCode=code&keyID=1',
                 ),
             ])
 
-    @mock.patch('urllib2.urlopen')
-    def test_get_with_error(self, mock_urlopen):
-        mock_urlopen.return_value = self.error_xml
+    def test_raw_get_with_error(self):
+        self.mock_sessions.get.return_value = DummyResponse(self.error_xml)
 
         # Pretend we don't have a cached result
         self.cache.get.return_value = None
 
         self.assertRaises(evelink_api.APIError,
-            self.api.get, 'eve/Error')
+            self.api.raw_get, 'eve/Error')
+        self.assertEqual(self.api.last_timestamps, (1255885531, 1258571131))
 
-    @mock.patch('urllib2.urlopen')
-    def test_cached_get_with_error(self, mock_urlopen):
+    def test_cached_get_with_error(self):
         """Make sure that we don't try to call the API if the result is cached."""
-        mock_urlopen.return_value = self.test_xml
-        self.cache.get.return_value = evelink_api.APIError(123, "Foo")
-
+        self.mock_sessions.post.return_value = DummyResponse(self.test_xml)
+        self.cache.get.return_value = evelink_api.APIError(123, "Foo",
+            (1255885531, 1258571131))
         self.assertRaises(evelink_api.APIError,
             self.api.get, 'foo/Bar', {'a':[1,2,3]})
 
-        self.assertFalse(mock_urlopen.called)
+        self.assertFalse(self.mock_sessions.post.called)
+        self.assertEqual(self.api.last_timestamps, (1255885531, 1258571131))
 
 
 if __name__ == "__main__":
