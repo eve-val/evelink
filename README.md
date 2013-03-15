@@ -32,9 +32,15 @@ Dependencies
 ------------
 **EVELink does not require any extra dependencies for normal operation.**
 
-However, EVELink will make use of the `requests` library if it is available in your Python environment, as it enables the use of a single persistent HTTP connection for a sequence of EVE API calls for a given API instance. This eliminates the overhead of establishing a new TCP/IP connection for every EVE API call, which in turn results in an overall performance increase. For this reason it is highly recommended to have `requests` installed, but to keep up with the spirit of keeping EVELink free from external dependencies, it is left to be an option for all users.
+However, EVELink will make use of the `requests` library if it is available in your Python environment,
+as it enables the use of a single persistent HTTP connection for a sequence of EVE API calls for a
+given API instance. This eliminates the overhead of establishing a new TCP/IP connection for every
+EVE API call, which in turn results in an overall performance increase. For this reason it is highly
+recommended to have `requests` installed, but to keep up with the spirit of keeping EVELink free from
+external dependencies, it is left to be an option for all users.
 
-If you are developing on EVELink, however, the following packages are required in order to run the tests:
+If you are developing on EVELink itself (to contribute to this project), the following packages are
+required in order to run the tests:
 
  - `mock`
  - `nose`
