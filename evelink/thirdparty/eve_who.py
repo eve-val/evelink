@@ -6,12 +6,17 @@ from time import sleep
 
 from evelink import api
 
-_log = logging.getLogger('evelink.api')
-
 try:
     import urllib2
 except ImportError:
     urllib2 = None
+
+_log = logging.getLogger('evelink.thirdparty.eve_who')
+
+
+class FetchError(Exception):
+    """Class for exceptions if fetch failed."""
+    pass
 
 
 class EVEWho(object):
@@ -77,7 +82,7 @@ class EVEWho(object):
                     sleep(int(hammering[0]))
                 else:
                     _log.error("Fetch page error: %s (%s)" % (url, response))
-                    raise Exception(response)
+                    raise FetchError(response)
 
         result = json.loads(response)
         self.cache.put(key, result, self.cachetime)
@@ -125,5 +130,3 @@ class EVEWho(object):
         (Convenience wrapper for member_list.)
         """
         return self._member_list(alli_id, api_type='allilist')
-
-# vim: set et ts=4 sts=4 sw=4:
