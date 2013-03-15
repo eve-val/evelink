@@ -52,32 +52,6 @@ class RequestsAPITestCase(unittest.TestCase):
     def tearDown(self):
         self.requests_patcher.stop()
 
-    def test_cache_key(self):
-        assert self.api._cache_key('foo/bar', {})
-        assert self.api._cache_key('foo/bar', {'baz': 'qux'})
-
-        self.assertEqual(
-            self.api._cache_key('foo/bar', {'a':1, 'b':2}),
-            self.api._cache_key('foo/bar', {'b':2, 'a':1}),
-        )
-
-    def test_cache_key_variance(self):
-        """Make sure that things which shouldn't have the same cache key don't."""
-        self.assertNotEqual(
-            self.api._cache_key('foo/bar', {'a':1}),
-            self.api._cache_key('foo/bar', {'a':2}),
-        )
-
-        self.assertNotEqual(
-            self.api._cache_key('foo/bar', {'a':1}),
-            self.api._cache_key('foo/bar', {'b':1}),
-        )
-
-        self.assertNotEqual(
-            self.api._cache_key('foo/bar', {}),
-            self.api._cache_key('foo/baz', {}),
-        )
-
     def test_raw_get(self):
         self.mock_sessions.post.return_value = DummyResponse(self.test_xml)
 
