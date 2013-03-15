@@ -31,6 +31,9 @@ class APITestCase(unittest.TestCase):
     def setUp(self):
         self.cache = mock.MagicMock(spec=evelink_api.APICache)
         self.api = evelink_api.API(cache=self.cache)
+        # force disable requests if enabled.
+        self._has_requests = evelink_api._has_requests
+        evelink_api._has_requests = False
 
         self.test_xml = StringIO(r"""
                 <?xml version='1.0' encoding='UTF-8'?>
@@ -56,6 +59,9 @@ class APITestCase(unittest.TestCase):
                     <cachedUntil>2009-11-18 19:05:31</cachedUntil>
                 </eveapi>
             """.strip())
+
+    def tearDown(self):
+        evelink_api._has_requests = self._has_requests
 
     def test_cache_key(self):
         assert self.api._cache_key('foo/bar', {})

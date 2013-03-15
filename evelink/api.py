@@ -1,3 +1,4 @@
+from cStringIO import StringIO
 import calendar
 import functools
 import logging
@@ -8,6 +9,13 @@ import urllib2
 from xml.etree import ElementTree
 
 _log = logging.getLogger('evelink.api')
+
+try:
+    import requests
+    _has_requests = True
+except ImportError:
+    _log.info('`requests` not available, falling back to urllib2')
+    _has_requests = None
 
 def _clean(v):
     """Convert parameters into an acceptable format for the API."""
@@ -234,6 +242,12 @@ class API(object):
         return result
 
     def send_request(self, full_path, params):
+        if _has_requests:
+            return self.requests_request(full_path, params)
+        else:
+            return self.urllib2_request(full_path, params)
+
+    def urllib2_request(self, full_path, params):
         try:
             if params:
                 # POST request
@@ -244,6 +258,26 @@ class API(object):
                 _log.debug("GETting request")
                 return urllib2.urlopen(full_path)
         except urllib2.URLError as e:
+            # TODO: Handle this better?
+            raise e
+
+    def requests_request(self, full_path, params):
+        session = getattr(self, 'session', None)
+        if not session:
+            session = requests.Session()
+            self.session = session
+
+        try:
+            if params:
+                # POST request
+                _log.debug("POSTing request")
+                r = session.post(full_path, params=params)
+            else:
+                # GET request
+                _log.debug("GETting request")
+                r = session.get(full_path)
+            return StringIO(r.content)
+        except requests.exceptions.RequestException as e:
             # TODO: Handle this better?
             raise e
 
