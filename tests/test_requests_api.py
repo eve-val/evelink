@@ -52,36 +52,33 @@ class RequestsAPITestCase(unittest.TestCase):
     def tearDown(self):
         self.requests_patcher.stop()
 
-    def test_raw_get(self):
+    def test_get(self):
         self.mock_sessions.post.return_value = DummyResponse(self.test_xml)
 
         # Pretend we don't have a cached result
         self.cache.get.return_value = None
 
-        tree = self.api.raw_get('foo/Bar', {'a':[1,2,3]})
+        tree = self.api.get('foo/Bar', {'a':[1,2,3]})
 
-        result = tree.find('result')
-        rowset = result.find('rowset')
+        rowset = tree.find('rowset')
         rows = rowset.findall('row')
         self.assertEqual(len(rows), 2)
         self.assertEqual(rows[0].attrib['foo'], 'bar')
-        self.assertEqual(self.api.last_timestamps, (1255885531, 1258563931))
 
     @mock.patch('evelink.api.get_ts_value')
-    def test_cached_raw_get(self, mock_ts):
+    def test_cached_get(self, mock_ts):
         """Make sure that we don't try to call the API if the result is cached."""
         self.mock_sessions.post.return_value = DummyResponse(self.test_xml)
         mock_ts.return_value = 123456
         self.cache.get.return_value = mock.sentinel.cached_result
 
-        result = self.api.raw_get('foo/Bar', {'a':[1,2,3]})
+        result = self.api.get('foo/Bar', {'a':[1,2,3]})
 
         self.assertEqual(result, mock.sentinel.cached_result)
         self.assertFalse(self.mock_sessions.post.called)
         # timestamp attempted to be extracted.
-        self.assertEqual(self.api.last_timestamps, (123456, 123456))
 
-    def test_raw_get_with_apikey(self):
+    def test_get_with_apikey(self):
         self.mock_sessions.post.return_value = DummyResponse(self.test_xml)
 
         api_key = (1, 'code')
@@ -90,7 +87,7 @@ class RequestsAPITestCase(unittest.TestCase):
         # Pretend we don't have a cached result
         self.cache.get.return_value = None
 
-        api.raw_get('foo', {'a':[2,3,4]})
+        api.get('foo', {'a':[2,3,4]})
 
         # Make sure the api key id and verification code were passed
         self.assertEqual(self.mock_sessions.post.mock_calls, [
@@ -100,26 +97,23 @@ class RequestsAPITestCase(unittest.TestCase):
                 ),
             ])
 
-    def test_raw_get_with_error(self):
+    def test_get_with_error(self):
         self.mock_sessions.get.return_value = DummyResponse(self.error_xml)
 
         # Pretend we don't have a cached result
         self.cache.get.return_value = None
 
         self.assertRaises(evelink_api.APIError,
-            self.api.raw_get, 'eve/Error')
-        self.assertEqual(self.api.last_timestamps, (1255885531, 1258571131))
+            self.api.get, 'eve/Error')
 
     def test_cached_get_with_error(self):
         """Make sure that we don't try to call the API if the result is cached."""
         self.mock_sessions.post.return_value = DummyResponse(self.test_xml)
-        self.cache.get.return_value = evelink_api.APIError(123, "Foo",
-            (1255885531, 1258571131))
+        self.cache.get.return_value = evelink_api.APIError(123, "Foo")
         self.assertRaises(evelink_api.APIError,
             self.api.get, 'foo/Bar', {'a':[1,2,3]})
 
         self.assertFalse(self.mock_sessions.post.called)
-        self.assertEqual(self.api.last_timestamps, (1255885531, 1258571131))
 
 
 if __name__ == "__main__":
