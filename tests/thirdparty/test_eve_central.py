@@ -57,6 +57,11 @@ class EVECentralTestCase(unittest.TestCase):
 
         results = evec._parse_item_orders(response)
 
+        this_year = datetime.datetime.now().year
+        reported = datetime.datetime(this_year, 9, 6, 22, 6, 36)
+        if reported > datetime.datetime.now():
+            reported = reported.replace(year=this_year - 1)
+
         self.assertEqual(results, {
                 'hours': 360,
                 'id': 1877,
@@ -69,7 +74,7 @@ class EVECentralTestCase(unittest.TestCase):
                             'price': 559000.0,
                             'range': 32767,
                             'region_id': 10000012,
-                            'reported': datetime.datetime(2012, 9, 6, 22, 6, 36),
+                            'reported': reported,
                             'security': -0.0417728879761037,
                             'station': {
                                 'id': 60012904,
@@ -85,7 +90,7 @@ class EVECentralTestCase(unittest.TestCase):
                             'price': 559000.0,
                             'range': 32767,
                             'region_id': 10000012,
-                            'reported': datetime.datetime(2012, 9, 6, 22, 6, 36),
+                            'reported': reported,
                             'security': -0.0417728879761037,
                             'station': {
                                 'id': 60012904,

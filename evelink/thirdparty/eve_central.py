@@ -175,7 +175,7 @@ class EVECentral(object):
                 o['reported'] = o['reported'].replace(year=this_year)
                 if o['reported'] > datetime.datetime.now():
                     previous_year = o['reported'].year - 1
-                    o['reported'].replace(year=previous_year)
+                    o['reported'] = o['reported'].replace(year=previous_year)
 
                 sub_result[order_id] = o
 
