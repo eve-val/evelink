@@ -54,8 +54,6 @@ class RequestsAPITestCase(unittest.TestCase):
 
     def test_get(self):
         self.mock_sessions.post.return_value = DummyResponse(self.test_xml)
-
-        # Pretend we don't have a cached result
         self.cache.get.return_value = None
 
         tree = self.api.get('foo/Bar', {'a':[1,2,3]})
@@ -65,27 +63,26 @@ class RequestsAPITestCase(unittest.TestCase):
         self.assertEqual(len(rows), 2)
         self.assertEqual(rows[0].attrib['foo'], 'bar')
 
-    @mock.patch('evelink.api.get_ts_value')
-    def test_cached_get(self, mock_ts):
+    def test_cached_get(self):
         """Make sure that we don't try to call the API if the result is cached."""
-        self.mock_sessions.post.return_value = DummyResponse(self.test_xml)
-        mock_ts.return_value = 123456
-        self.cache.get.return_value = mock.sentinel.cached_result
+        self.mock_sessions.post.return_value = DummyResponse(self.error_xml)
+        self.cache.get.return_value = self.test_xml
 
         result = self.api.get('foo/Bar', {'a':[1,2,3]})
 
-        self.assertEqual(result, mock.sentinel.cached_result)
+        rowset = result.find('rowset')
+        rows = rowset.findall('row')
+        self.assertEqual(len(rows), 2)
+        self.assertEqual(rows[0].attrib['foo'], 'bar')
+
         self.assertFalse(self.mock_sessions.post.called)
-        # timestamp attempted to be extracted.
 
     def test_get_with_apikey(self):
         self.mock_sessions.post.return_value = DummyResponse(self.test_xml)
+        self.cache.get.return_value = None
 
         api_key = (1, 'code')
         api = evelink_api.API(cache=self.cache, api_key=api_key)
-
-        # Pretend we don't have a cached result
-        self.cache.get.return_value = None
 
         api.get('foo', {'a':[2,3,4]})
 
@@ -99,8 +96,6 @@ class RequestsAPITestCase(unittest.TestCase):
 
     def test_get_with_error(self):
         self.mock_sessions.get.return_value = DummyResponse(self.error_xml)
-
-        # Pretend we don't have a cached result
         self.cache.get.return_value = None
 
         self.assertRaises(evelink_api.APIError,
@@ -109,7 +104,7 @@ class RequestsAPITestCase(unittest.TestCase):
     def test_cached_get_with_error(self):
         """Make sure that we don't try to call the API if the result is cached."""
         self.mock_sessions.post.return_value = DummyResponse(self.test_xml)
-        self.cache.get.return_value = evelink_api.APIError(123, "Foo")
+        self.cache.get.return_value = self.error_xml
         self.assertRaises(evelink_api.APIError,
             self.api.get, 'foo/Bar', {'a':[1,2,3]})
 
