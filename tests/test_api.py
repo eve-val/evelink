@@ -100,6 +100,10 @@ class APITestCase(unittest.TestCase):
         rows = rowset.findall('row')
         self.assertEqual(len(rows), 2)
         self.assertEqual(rows[0].attrib['foo'], 'bar')
+        self.assertEqual(self.api.last_timestamps, {
+            'current_time': 1255885531,
+            'cached_until': 1258563931,
+        })
 
     @mock.patch('urllib2.urlopen')
     def test_cached_get(self, mock_urlopen):
@@ -117,6 +121,11 @@ class APITestCase(unittest.TestCase):
         self.assertEqual(len(rows), 2)
         self.assertEqual(rows[0].attrib['foo'], 'bar')
 
+        # timestamp attempted to be extracted.
+        self.assertEqual(self.api.last_timestamps, {
+            'current_time': 1255885531,
+            'cached_until': 1258563931,
+        })
 
     @mock.patch('urllib2.urlopen')
     def test_get_with_apikey(self, mock_urlopen):
@@ -143,6 +152,10 @@ class APITestCase(unittest.TestCase):
 
         self.assertRaises(evelink_api.APIError,
             self.api.get, 'eve/Error')
+        self.assertEqual(self.api.last_timestamps, {
+            'current_time': 1255885531,
+            'cached_until': 1258571131,
+        })
 
     @mock.patch('urllib2.urlopen')
     def test_cached_get_with_error(self, mock_urlopen):
@@ -154,6 +167,10 @@ class APITestCase(unittest.TestCase):
             self.api.get, 'foo/Bar', {'a':[1,2,3]})
 
         self.assertFalse(mock_urlopen.called)
+        self.assertEqual(self.api.last_timestamps, {
+            'current_time': 1255885531,
+            'cached_until': 1258571131,
+        })
 
 
 if __name__ == "__main__":

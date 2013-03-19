@@ -181,6 +181,13 @@ class API(object):
         if api_key and len(api_key) != 2:
             raise ValueError("The provided API key must be a tuple of (keyID, vCode).")
         self.api_key = api_key
+        self._set_last_timestamps()
+
+    def _set_last_timestamps(self, current_time=0, cached_until=0):
+        self.last_timestamps = {
+            'current_time': current_time,
+            'cached_until': cached_until,
+        }
 
     def _cache_key(self, path, params):
         sorted_params = sorted(params.iteritems())
@@ -219,6 +226,7 @@ class API(object):
         tree = ElementTree.parse(StringIO(response))
         current_time = get_ts_value(tree, 'currentTime')
         expires_time = get_ts_value(tree, 'cachedUntil')
+        self._set_last_timestamps(current_time, expires_time)
 
         if not cached:
             # Have to split this up from above as timestamps have to be

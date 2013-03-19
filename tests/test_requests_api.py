@@ -62,6 +62,10 @@ class RequestsAPITestCase(unittest.TestCase):
         rows = rowset.findall('row')
         self.assertEqual(len(rows), 2)
         self.assertEqual(rows[0].attrib['foo'], 'bar')
+        self.assertEqual(self.api.last_timestamps, {
+            'current_time': 1255885531,
+            'cached_until': 1258563931,
+        })
 
     def test_cached_get(self):
         """Make sure that we don't try to call the API if the result is cached."""
@@ -76,6 +80,11 @@ class RequestsAPITestCase(unittest.TestCase):
         self.assertEqual(rows[0].attrib['foo'], 'bar')
 
         self.assertFalse(self.mock_sessions.post.called)
+        # timestamp attempted to be extracted.
+        self.assertEqual(self.api.last_timestamps, {
+            'current_time': 1255885531,
+            'cached_until': 1258563931,
+        })
 
     def test_get_with_apikey(self):
         self.mock_sessions.post.return_value = DummyResponse(self.test_xml)
@@ -100,6 +109,10 @@ class RequestsAPITestCase(unittest.TestCase):
 
         self.assertRaises(evelink_api.APIError,
             self.api.get, 'eve/Error')
+        self.assertEqual(self.api.last_timestamps, {
+            'current_time': 1255885531,
+            'cached_until': 1258571131,
+        })
 
     def test_cached_get_with_error(self):
         """Make sure that we don't try to call the API if the result is cached."""
@@ -109,6 +122,10 @@ class RequestsAPITestCase(unittest.TestCase):
             self.api.get, 'foo/Bar', {'a':[1,2,3]})
 
         self.assertFalse(self.mock_sessions.post.called)
+        self.assertEqual(self.api.last_timestamps, {
+            'current_time': 1255885531,
+            'cached_until': 1258571131,
+        })
 
 
 if __name__ == "__main__":
