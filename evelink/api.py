@@ -177,6 +177,7 @@ class API(object):
         if not isinstance(cache, APICache):
             raise ValueError("The provided cache must subclass from APICache.")
         self.cache = cache
+        self.CACHE_VERSION = '1'
 
         if api_key and len(api_key) != 2:
             raise ValueError("The provided API key must be a tuple of (keyID, vCode).")
@@ -192,7 +193,7 @@ class API(object):
     def _cache_key(self, path, params):
         sorted_params = sorted(params.iteritems())
         # Paradoxically, Shelve doesn't like integer keys.
-        return str(hash((path, tuple(sorted_params))))
+        return '%s-%s' % (self.CACHE_VERSION, hash((path, tuple(sorted_params))))
 
     def get(self, path, params=None):
         """Request a specific path from the EVE API.
