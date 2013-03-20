@@ -53,6 +53,8 @@ class RequestsAPITestCase(unittest.TestCase):
         self.requests_patcher.stop()
 
     def test_get(self):
+        # mock up a sessions compatible response object and pretend to have
+        # nothing chached; similar pattern below for all test_get_* methods
         self.mock_sessions.post.return_value = DummyResponse(self.test_xml)
         self.cache.get.return_value = None
 
@@ -69,6 +71,8 @@ class RequestsAPITestCase(unittest.TestCase):
 
     def test_cached_get(self):
         """Make sure that we don't try to call the API if the result is cached."""
+        # mock up a sessions compatible error response, and pretend to have a
+        # good test response cached.
         self.mock_sessions.post.return_value = DummyResponse(self.error_xml)
         self.cache.get.return_value = self.test_xml
 
@@ -116,6 +120,7 @@ class RequestsAPITestCase(unittest.TestCase):
 
     def test_cached_get_with_error(self):
         """Make sure that we don't try to call the API if the result is cached."""
+        # mocked response is good now, with the error response cached.
         self.mock_sessions.post.return_value = DummyResponse(self.test_xml)
         self.cache.get.return_value = self.error_xml
         self.assertRaises(evelink_api.APIError,

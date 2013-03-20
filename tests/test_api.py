@@ -91,6 +91,8 @@ class APITestCase(unittest.TestCase):
 
     @mock.patch('urllib2.urlopen')
     def test_get(self, mock_urlopen):
+        # mock up an urlopen compatible response object and pretend to have no
+        # cached results; similar pattern for all test_get_* methods below.
         mock_urlopen.return_value = StringIO(self.test_xml)
         self.cache.get.return_value = None
 
@@ -108,6 +110,8 @@ class APITestCase(unittest.TestCase):
     @mock.patch('urllib2.urlopen')
     def test_cached_get(self, mock_urlopen):
         """Make sure that we don't try to call the API if the result is cached."""
+        # mock up a urlopen compatible error response, and pretend to have a
+        # good test response cached.
         mock_urlopen.return_value = StringIO(self.error_xml)
         self.cache.get.return_value = self.test_xml
 
@@ -160,6 +164,7 @@ class APITestCase(unittest.TestCase):
     @mock.patch('urllib2.urlopen')
     def test_cached_get_with_error(self, mock_urlopen):
         """Make sure that we don't try to call the API if the result is cached."""
+        # mocked response is good now, with the error response cached.
         mock_urlopen.return_value = StringIO(self.test_xml)
         self.cache.get.return_value = self.error_xml
 
