@@ -181,6 +181,13 @@ class API(object):
         if api_key and len(api_key) != 2:
             raise ValueError("The provided API key must be a tuple of (keyID, vCode).")
         self.api_key = api_key
+        self._set_last_timestamps()
+
+    def _set_last_timestamps(self, current_time=0, cached_until=0):
+        self.last_timestamps = {
+            'current_time': current_time,
+            'cached_until': cached_until,
+        }
 
     def _cache_key(self, path, params):
         sorted_params = sorted(params.iteritems())
@@ -205,40 +212,36 @@ class API(object):
             params['vCode'] = self.api_key[1]
 
         key = self._cache_key(path, params)
-        cached_result = self.cache.get(key)
-        if cached_result is not None:
-            # Cached APIErrors should be re-raised
-            if isinstance(cached_result, APIError):
-                _log.error("Raising cached error: %r" % cached_result)
-                raise cached_result
-            # Normal cached results get returned
+        response = self.cache.get(key)
+        cached = response is not None
+
+        if not cached:
+            # no cached response body found, call the API for one.
+            params = urlencode(params)
+            full_path = "https://%s/%s.xml.aspx" % (self.base_url, path)
+            response = self.send_request(full_path, params)
+        else:
             _log.debug("Cache hit, returning cached payload")
-            return cached_result
 
-        params = urlencode(params)
-
-        full_path = "https://%s/%s.xml.aspx" % (self.base_url, path)
-
-        response = self.send_request(full_path, params)
-
-        tree = ElementTree.parse(response)
-
+        tree = ElementTree.parse(StringIO(response))
         current_time = get_ts_value(tree, 'currentTime')
         expires_time = get_ts_value(tree, 'cachedUntil')
+        self._set_last_timestamps(current_time, expires_time)
+
+        if not cached:
+            # Have to split this up from above as timestamps have to be
+            # extracted.
+            self.cache.put(key, response, expires_time - current_time)
 
         error = tree.find('error')
         if error is not None:
             code = error.attrib['code']
             message = error.text.strip()
             exc = APIError(code, message)
-
-            self.cache.put(key, exc, expires_time - current_time)
             _log.error("Raising API error: %r" % exc)
             raise exc
 
         result = tree.find('result')
-
-        self.cache.put(key, result, expires_time - current_time)
         return result
 
     def send_request(self, full_path, params):
@@ -252,11 +255,14 @@ class API(object):
             if params:
                 # POST request
                 _log.debug("POSTing request")
-                return urllib2.urlopen(full_path, params)
+                r = urllib2.urlopen(full_path, params)
             else:
                 # GET request
                 _log.debug("GETting request")
-                return urllib2.urlopen(full_path)
+                r = urllib2.urlopen(full_path)
+            result = r.read()
+            r.close()
+            return result
         except urllib2.URLError as e:
             # TODO: Handle this better?
             raise e
@@ -276,7 +282,7 @@ class API(object):
                 # GET request
                 _log.debug("GETting request")
                 r = session.get(full_path)
-            return StringIO(r.content)
+            return r.content
         except requests.exceptions.RequestException as e:
             # TODO: Handle this better?
             raise e
