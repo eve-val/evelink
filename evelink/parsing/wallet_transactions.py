@@ -27,7 +27,11 @@ def parse_wallet_transactions(api_result):
             'action': a['transactionType'],
             'for': a['transactionFor'],
         }
+        if 'characterID' in a:
+            entry['char'] = {
+                'id': int(a['characterID']),
+                'name': a['characterName'],
+            }
         result.append(entry)
 
     return result
-

@@ -15,12 +15,14 @@
      <row  transactionDateTime="2010-02-02 18:28:00" transactionID="1304203159" quantity="2"
            typeName="Skirmish Warfare" typeID="3349" price="13012.01"
            clientID="275581519" clientName="SPAIDERKA" stationID="60003760"
+           characterID="124" characterName="Bar"
            stationName="Jita IV - Moon 4 - Caldari Navy Assembly Plant"
            transactionType="buy" transactionFor="personal"
            journalTransactionID="6256808878"/>
      <row  transactionDateTime="2010-01-29 15:45:00" transactionID="1298649939" quantity="1"
            typeName="Heavy Missile Launcher II" typeID="2410" price="556001.01"
            clientID="1703231064" clientName="Der Suchende" stationID="60004369"
+           characterID="123" characterName="Foo"
            stationName="Ohmahailen V - Moon 7 - Corporate Police Force Assembly Plant"
            transactionType="buy" transactionFor="personal"
            journalTransactionID="6256808869"/>
