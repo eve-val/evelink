@@ -13,10 +13,12 @@ def parse_wallet_journal(api_result):
             'party_1': {
                 'name': a['ownerName1'],
                 'id': int(a['ownerID1']),
+                'type':int(a['owner1TypeID']),
             },
             'party_2': {
                 'name': a['ownerName2'],
                 'id': int(a['ownerID2']),
+                'type':int(a['owner2TypeID']),
             },
             'arg': {
                 'name': a['argName1'],
