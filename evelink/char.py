@@ -579,6 +579,32 @@ class Char(object):
             results[note['id']] = note
 
         return results
+        
+    def locations(self, locationList):
+        params={}
+        params['IDs'] = locationList
+        params['characterID'] = self.char_id
+        api_result = self.api.get('char/Locations', params)
+        
+        rowset = api_result.find('rowset')
+        rows = rowset.findall('row')
+        
+        results = {}
+        for row in rows:
+            name = row.attrib['itemName'] or None
+            itemID = int(row.attrib['itemID']) or None
+            x = float(row.attrib['x']) or None
+            y = float(row.attrib['y']) or None
+            z = float(row.attrib['z']) or None
+            
+            results[itemID] = {
+                'name': name,
+                'itemID' : itemID,
+                'x' : x,
+                'y' : y,
+                'z' : z
+                }
+        return results
 
 
 # vim: set ts=4 sts=4 sw=4 et:
