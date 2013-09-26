@@ -580,10 +580,11 @@ class Char(object):
 
         return results
         
-    def locations(self, locationList):
-        params={}
-        params['IDs'] = locationList
-        params['characterID'] = self.char_id
+    def locations(self, location_list):
+        params={
+            'IDs' : location_list,
+            'characterID' : self.char_id,
+        }
         api_result = self.api.get('char/Locations', params)
         
         rowset = api_result.find('rowset')
@@ -592,18 +593,18 @@ class Char(object):
         results = {}
         for row in rows:
             name = row.attrib['itemName'] or None
-            itemID = int(row.attrib['itemID']) or None
+            id = int(row.attrib['itemID']) or None
             x = float(row.attrib['x']) or None
             y = float(row.attrib['y']) or None
             z = float(row.attrib['z']) or None
             
-            results[itemID] = {
+            results[id] = {
                 'name': name,
-                'itemID' : itemID,
+                'id' : id,
                 'x' : x,
                 'y' : y,
-                'z' : z
-                }
+                'z' : z,
+            }
         return results
 
 

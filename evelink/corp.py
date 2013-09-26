@@ -711,9 +711,10 @@ class Corp(object):
 
         return results
 
-    def locations(self, locationList):
-        params={}
-        params['IDs'] = locationList
+    def locations(self, location_list):
+        params={
+            'IDs' : location_list,
+        }
         api_result = self.api.get('corp/Locations', params)
         
         rowset = api_result.find('rowset')
@@ -722,18 +723,18 @@ class Corp(object):
         results = {}
         for row in rows:
             name = row.attrib['itemName'] or None
-            itemID = int(row.attrib['itemID']) or None
+            id = int(row.attrib['itemID']) or None
             x = float(row.attrib['x']) or None
             y = float(row.attrib['y']) or None
             z = float(row.attrib['z']) or None
             
-            results[itemID] = {
+            results[id] = {
                 'name': name,
-                'itemID' : itemID,
+                'id' : id,
                 'x' : x,
                 'y' : y,
-                'z' : z
-                }
+                'z' : z,
+            }
 
         return results
 
