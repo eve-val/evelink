@@ -723,7 +723,15 @@ class CorpTestCase(APITestCase):
         self.assertEqual(self.api.mock_calls, [
                 mock.call.get('corp/ContainerLog'),
             ])
-
+    
+    def test_locations(self):
+        self.api.get.return_value = self.make_api_result("corp/locations.xml")
+        
+        result = self.corp.locations((1009661446486,))
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('corp/Locations', {'IDs': (1009661446486,),}),
+            ])
+        self.assertEqual(result, {1009661446486L: {'id': 1009661446486L, 'x': None, 'z': None, 'name': "Superawesome test Impairor", 'y': None,},})
 
 if __name__ == "__main__":
     unittest.main()

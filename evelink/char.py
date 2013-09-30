@@ -586,7 +586,6 @@ class Char(object):
             'characterID' : self.char_id,
         }
         api_result = self.api.get('char/Locations', params)
-        
         rowset = api_result.find('rowset')
         rows = rowset.findall('row')
         

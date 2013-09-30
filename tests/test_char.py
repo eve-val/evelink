@@ -636,5 +636,15 @@ class CharTestCase(APITestCase):
                 mock.call.get('char/ContactNotifications', {'characterID': 1}),
             ])
 
+    def test_locations(self):
+        self.api.get.return_value = self.make_api_result("char/locations.xml")
+
+        result = self.char.locations((1009661446486,))
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('char/Locations', {'characterID': 1, 'IDs': (1009661446486,),}),
+            ])
+        self.assertEqual(result, {1009661446486L: {'id': 1009661446486L, 'x': None, 'z': None, 'name': "Superawesome test Impairor", 'y': None,},})
+
+
 if __name__ == "__main__":
     unittest.main()
