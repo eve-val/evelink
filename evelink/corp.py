@@ -711,5 +711,33 @@ class Corp(object):
 
         return results
 
+    def locations(self, location_list):
+        params={
+            'IDs' : location_list,
+        }
+        api_result = self.api.get('corp/Locations', params)
+        
+        rowset = api_result.find('rowset')
+        rows = rowset.findall('row')
+        
+        results = {}
+        for row in rows:
+            name = row.attrib['itemName'] or None
+            id = int(row.attrib['itemID']) or None
+            x = float(row.attrib['x']) or None
+            y = float(row.attrib['y']) or None
+            z = float(row.attrib['z']) or None
+            
+            results[id] = {
+                'name': name,
+                'id' : id,
+                'x' : x,
+                'y' : y,
+                'z' : z,
+            }
+
+        return results
+
+
 
 # vim: set ts=4 sts=4 sw=4 et:

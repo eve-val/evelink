@@ -1,0 +1,6 @@
+<result>
+    <rowset name="locations" key="itemID" columns="itemID,itemName,x,y,z">
+      <row itemID="1009661446486" itemName="Superawesome test Impairor" x="0" y="0" z="0" />
+      <row itemID="1007448817800" itemName="A Whale" x="-170714848271.291" y="-1728060949.58229" z="208419106396.3" />
+    </rowset>
+</result>
