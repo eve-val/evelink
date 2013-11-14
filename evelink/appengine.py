@@ -2,7 +2,6 @@ from google.appengine.api import memcache
 from google.appengine.api import urlfetch
 from google.appengine.ext import ndb
 from evelink import api
-import io
 import time
 
 
@@ -31,7 +30,7 @@ class AppEngineAPI(api.API):
                 )
         if result.status_code != 200:
             raise ValueError("Bad result from server: {}".format(result.status_code))
-        return io.BytesIO(result.content)
+        return result.content
 
 
 class AppEngineCache(api.APICache):

@@ -1,4 +1,3 @@
-from cStringIO import StringIO
 import calendar
 import functools
 import logging
@@ -224,7 +223,7 @@ class API(object):
         else:
             _log.debug("Cache hit, returning cached payload")
 
-        tree = ElementTree.parse(StringIO(response))
+        tree = ElementTree.fromstring(response)
         current_time = get_ts_value(tree, 'currentTime')
         expires_time = get_ts_value(tree, 'cachedUntil')
         self._set_last_timestamps(current_time, expires_time)
