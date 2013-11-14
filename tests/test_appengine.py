@@ -1,5 +1,6 @@
 import sys
 if '--with-gae' in sys.argv:
+    import mock
     import unittest2 as unittest
     from google.appengine.ext import testbed
 
@@ -51,6 +52,46 @@ if '--with-gae' in sys.argv:
             cache = appengine.AppEngineCache()
             cache.put('baz', 'qux', -1)
             self.assertEqual(cache.get('baz'), None)
+
+
+    class AppEngineAPITestCase(unittest.TestCase):
+
+        def setUp(self):
+            self.testbed = testbed.Testbed()
+            self.testbed.activate()
+            self.testbed.init_memcache_stub()
+            self.test_xml = r"""
+                <?xml version='1.0' encoding='UTF-8'?>
+                <eveapi version="2">
+                    <currentTime>2009-10-18 17:05:31</currentTime>
+                    <result>
+                        <rowset>
+                            <row foo="bar" />
+                            <row foo="baz" />
+                        </rowset>
+                    </result>
+                    <cachedUntil>2009-11-18 17:05:31</cachedUntil>
+                </eveapi>
+            """.strip()
+
+        @mock.patch('google.appengine.api.urlfetch.fetch')
+        def test_get(self, mock_urlfetch):
+            mock_urlfetch.return_value.status_code = 200
+            mock_urlfetch.return_value.content = self.test_xml
+
+            api = appengine.AppEngineAPI()
+            result = api.get('foo/Bar', {'a':[1,2,3]})
+
+            rowset = result.find('rowset')
+            rows = rowset.findall('row')
+            self.assertEqual(len(rows), 2)
+            self.assertEqual(rows[0].attrib['foo'], 'bar')
+            self.assertEqual(api.last_timestamps, {
+                'current_time': 1255885531,
+                'cached_until': 1258563931,
+            })
+
+
 
     if __name__ == "__main__":
         unittest.main()

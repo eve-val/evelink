@@ -36,7 +36,7 @@ class AppEngineAPI(api.API):
 class AppEngineCache(api.APICache):
     """Memcache backed APICache implementation."""
     def get(self, key):
-        memcache.get(key)
+        return memcache.get(key)
 
     def put(self, key, value, duration):
         if duration < 0:
