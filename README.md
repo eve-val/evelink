@@ -13,18 +13,20 @@ import evelink.eve # Wrapped API access for the /eve/ API path
 
 # Using the raw access level to get the name of a character
 api = evelink.api.API()
-result = api.get('eve/CharacterName', {'IDs': [1]})
+result, ts, expiry = api.get('eve/CharacterName', {'IDs': [1]})
 print result.find('rowset').findall('row')[0].attrib['name']
 
 # Using the wrapped access level to get the name of a character
 eve = evelink.eve.EVE()
-print eve.character_name_from_id(1)
+result, ts, expiry = eve.character_name_from_id(1)
+print result
 
 # Using authenticated calls
 api = evelink.api.API(api_key=(12345, 'longvcodestring'))
-charid = eve.character_id_from_name("Character Name")
+charid, _, _ = eve.character_id_from_name("Character Name")
 char = evelink.char.Char(char_id = charid, api=api)
-print char.wallet_balance()
+result, ts, expiry = char.wallet_balance()
+print result
 ```
 
 
