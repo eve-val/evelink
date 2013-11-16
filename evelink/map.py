@@ -15,7 +15,7 @@ class Map(object):
         NOTE: Systems with 0 jumps in the last hour are not included!
         """
 
-        api_result = self.api.get('map/Jumps')
+        api_result, current, expires = self.api.get('map/Jumps')
 
         rowset = api_result.find('rowset')
         results = {}
@@ -26,7 +26,7 @@ class Map(object):
 
         data_time = api.parse_ts(api_result.find('dataTime').text)
 
-        return results, data_time
+        return results, data_time, current, expires
 
     def kills_by_system(self):
         """Get kill counts for systems in the last hour.
@@ -36,7 +36,7 @@ class Map(object):
         Each {killdata} is {'faction':count, 'ship':count, 'pod':count}.
         """
 
-        api_result = self.api.get('map/Kills')
+        api_result, current, expires = self.api.get('map/Kills')
 
         rowset = api_result.find('rowset')
         results = {}
@@ -55,12 +55,12 @@ class Map(object):
 
         data_time = api.parse_ts(api_result.find('dataTime').text)
 
-        return results, data_time
+        return results, data_time, current, expires
 
     def faction_warfare_systems(self):
         """Get a dict of factional warfare systems and their info."""
 
-        api_result = self.api.get('map/FacWarSystems')
+        api_result, current, expires = self.api.get('map/FacWarSystems')
 
         rowset = api_result.find('rowset')
         results = {}
@@ -81,12 +81,12 @@ class Map(object):
                 'contested': contested,
             }
 
-        return results
+        return results, current, expires
 
     def sov_by_system(self):
         """Get sovereignty info keyed by system."""
 
-        api_result = self.api.get('map/Sovereignty')
+        api_result, current, expires = self.api.get('map/Sovereignty')
 
         rowset = api_result.find('rowset')
         results = {}
@@ -107,4 +107,4 @@ class Map(object):
 
         data_time = api.parse_ts(api_result.find('dataTime').text)
 
-        return (results, data_time)
+        return results, data_time, current, expires
