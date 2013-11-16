@@ -242,7 +242,7 @@ class API(object):
             raise exc
 
         result = tree.find('result')
-        return result
+        return result, current_time, expires_time
 
     def send_request(self, full_path, params):
         if _has_requests:
