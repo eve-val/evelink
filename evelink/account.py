@@ -12,7 +12,7 @@ class Account(object):
 
     def status(self):
         """Returns the account's subscription status."""
-        api_result = self.api.get('account/AccountStatus')
+        api_result, current, expires = self.api.get('account/AccountStatus')
 
         _str, _int, _float, _bool, _ts = api.elem_getters(api_result)
 
@@ -21,12 +21,12 @@ class Account(object):
             'create_ts': _ts('createDate'),
             'logins': _int('logonCount'),
             'minutes_played': _int('logonMinutes'),
-        }
+        }, current, expires
 
     def key_info(self):
         """Returns the details of the API key being used to auth."""
 
-        api_result = self.api.get('account/APIKeyInfo')
+        api_result, current, expires = self.api.get('account/APIKeyInfo')
 
         key = api_result.find('key')
         result = {
@@ -48,12 +48,12 @@ class Account(object):
             }
             result['characters'][character['id']] = character
 
-        return result
+        return result, current, expires
 
     def characters(self):
         """Returns all of the characters on an account."""
 
-        api_result = self.api.get('account/Characters')
+        api_result, current, expires = self.api.get('account/Characters')
 
         rowset = api_result.find('rowset')
         result = {}
@@ -68,4 +68,4 @@ class Account(object):
             }
             result[character['id']] = character
 
-        return result
+        return result, current, expires
