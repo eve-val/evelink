@@ -6,7 +6,7 @@ from evelink.parsing import wallet_journal as evelink_w
 
 class WalletJournalTestCase(unittest.TestCase):
     def test_wallet_journal(self):
-        api_result = make_api_result("char/wallet_journal.xml")
+        api_result, _, _ = make_api_result("char/wallet_journal.xml")
 
         result = evelink_w.parse_wallet_journal(api_result)
 
@@ -68,13 +68,13 @@ class WalletJournalTestCase(unittest.TestCase):
         ])
 
     def test_corp_wallet_journal(self):
-        api_result = make_api_result("corp/wallet_journal.xml")
+        api_result, _, _ = make_api_result("corp/wallet_journal.xml")
 
         result = evelink_w.parse_wallet_journal(api_result)
 
         self.assertEqual(result, [{
-            'amount': 3843.75, 
-            'balance': 119691201.37, 
+            'amount': 3843.75,
+            'balance': 119691201.37,
             'party_2': {'name': 'Varax Artrald', 'id': 92229838},
             'type_id': 85,
             'reason': '24156:1,',
@@ -107,5 +107,5 @@ class WalletJournalTestCase(unittest.TestCase):
         ])
 
 
-        
+
 

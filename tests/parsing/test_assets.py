@@ -7,7 +7,7 @@ from evelink.parsing import assets as evelink_a
 class AssetsTestCase(unittest.TestCase):
 
     def test_parse_assets(self):
-        api_result = make_api_result("corp/assets.xml")
+        api_result, _, _ = make_api_result("corp/assets.xml")
 
         result = evelink_a.parse_assets(api_result)
 

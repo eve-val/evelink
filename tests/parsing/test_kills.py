@@ -6,7 +6,7 @@ from tests.utils import make_api_result
 class KillsTestCase(unittest.TestCase):
 
     def test_parse_kills(self):
-        api_result = make_api_result("char/kills.xml")
+        api_result, _, _ = make_api_result("char/kills.xml")
 
         result = evelink_k.parse_kills(api_result)
 

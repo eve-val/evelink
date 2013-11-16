@@ -9,7 +9,7 @@ class ContactsTestCase(unittest.TestCase):
     maxDiff = 1000
 
     def test_parse_char_contact_list(self):
-        api_result = make_api_result("char/contact_list.xml")
+        api_result, _, _ = make_api_result("char/contact_list.xml")
 
         result = contact_list.parse_contact_list(api_result)
 
@@ -52,7 +52,7 @@ class ContactsTestCase(unittest.TestCase):
         self.assertEqual(sorted(result.keys()), sorted(expected_result.keys()))
 
     def test_parse_corp_contact_list(self):
-        api_result = make_api_result("corp/contact_list.xml")
+        api_result, _, _ = make_api_result("corp/contact_list.xml")
 
         result = contact_list.parse_contact_list(api_result)
 

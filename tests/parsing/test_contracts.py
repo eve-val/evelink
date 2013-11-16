@@ -7,7 +7,7 @@ from evelink.parsing import contracts as evelink_c
 
 class ContractsTestCase(unittest.TestCase):
     def test_parse_contracts(self):
-        api_result = make_api_result("corp/contracts.xml")
+        api_result, _, _ = make_api_result("corp/contracts.xml")
         result = evelink_c.parse_contracts(api_result)
         self.assertEqual(result, {
                 5966: {

@@ -8,7 +8,7 @@ from evelink.parsing import orders as evelink_o
 class OrdersTestCase(unittest.TestCase):
 
     def test_parse_market_orders(self):
-        api_result = make_api_result("char/orders.xml")
+        api_result, _, _ = make_api_result("char/orders.xml")
 
         result = evelink_o.parse_market_orders(api_result)
 
