@@ -9,7 +9,7 @@ class EVE(object):
 
     def certificate_tree(self):
         """Returns a list of certificates in eve."""
-        api_result = self.api.get('eve/CertificateTree')
+        api_result, current, expires = self.api.get('eve/CertificateTree')
 
         result = {}
         rowset = api_result.find('rowset')
@@ -72,7 +72,7 @@ class EVE(object):
 
             result[cat_name] = cat_tree
 
-        return result
+        return result, current, expires
 
     def character_names_from_ids(self, id_list):
         """Retrieve a dict mapping character IDs to names.
@@ -85,7 +85,7 @@ class EVE(object):
         the entire call to fail.
         """
 
-        api_result = self.api.get('eve/CharacterName', {
+        api_result, current, expires = self.api.get('eve/CharacterName', {
                 'IDs': set(id_list),
             })
 
@@ -103,14 +103,15 @@ class EVE(object):
             char_id = int(row.attrib['characterID'])
             results[char_id] = name
 
-        return results
+        return results, current, expires
 
     def character_name_from_id(self, char_id):
         """Retrieve the character's name based on ID.
 
         Convenience wrapper around character_names_from_ids().
         """
-        return self.character_names_from_ids([char_id]).get(char_id)
+        result, current, expires = self.character_names_from_ids([char_id])
+        return result.get(char_id), current, expires
 
     def character_ids_from_names(self, name_list):
         """Retrieve a dict mapping character names to IDs.
@@ -121,7 +122,7 @@ class EVE(object):
         Names of unknown characters will map to None.
         """
 
-        api_result = self.api.get('eve/CharacterID', {
+        api_result, current, expires = self.api.get('eve/CharacterID', {
                 'names': set(name_list),
             })
 
@@ -134,19 +135,20 @@ class EVE(object):
             char_id = int(row.attrib['characterID']) or None
             results[name] = char_id
 
-        return results
+        return results, current, expires
 
     def character_id_from_name(self, name):
         """Retrieve the named character's ID.
 
         Convenience wrapper around character_ids_from_names().
         """
-        return self.character_ids_from_names([name]).get(name)
+        result, current, expires = self.character_ids_from_names([name])
+        return result.get(name), current, expires
 
     def character_info_from_id(self, char_id):
         """Retrieve a dict of info about the designated character."""
 
-        api_result = self.api.get('eve/CharacterInfo', {
+        api_result, current, expires = self.api.get('eve/CharacterInfo', {
                 'characterID': char_id,
             })
 
@@ -196,12 +198,12 @@ class EVE(object):
                     'start_ts': start_date,
                 })
 
-        return results
+        return results, current, expires
 
     def alliances(self):
         """Return a dict of all alliances in EVE."""
 
-        api_result = self.api.get('eve/AllianceList')
+        api_result, current, expires = self.api.get('eve/AllianceList')
 
         results = {}
         rowset = api_result.find('rowset')
@@ -227,12 +229,12 @@ class EVE(object):
 
             results[alliance['id']] = alliance
 
-        return results
+        return results, current, expires
 
     def errors(self):
         """Return a mapping of error codes to messages."""
 
-        api_result = self.api.get('eve/ErrorList')
+        api_result, current, expires = self.api.get('eve/ErrorList')
 
         rowset = api_result.find('rowset')
         results = {}
@@ -241,12 +243,12 @@ class EVE(object):
             message = row.attrib['errorText']
             results[code] = message
 
-        return results
+        return results, current, expires
 
     def faction_warfare_stats(self):
         """Return various statistics from Faction Warfare."""
 
-        api_result = self.api.get('eve/FacWarStats')
+        api_result, current, expires = self.api.get('eve/FacWarStats')
 
         totals = api_result.find('totals')
         rowsets = dict((r.attrib['name'], r) for r in api_result.findall('rowset'))
@@ -301,12 +303,12 @@ class EVE(object):
             }
             results['wars'].append(war)
 
-        return results
+        return results, current, expires
 
     def skill_tree(self):
         """Return a dict of all available skill groups."""
 
-        api_result = self.api.get('eve/SkillTree')
+        api_result, current, expires = self.api.get('eve/SkillTree')
 
         rowset = api_result.find('rowset') # skillGroups
 
@@ -382,13 +384,13 @@ class EVE(object):
                 for skill_id, skill_info in skill['required_skills'].iteritems():
                     skill_info['name'] = name_cache.get(skill_id)
 
-        return results
+        return results, current, expires
 
 
     def reference_types(self):
         """Return a dict containing id -> name reference type mappings."""
 
-        api_result = self.api.get('eve/RefTypes')
+        api_result, current, expires = self.api.get('eve/RefTypes')
         rowset = api_result.find('rowset')
 
         results = {}
@@ -396,12 +398,12 @@ class EVE(object):
             a = row.attrib
             results[int(a['refTypeID'])] = a['refTypeName']
 
-        return results
+        return results, current, expires
 
     def faction_warfare_leaderboard(self):
         """Return top-100 lists from Faction Warfare."""
 
-        api_result = self.api.get('eve/FacWarTopStats')
+        api_result, current, expires = self.api.get('eve/FacWarTopStats')
 
         def parse_top_100(rowset, prefix, attr, attr_name):
             top100 = []
@@ -443,11 +445,11 @@ class EVE(object):
             'faction': parse_section(api_result.find('factions'), 'faction'),
         }
 
-        return results
+        return results, current, expires
 
     def conquerable_stations(self):
 
-        api_result = self.api.get('eve/ConquerableStationlist')
+        api_result, current, expires = self.api.get('eve/ConquerableStationlist')
 
         results = {}
         rowset = api_result.find('rowset')
@@ -463,4 +465,8 @@ class EVE(object):
                 }
             results[station['id']] = station
 
-        return results
+        return results, current, expires
+
+
+
+# vim: set ts=4 sts=4 sw=4 et:
