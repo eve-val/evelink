@@ -16,12 +16,14 @@ class Account(object):
 
         _str, _int, _float, _bool, _ts = api.elem_getters(api_result.result)
 
-        return api.APIResult({
+        result = {
             'paid_ts': _ts('paidUntil'),
             'create_ts': _ts('createDate'),
             'logins': _int('logonCount'),
             'minutes_played': _int('logonMinutes'),
-        }, api_result.timestamp, api_result.expires)
+        }
+
+        return api.APIResult(result, api_result.timestamp, api_result.expires)
 
     def key_info(self):
         """Returns the details of the API key being used to auth."""
