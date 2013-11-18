@@ -33,7 +33,7 @@ class Corp(object):
         if corp_id is not None:
             params['corporationID'] = corp_id
 
-        api_result, current, expires = self.api.get("corp/CorporationSheet", params)
+        api_result = self.api.get("corp/CorporationSheet", params)
 
         def get_logo_details(logo_result):
             _str, _int, _float, _bool, _ts = api.elem_getters(logo_result)
@@ -46,7 +46,7 @@ class Corp(object):
                 ],
             }
 
-        _str, _int, _float, _bool, _ts = api.elem_getters(api_result)
+        _str, _int, _float, _bool, _ts = api.elem_getters(api_result.result)
 
         result = {
             'id': _int('corporationID'),
@@ -71,13 +71,13 @@ class Corp(object):
                 'current': _int('memberCount'),
             },
             'shares': _int('shares'),
-            'logo': get_logo_details(api_result.find('logo')),
+            'logo': get_logo_details(api_result.result.find('logo')),
         }
 
         if corp_id is None:
             result['members']['limit'] = _int('memberLimit')
 
-            rowsets = dict((r.attrib['name'], r) for r in api_result.findall('rowset'))
+            rowsets = dict((r.attrib['name'], r) for r in api_result.result.findall('rowset'))
 
             division_types = {
                 'hangars': 'divisions',
@@ -92,14 +92,14 @@ class Corp(object):
 
                 result[key] = divisions
 
-        return result, current, expires
+        return api.APIResult(result, api_result.timestamp, api_result.expires)
 
     def industry_jobs(self):
         """Get a list of jobs for a corporation."""
 
-        api_result, current, expires = self.api.get('corp/IndustryJobs')
+        api_result = self.api.get('corp/IndustryJobs')
 
-        return parse_industry_jobs(api_result), current, expires
+        return api.APIResult(parse_industry_jobs(api_result.result), api_result.timestamp, api_result.expires)
 
     def npc_standings(self):
         """Returns information about the corporation's standings towards NPCs.
@@ -107,8 +107,8 @@ class Corp(object):
         NOTE: This is *only* NPC standings. Player standings are accessed
         via the 'contacts' method.
         """
-        api_result, current, expires = self.api.get('corp/Standings')
-        container = api_result.find('corporationNPCStandings')
+        api_result = self.api.get('corp/Standings')
+        container = api_result.result.find('corporationNPCStandings')
 
         rowsets = dict((r.attrib['name'], r) for r in container.findall('rowset'))
         results = {
@@ -133,7 +133,7 @@ class Corp(object):
                 }
                 results[key][standing['id']] = standing
 
-        return results, current, expires
+        return api.APIResult(results, api_result.timestamp, api_result.expires)
 
     def kills(self, before_kill=None):
         """Look up recent kills for a corporation.
@@ -145,16 +145,16 @@ class Corp(object):
         params = {}
         if before_kill is not None:
             params['beforeKillID'] = before_kill
-        api_result, current, expires = self.api.get('corp/KillLog', params)
+        api_result = self.api.get('corp/KillLog', params)
 
-        return parse_kills(api_result), current, expires
+        return api.APIResult(parse_kills(api_result.result), api_result.timestamp, api_result.expires)
 
     def wallet_info(self):
         """Get information about corp wallets."""
 
-        api_result, current, expires = self.api.get('corp/AccountBalance')
+        api_result = self.api.get('corp/AccountBalance')
 
-        rowset = api_result.find('rowset')
+        rowset = api_result.result.find('rowset')
         results = {}
         for row in rowset.findall('row'):
             wallet = {
@@ -164,7 +164,7 @@ class Corp(object):
             }
             results[wallet['key']] = wallet
 
-        return results, current, expires
+        return api.APIResult(results, api_result.timestamp, api_result.expires)
 
     def wallet_journal(self, before_id=None, limit=None):
         """Returns wallet journal for a corporation."""
@@ -174,9 +174,9 @@ class Corp(object):
             params['fromID'] = before_id
         if limit is not None:
             params['rowCount'] = limit
-        api_result, current, expires = self.api.get('corp/WalletJournal', params)
+        api_result = self.api.get('corp/WalletJournal', params)
 
-        return parse_wallet_journal(api_result), current, expires
+        return api.APIResult(parse_wallet_journal(api_result.result), api_result.timestamp, api_result.expires)
 
     def wallet_transactions(self, before_id=None, limit=None):
         """Returns wallet transactions for a corporation."""
@@ -186,15 +186,15 @@ class Corp(object):
             params['fromID'] = before_id
         if limit is not None:
             params['rowCount'] = limit
-        api_result, current, expires = self.api.get('corp/WalletTransactions', params)
+        api_result = self.api.get('corp/WalletTransactions', params)
 
-        return parse_wallet_transactions(api_result), current, expires
+        return api.APIResult(parse_wallet_transactions(api_result.result), api_result.timestamp, api_result.expires)
 
     def orders(self):
         """Return a corporation's buy and sell orders."""
-        api_result, current, expires = self.api.get('corp/MarketOrders')
+        api_result = self.api.get('corp/MarketOrders')
 
-        return parse_market_orders(api_result), current, expires
+        return api.APIResult(parse_market_orders(api_result.result), api_result.timestamp, api_result.expires)
 
     def assets(self):
         """Get information about corp assets.
@@ -218,8 +218,8 @@ class Corp(object):
         the top-level values as "containers" with no fields except for
         "contents" and "location_id".
         """
-        api_result, current, expires = self.api.get('corp/AssetList')
-        return parse_assets(api_result), current, expires
+        api_result = self.api.get('corp/AssetList')
+        return api.APIResult(parse_assets(api_result.result), api_result.timestamp, api_result.expires)
 
     def faction_warfare_stats(self):
         """Returns stats from faction warfare if this corp is enrolled.
@@ -227,11 +227,11 @@ class Corp(object):
         NOTE: This will raise an APIError if the corp is not enrolled in
         Faction Warfare.
         """
-        api_result, current, expires = self.api.get('corp/FacWarStats')
+        api_result = self.api.get('corp/FacWarStats')
 
-        _str, _int, _float, _bool, _ts = api.elem_getters(api_result)
+        _str, _int, _float, _bool, _ts = api.elem_getters(api_result.result)
 
-        return {
+        result = {
             'faction': {
                 'id': _int('factionID'),
                 'name': _str('factionName'),
@@ -248,35 +248,36 @@ class Corp(object):
                 'week': _int('victoryPointsLastWeek'),
                 'total': _int('victoryPointsTotal'),
             },
-        }, current, expires
+        }
+
+        return api.APIResult(result, api_result.timestamp, api_result.expires)
 
     def contract_bids(self):
         """Lists the latest bids that have been made to any recent auctions."""
-        api_result, current, expires = self.api.get('corp/ContractBids')
+        api_result = self.api.get('corp/ContractBids')
 
-        return parse_contract_bids(api_result), current, expires
+        return api.APIResult(parse_contract_bids(api_result.result), api_result.timestamp, api_result.expires)
 
     def contract_items(self, contract_id):
         """Lists items that a specified contract contains"""
-        api_result, current, expires = self.api.get('corp/ContractItems',
-            {'contractID': contract_id})
+        api_result = self.api.get('corp/ContractItems', {'contractID': contract_id})
 
-        return parse_contract_items(api_result), current, expires
+        return api.APIResult(parse_contract_items(api_result.result), api_result.timestamp, api_result.expires)
 
     def contracts(self):
         """Get information about corp contracts."""
-        api_result, current, expires = self.api.get('corp/Contracts')
-        return parse_contracts(api_result), current, expires
+        api_result = self.api.get('corp/Contracts')
+        return api.APIResult(parse_contracts(api_result.result), api_result.timestamp, api_result.expires)
 
     def shareholders(self):
         """Get information about a corp's shareholders."""
-        api_result, current, expires = self.api.get('corp/Shareholders')
+        api_result = self.api.get('corp/Shareholders')
 
         results = {
             'char': {},
             'corp': {},
         }
-        rowsets = dict((r.attrib['name'], r) for r in api_result.findall('rowset'))
+        rowsets = dict((r.attrib['name'], r) for r in api_result.result.findall('rowset'))
 
         for row in rowsets['characters'].findall('row'):
             a = row.attrib
@@ -300,18 +301,18 @@ class Corp(object):
             }
             results['corp'][holder['id']] = holder
 
-        return results, current, expires
+        return api.APIResult(results, api_result.timestamp, api_result.expires)
 
     def contacts(self):
         """Return the corp's corp and alliance contact lists."""
-        api_result, current, expires = self.api.get('corp/ContactList')
-        return parse_contact_list(api_result), current, expires
+        api_result = self.api.get('corp/ContactList')
+        return api.APIResult(parse_contact_list(api_result.result), api_result.timestamp, api_result.expires)
 
     def titles(self):
         """Returns information about the corporation's titles."""
-        api_result, current, expires = self.api.get('corp/Titles')
+        api_result = self.api.get('corp/Titles')
 
-        rowset = api_result.find('rowset')
+        rowset = api_result.result.find('rowset')
         results = {}
         for row in rowset.findall('row'):
             a = row.attrib
@@ -345,13 +346,13 @@ class Corp(object):
 
             results[title['id']] = title
 
-        return results, current, expires
+        return api.APIResult(results, api_result.timestamp, api_result.expires)
 
     def starbases(self):
         """Returns information about the corporation's POSes."""
-        api_result, current, expires = self.api.get('corp/StarbaseList')
+        api_result = self.api.get('corp/StarbaseList')
 
-        rowset = api_result.find('rowset')
+        rowset = api_result.result.find('rowset')
         results = {}
         for row in rowset.findall('row'):
             a = row.attrib
@@ -367,16 +368,16 @@ class Corp(object):
             }
             results[starbase['id']] = starbase
 
-        return results, current, expires
+        return api.APIResult(results, api_result.timestamp, api_result.expires)
 
     def starbase_details(self, starbase_id):
         """Returns details about the specified POS."""
-        api_result, current, expires = self.api.get('corp/StarbaseDetail', {'itemID': starbase_id})
+        api_result = self.api.get('corp/StarbaseDetail', {'itemID': starbase_id})
 
-        _str, _int, _float, _bool, _ts = api.elem_getters(api_result)
+        _str, _int, _float, _bool, _ts = api.elem_getters(api_result.result)
 
-        general_settings = api_result.find('generalSettings')
-        combat_settings = api_result.find('combatSettings')
+        general_settings = api_result.result.find('generalSettings')
+        combat_settings = api_result.result.find('combatSettings')
 
         def get_fuel_bay_perms(settings):
             # Two 2-bit fields
@@ -451,21 +452,21 @@ class Corp(object):
             'fuel': {},
         }
 
-        rowset = api_result.find('rowset')
+        rowset = api_result.result.find('rowset')
         for row in rowset.findall('row'):
             a = row.attrib
             result['fuel'][int(a['typeID'])] = int(a['quantity'])
 
-        return result, current, expires
+        return api.APIResult(result, api_result.timestamp, api_result.expires)
 
     def members(self, extended=True):
         """Returns details about each member of the corporation."""
         args = {}
         if extended:
             args['extended'] = 1
-        api_result, current, expires = self.api.get('corp/MemberTracking', args)
+        api_result = self.api.get('corp/MemberTracking', args)
 
-        rowset = api_result.find('rowset')
+        rowset = api_result.result.find('rowset')
         results = {}
         for row in rowset.findall('row'):
             a = row.attrib
@@ -502,14 +503,14 @@ class Corp(object):
 
             results[member['id']] = member
 
-        return results, current, expires
+        return api.APIResult(results, api_result.timestamp, api_result.expires)
 
     def permissions(self):
         """Returns information about corporation member permissions."""
-        api_result, current, expires = self.api.get('corp/MemberSecurity')
+        api_result = self.api.get('corp/MemberSecurity')
 
         results = {}
-        rowset = api_result.find('rowset')
+        rowset = api_result.result.find('rowset')
         for row in rowset.findall('row'):
             a = row.attrib
             member = {
@@ -540,16 +541,16 @@ class Corp(object):
 
             results[member['id']] = member
 
-        return results, current, expires
+        return api.APIResult(results, api_result.timestamp, api_result.expires)
 
     def permissions_log(self):
         """Returns information about changes to member permissions."""
-        api_result, current, expires = self.api.get('corp/MemberSecurityLog')
+        api_result = self.api.get('corp/MemberSecurityLog')
 
         inverse_role_types = dict((v,k) for k,v in constants.Corp.role_types.iteritems())
 
         results = []
-        rowset = api_result.find('rowset')
+        rowset = api_result.result.find('rowset')
         for row in rowset.findall('row'):
             a = row.attrib
             change = {
@@ -583,13 +584,13 @@ class Corp(object):
             results.append(change)
 
         results.sort(key=lambda r: r['timestamp'], reverse=True)
-        return results, current, expires
+        return api.APIResult(results, api_result.timestamp, api_result.expires)
 
     def stations(self):
         """Returns information about the corporation's (non-POS) stations."""
-        api_result, current, expires = self.api.get('corp/OutpostList')
+        api_result = self.api.get('corp/OutpostList')
 
-        rowset = api_result.find('rowset')
+        rowset = api_result.result.find('rowset')
         results = {}
         for row in rowset.findall('row'):
             a = row.attrib
@@ -609,13 +610,13 @@ class Corp(object):
             }
             results[station['id']] = station
 
-        return results, current, expires
+        return api.APIResult(results, api_result.timestamp, api_result.expires)
 
     def station_services(self, station_id):
         """Returns information about a given station's services."""
-        api_result, current, expires = self.api.get('corp/OutpostServiceDetail', {'itemID': station_id})
+        api_result = self.api.get('corp/OutpostServiceDetail', {'itemID': station_id})
 
-        rowset = api_result.find('rowset')
+        rowset = api_result.result.find('rowset')
         results = {}
         for row in rowset.findall('row'):
             a = row.attrib
@@ -630,13 +631,13 @@ class Corp(object):
             }
             results[service['name']] = service
 
-        return results, current, expires
+        return api.APIResult(results, api_result.timestamp, api_result.expires)
 
     def medals(self):
         """Returns information about the medals created by a corporation."""
-        api_result, current, expires = self.api.get('corp/Medals')
+        api_result = self.api.get('corp/Medals')
 
-        rowset = api_result.find('rowset')
+        rowset = api_result.result.find('rowset')
         results = {}
         for row in rowset.findall('row'):
             a = row.attrib
@@ -649,13 +650,13 @@ class Corp(object):
             }
             results[medal['id']] = medal
 
-        return results, current, expires
+        return api.APIResult(results, api_result.timestamp, api_result.expires)
 
     def member_medals(self):
         """Returns information about medals assigned to corporation members."""
-        api_result, current, expires = self.api.get("corp/MemberMedals")
+        api_result = self.api.get("corp/MemberMedals")
 
-        rowset = api_result.find('rowset')
+        rowset = api_result.result.find('rowset')
         results = {}
         for row in rowset.findall('row'):
             a = row.attrib
@@ -669,14 +670,14 @@ class Corp(object):
             }
             results.setdefault(award['char_id'], {})[award['medal_id']] = award
 
-        return results, current, expires
+        return api.APIResult(results, api_result.timestamp, api_result.expires)
 
     def container_log(self):
         """Returns a log of actions performed on corporation containers."""
-        api_result, current, expires = self.api.get("corp/ContainerLog")
+        api_result = self.api.get("corp/ContainerLog")
 
         results = []
-        rowset = api_result.find('rowset')
+        rowset = api_result.result.find('rowset')
 
         def int_or_none(val):
             return int(val) if val else None
@@ -709,15 +710,15 @@ class Corp(object):
             }
             results.append(action)
 
-        return results, current, expires
+        return api.APIResult(results, api_result.timestamp, api_result.expires)
 
     def locations(self, location_list):
         params={
             'IDs' : location_list,
         }
-        api_result, current, expires = self.api.get('corp/Locations', params)
+        api_result = self.api.get('corp/Locations', params)
 
-        rowset = api_result.find('rowset')
+        rowset = api_result.result.find('rowset')
         rows = rowset.findall('row')
 
         results = {}
@@ -736,7 +737,7 @@ class Corp(object):
                 'z' : z,
             }
 
-        return results, current, expires
+        return api.APIResult(results, api_result.timestamp, api_result.expires)
 
 
 

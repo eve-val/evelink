@@ -10,10 +10,12 @@ class Server(object):
     def server_status(self):
         """Check the current server status."""
 
-        api_result, current, expires = self.api.get('server/ServerStatus')
+        api_result = self.api.get('server/ServerStatus')
 
-        return {
-            'online': api.get_bool_value(api_result, 'serverOpen'),
-            'players': api.get_int_value(api_result, 'onlinePlayers'),
-        }, current, expires
+        result = {
+            'online': api.get_bool_value(api_result.result, 'serverOpen'),
+            'players': api.get_int_value(api_result.result, 'onlinePlayers'),
+        }
+
+        return api.APIResult(result, api_result.timestamp, api_result.expires)
 

@@ -42,30 +42,27 @@ class Char(object):
         the top-level values as "containers" with no fields except for
         "contents" and "location_id".
         """
-        api_result, current, expires = self.api.get('char/AssetList',
-            {'characterID': self.char_id})
+        api_result = self.api.get('char/AssetList', {'characterID': self.char_id})
 
-        return parse_assets(api_result), current, expires
+        return api.APIResult(parse_assets(api_result.result), api_result.timestamp, api_result.expires)
 
     def contract_bids(self):
         """Lists the latest bids that have been made to any recent auctions."""
-        api_result, current, expires = self.api.get('char/ContractBids',
-            {'characterID': self.char_id})
+        api_result = self.api.get('char/ContractBids', {'characterID': self.char_id})
 
-        return parse_contract_bids(api_result), current, expires
+        return api.APIResult(parse_contract_bids(api_result.result), api_result.timestamp, api_result.expires)
 
     def contract_items(self, contract_id):
         """Lists items that a specified contract contains"""
-        api_result, current, expires = self.api.get('char/ContractItems',
+        api_result = self.api.get('char/ContractItems',
             {'characterID': self.char_id, 'contractID': contract_id})
 
-        return parse_contract_items(api_result), current, expires
+        return api.APIResult(parse_contract_items(api_result.result), api_result.timestamp, api_result.expires)
 
     def contracts(self):
         """Returns a record of all contracts for a specified character"""
-        api_result, current, expires = self.api.get('char/Contracts',
-            {'characterID': self.char_id})
-        return parse_contracts(api_result), current, expires
+        api_result = self.api.get('char/Contracts', {'characterID': self.char_id})
+        return api.APIResult(parse_contracts(api_result.result), api_result.timestamp, api_result.expires)
 
     def wallet_journal(self, before_id=None, limit=None):
         """Returns a complete record of all wallet activity for a specified character"""
@@ -74,48 +71,45 @@ class Char(object):
             params['fromID'] = before_id
         if limit is not None:
             params['rowCount'] = limit
-        api_result, current, expires = self.api.get('char/WalletJournal', params)
+        api_result = self.api.get('char/WalletJournal', params)
 
-        return parse_wallet_journal(api_result), current, expires
+        return api.APIResult(parse_wallet_journal(api_result.result), api_result.timestamp, api_result.expires)
 
     def wallet_info(self):
         """Return a given character's wallet."""
-        api_result, current, expires = self.api.get('char/AccountBalance',
+        api_result = self.api.get('char/AccountBalance',
             {'characterID': self.char_id})
 
-        rowset = api_result.find('rowset')
+        rowset = api_result.result.find('rowset')
         row = rowset.find('row')
         result = {
             'balance': float(row.attrib['balance']),
             'id': int(row.attrib['accountID']),
             'key': int(row.attrib['accountKey']),
         }
-        return result, current, expires
+        return api.APIResult(result, api_result.timestamp, api_result.expires)
 
     def wallet_balance(self):
         """Helper to return just the balance from a given character wallet"""
-        result, current, expires = self.wallet_info()
-        return result['balance'], current, expires
+        api_result = self.wallet_info()
+        return api.APIResult(api_result.result['balance'], api_result.timestamp, api_result.expires)
 
     def wallet_transactions(self, before_id=None, limit=None):
         """Returns wallet transactions for a character."""
-
         params = {'characterID': self.char_id}
         if before_id is not None:
             params['fromID'] = before_id
         if limit is not None:
             params['rowCount'] = limit
-        api_result, current, expires = self.api.get('char/WalletTransactions', params)
+        api_result = self.api.get('char/WalletTransactions', params)
 
-        return parse_wallet_transactions(api_result), current, expires
+        return api.APIResult(parse_wallet_transactions(api_result.result), api_result.timestamp, api_result.expires)
 
     def industry_jobs(self):
         """Get a list of jobs for a character"""
+        api_result = self.api.get('char/IndustryJobs', {'characterID': self.char_id})
 
-        api_result, current, expires = self.api.get('char/IndustryJobs',
-            {'characterID': self.char_id})
-
-        return parse_industry_jobs(api_result), current, expires
+        return api.APIResult(parse_industry_jobs(api_result.result), api_result.timestamp, api_result.expires)
 
     def kills(self, before_kill=None):
         """Look up recent kills for a character.
@@ -127,17 +121,17 @@ class Char(object):
         params = {'characterID': self.char_id}
         if before_kill is not None:
             params['beforeKillID'] = before_kill
-        api_result, current, expires = self.api.get('char/KillLog', params)
+        api_result = self.api.get('char/KillLog', params)
 
-        return parse_kills(api_result), current, expires
+        return api.APIResult(parse_kills(api_result.result), api_result.timestamp, api_result.expires)
 
     def notifications(self):
         """Returns the message headers for notifications."""
-        api_result, current, expires = self.api.get('char/Notifications',
+        api_result = self.api.get('char/Notifications',
             {'characterID': self.char_id})
 
         result = {}
-        rowset = api_result.find('rowset')
+        rowset = api_result.result.find('rowset')
         for row in rowset.findall('row'):
             a = row.attrib
             notification_id = int(a['notificationID'])
@@ -149,36 +143,36 @@ class Char(object):
                 'read': a['read'] == '1',
             }
 
-        return result, current, expires
+        return api.APIResult(result, api_result.timestamp, api_result.expires)
 
     def notification_texts(self, notification_ids):
         """Returns the message bodies for notifications."""
-        api_result, current, expires = self.api.get('char/NotificationTexts',
+        api_result = self.api.get('char/NotificationTexts',
             {'characterID': self.char_id, 'IDs': notification_ids})
 
         result = {}
-        rowset = api_result.find('rowset')
+        rowset = api_result.result.find('rowset')
         for row in rowset.findall('row'):
             notification_id = int(row.attrib['notificationID'])
             notification = {'id': notification_id}
             notification.update(api.parse_keyval_data(row.text))
             result[notification_id] = notification
 
-        missing_ids = api_result.find('missingIDs')
+        missing_ids = api_result.result.find('missingIDs')
         if missing_ids is not None:
             for missing_id in missing_ids.text.split(","):
                 result[missing_id] = None
 
-        return result, current, expires
+        return api.APIResult(result, api_result.timestamp, api_result.expires)
 
     def standings(self):
         """Returns the standings towards a character from NPC entities."""
-        api_result, current, expires = self.api.get('char/Standings',
+        api_result = self.api.get('char/Standings',
             {'characterID': self.char_id})
 
         result = {}
         rowsets = {}
-        for rowset in api_result.find('characterNPCStandings').findall('rowset'):
+        for rowset in api_result.result.find('characterNPCStandings').findall('rowset'):
             rowsets[rowset.attrib['name']] = rowset
 
         _name_map = {
@@ -198,14 +192,14 @@ class Char(object):
                     'standing': float(a['standing']),
                 }
 
-        return result, current, expires
+        return api.APIResult(result, api_result.timestamp, api_result.expires)
 
     def character_sheet(self):
         """Returns attributes relating to a specific character."""
-        api_result, current, expires = self.api.get('char/CharacterSheet',
+        api_result = self.api.get('char/CharacterSheet',
             {'characterID': self.char_id})
 
-        _str, _int, _float, _bool, _ts = api.elem_getters(api_result)
+        _str, _int, _float, _bool, _ts = api.elem_getters(api_result.result)
         result = {
             'id': _int('characterID'),
             'name': _str('name'),
@@ -232,10 +226,10 @@ class Char(object):
 
         for attr in ('intelligence', 'memory', 'charisma', 'perception', 'willpower'):
             result['attributes'][attr] = {}
-            base = int(api_result.findtext('attributes/%s' % attr))
+            base = int(api_result.result.findtext('attributes/%s' % attr))
             result['attributes'][attr]['base'] = base
             result['attributes'][attr]['total'] = base
-            bonus = api_result.find('attributeEnhancers/%sBonus' % attr)
+            bonus = api_result.result.find('attributeEnhancers/%sBonus' % attr)
             if bonus is not None:
                 mod = int(bonus.findtext('augmentatorValue'))
                 result['attributes'][attr]['total'] += mod
@@ -245,7 +239,7 @@ class Char(object):
                 }
 
         rowsets = {}
-        for rowset in api_result.findall('rowset'):
+        for rowset in api_result.result.findall('rowset'):
             key = rowset.attrib['name']
             rowsets[key] = rowset
 
@@ -286,29 +280,29 @@ class Char(object):
                 'name': a['titleName'],
             }
 
-        return result, current, expires
+        return api.APIResult(result, api_result.timestamp, api_result.expires)
 
     def contacts(self):
         """Return a character's personal, corp and alliance contact lists."""
-        api_result, current, expires = self.api.get('char/ContactList',
+        api_result = self.api.get('char/ContactList',
             {'characterID': self.char_id})
 
-        return parse_contact_list(api_result), current, expires
+        return api.APIResult(parse_contact_list(api_result.result), api_result.timestamp, api_result.expires)
 
     def orders(self):
         """Return a given character's buy and sell orders."""
-        api_result, current, expires = self.api.get('char/MarketOrders',
+        api_result = self.api.get('char/MarketOrders',
             {'characterID': self.char_id})
 
-        return parse_market_orders(api_result), current, expires
+        return api.APIResult(parse_market_orders(api_result.result), api_result.timestamp, api_result.expires)
 
     def research(self):
         """Returns information about the agents with whom the character is doing research."""
 
-        api_result, current, expires = self.api.get('char/Research',
+        api_result = self.api.get('char/Research',
             {'characterID': self.char_id})
 
-        rowset = api_result.find('rowset')
+        rowset = api_result.result.find('rowset')
         rows = rowset.findall('row')
         result = {}
         for row in rows:
@@ -322,15 +316,14 @@ class Char(object):
                 'remaining': float(a['remainderPoints']),
             }
 
-        return result, current, expires
+        return api.APIResult(result, api_result.timestamp, api_result.expires)
 
     def current_training(self):
         """Returns the skill that is currently being trained by a specified character"""
 
-        api_result, current, expires = self.api.get('char/SkillInTraining',
-            {'characterID': self.char_id})
+        api_result = self.api.get('char/SkillInTraining', {'characterID': self.char_id})
 
-        _str, _int, _float, _bool, _ts = api.elem_getters(api_result)
+        _str, _int, _float, _bool, _ts = api.elem_getters(api_result.result)
         result = {
             'start_ts': _ts('trainingStartTime'),
             'end_ts': _ts('trainingEndTime'),
@@ -342,14 +335,14 @@ class Char(object):
             'active': _bool('skillInTraining'),
         }
 
-        return result, current, expires
+        return api.APIResult(result, api_result.timestamp, api_result.expires)
 
     def skill_queue(self):
         """returns the skill queue of the character"""
-        api_result, current, expires = self.api.get('char/SkillQueue',
+        api_result = self.api.get('char/SkillQueue',
             {'characterID': self.char_id})
 
-        rowset = api_result.find('rowset')
+        rowset = api_result.result.find('rowset')
         rows = rowset.findall('row')
         result = []
         for row in rows:
@@ -366,14 +359,14 @@ class Char(object):
 
             result.append(line)
 
-        return result, current, expires
+        return api.APIResult(result, api_result.timestamp, api_result.expires)
 
     def messages(self):
         """Returns a list of headers for a character's mail."""
-        api_result, current, expires = self.api.get('char/MailMessages',
+        api_result = self.api.get('char/MailMessages',
             {'characterID': self.char_id})
 
-        rowset = api_result.find('rowset')
+        rowset = api_result.result.find('rowset')
         results = []
         for row in rowset.findall('row'):
             a = row.attrib
@@ -396,7 +389,7 @@ class Char(object):
 
             results.append(message)
 
-        return results, current, expires
+        return api.APIResult(results, api_result.timestamp, api_result.expires)
 
     def message_bodies(self, message_ids):
         """Returns the actual body content of a set of mail messages.
@@ -405,42 +398,42 @@ class Char(object):
         any messages you are requesting bodies for (via the 'messages'
         method) or else this call will fail.
         """
-        api_result, current, expires = self.api.get('char/MailBodies',
+        api_result = self.api.get('char/MailBodies',
             {'characterID': self.char_id, 'ids': message_ids})
 
-        rowset = api_result.find('rowset')
+        rowset = api_result.result.find('rowset')
         results = {}
         for row in rowset.findall('row'):
             message_id = int(row.attrib['messageID'])
             results[message_id] = row.text
 
-        missing_set = api_result.find('missingMessageIDs')
+        missing_set = api_result.result.find('missingMessageIDs')
         if missing_set is not None:
             missing_ids = [int(i) for i in missing_set.text.split(',')]
             for missing_id in missing_ids:
                 results[missing_id] = None
 
-        return results, current, expires
+        return api.APIResult(results, api_result.timestamp, api_result.expires)
 
     def mailing_lists(self):
         """Returns the mailing lists to which a character is subscribed."""
-        api_result, current, expires = self.api.get('char/MailingLists')
+        api_result = self.api.get('char/MailingLists')
 
-        rowset = api_result.find('rowset')
+        rowset = api_result.result.find('rowset')
         results = {}
         for row in rowset.findall('row'):
             a = row.attrib
             results[int(a['listID'])] = a['displayName']
 
-        return results, current, expires
+        return api.APIResult(results, api_result.timestamp, api_result.expires)
 
     def calendar_events(self):
         """Returns the list of upcoming calendar events for a character."""
-        api_result, current, expires = self.api.get('char/UpcomingCalendarEvents',
+        api_result = self.api.get('char/UpcomingCalendarEvents',
             {'characterID': self.char_id})
 
         results = {}
-        rowset = api_result.find('rowset')
+        rowset = api_result.result.find('rowset')
         for row in rowset.findall('row'):
             a = row.attrib
             event = {
@@ -458,7 +451,7 @@ class Char(object):
             }
             results[event['id']] = event
 
-        return results, current, expires
+        return api.APIResult(results, api_result.timestamp, api_result.expires)
 
     def calendar_attendees(self, event_ids):
         """Returns the list of attendees for the specified calendar event.
@@ -470,11 +463,11 @@ class Char(object):
         NOTE: You must have recently fetched the list of calendar events
         (using the 'calendar_events' method) before calling this method.
         """
-        api_result, current, expires = self.api.get('char/CalendarEventAttendees',
+        api_result = self.api.get('char/CalendarEventAttendees',
             {'characterID': self.char_id, 'eventIDs': event_ids})
 
         results = dict((int(i),{}) for i in event_ids)
-        rowset = api_result.find('rowset')
+        rowset = api_result.result.find('rowset')
         for row in rowset.findall('row'):
             a = row.attrib
             attendee = {
@@ -484,7 +477,7 @@ class Char(object):
             }
             results[int(a['eventID'])][attendee['id']] = attendee
 
-        return results, current, expires
+        return api.APIResult(results, api_result.timestamp, api_result.expires)
 
     def event_attendees(self, event_id):
         """Returns the attendees for a single event.
@@ -494,7 +487,8 @@ class Char(object):
         NOTE: You must have recently fetched the list of calendar events
         (using the 'calendar_events' method) before calling this method.
         """
-        return self.calendar_attendees([event_id])[int(event_id)]
+        api_result = self.calendar_attendees([event_id])
+        return api.APIResult(api_result.result[int(event_id)], api_result.timestamp, api_result.expires)
 
     def faction_warfare_stats(self):
         """Returns FW stats for this character, if enrolled in FW.
@@ -502,12 +496,12 @@ class Char(object):
         NOTE: This will return an error instead if the character
         is not enrolled in Faction Warfare.
         """
-        api_result, current, expires = self.api.get('char/FacWarStats',
+        api_result = self.api.get('char/FacWarStats',
             {'characterID': self.char_id})
 
-        _str, _int, _float, _bool, _ts = api.elem_getters(api_result)
+        _str, _int, _float, _bool, _ts = api.elem_getters(api_result.result)
 
-        return {
+        result = {
             'faction': {
                 'id': _int('factionID'),
                 'name': _str('factionName'),
@@ -527,12 +521,14 @@ class Char(object):
                 'week': _int('victoryPointsLastWeek'),
                 'total': _int('victoryPointsTotal'),
             },
-        }, current, expires
+        }
+
+        return api.APIResult(result, api_result.timestamp, api_result.expires)
 
     def medals(self):
         """Returns a list of medals the character has."""
 
-        api_result, current, expires = self.api.get('char/Medals',
+        api_result = self.api.get('char/Medals',
             {'characterID': self.char_id})
 
         result = {'current': {}, 'other': {}}
@@ -541,7 +537,7 @@ class Char(object):
             'otherCorporations': 'other',
         }
 
-        for rowset in api_result.findall('rowset'):
+        for rowset in api_result.result.findall('rowset'):
             name = _map[rowset.attrib['name']]
             for row in rowset.findall('row'):
                 a = row.attrib
@@ -556,15 +552,14 @@ class Char(object):
                     'description': a['description'],
                 }
 
-        return result, current, expires
+        return api.APIResult(result, api_result.timestamp, api_result.expires)
 
     def contact_notifications(self):
         """Returns pending contact notifications."""
-        api_result, current, expires = self.api.get('char/ContactNotifications',
-            {'characterID': self.char_id})
+        api_result = self.api.get('char/ContactNotifications', {'characterID': self.char_id})
 
         results = {}
-        rowset = api_result.find('rowset')
+        rowset = api_result.result.find('rowset')
         for row in rowset.findall('row'):
             a = row.attrib
             note = {
@@ -578,15 +573,15 @@ class Char(object):
             }
             results[note['id']] = note
 
-        return results, current, expires
+        return api.APIResult(results, api_result.timestamp, api_result.expires)
 
     def locations(self, location_list):
         params={
             'IDs' : location_list,
             'characterID' : self.char_id,
         }
-        api_result, current, expires = self.api.get('char/Locations', params)
-        rowset = api_result.find('rowset')
+        api_result = self.api.get('char/Locations', params)
+        rowset = api_result.result.find('rowset')
         rows = rowset.findall('row')
 
         results = {}
@@ -604,7 +599,7 @@ class Char(object):
                 'y' : y,
                 'z' : z,
             }
-        return results, current, expires
+        return api.APIResult(results, api_result.timestamp, api_result.expires)
 
 
 # vim: set ts=4 sts=4 sw=4 et:

@@ -12,23 +12,23 @@ class Account(object):
 
     def status(self):
         """Returns the account's subscription status."""
-        api_result, current, expires = self.api.get('account/AccountStatus')
+        api_result = self.api.get('account/AccountStatus')
 
-        _str, _int, _float, _bool, _ts = api.elem_getters(api_result)
+        _str, _int, _float, _bool, _ts = api.elem_getters(api_result.result)
 
-        return {
+        return api.APIResult({
             'paid_ts': _ts('paidUntil'),
             'create_ts': _ts('createDate'),
             'logins': _int('logonCount'),
             'minutes_played': _int('logonMinutes'),
-        }, current, expires
+        }, api_result.timestamp, api_result.expires)
 
     def key_info(self):
         """Returns the details of the API key being used to auth."""
 
-        api_result, current, expires = self.api.get('account/APIKeyInfo')
+        api_result = self.api.get('account/APIKeyInfo')
 
-        key = api_result.find('key')
+        key = api_result.result.find('key')
         result = {
             'access_mask': int(key.attrib['accessMask']),
             'type': constants.APIKey.key_types[key.attrib['type']],
@@ -48,14 +48,14 @@ class Account(object):
             }
             result['characters'][character['id']] = character
 
-        return result, current, expires
+        return api.APIResult(result, api_result.timestamp, api_result.expires)
 
     def characters(self):
         """Returns all of the characters on an account."""
 
-        api_result, current, expires = self.api.get('account/Characters')
+        api_result = self.api.get('account/Characters')
 
-        rowset = api_result.find('rowset')
+        rowset = api_result.result.find('rowset')
         result = {}
         for row in rowset.findall('row'):
             character = {
@@ -68,4 +68,4 @@ class Account(object):
             }
             result[character['id']] = character
 
-        return result, current, expires
+        return api.APIResult(result, api_result.timestamp, api_result.expires)

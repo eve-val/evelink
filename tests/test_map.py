@@ -14,7 +14,7 @@ class MapTestCase(APITestCase):
     def test_jumps_by_system(self):
         self.api.get.return_value = self.make_api_result("map/jumps_by_system.xml")
 
-        result, data_time, current, expires = self.map.jumps_by_system()
+        (result, data_time), current, expires = self.map.jumps_by_system()
 
         self.assertEqual(result, {30001984:10})
         self.assertEqual(data_time, 1197460238)
@@ -27,7 +27,7 @@ class MapTestCase(APITestCase):
     def test_kills_by_system(self):
         self.api.get.return_value = self.make_api_result("map/kills_by_system.xml")
 
-        result, data_time, current, expires = self.map.kills_by_system()
+        (result, data_time), current, expires = self.map.kills_by_system()
 
         self.assertEqual(result, {
                 30001343: {'id':30001343, 'faction':17, 'ship':0, 'pod':0},
@@ -75,7 +75,7 @@ class MapTestCase(APITestCase):
     def test_sov_by_system(self):
         self.api.get.return_value = self.make_api_result("map/sov_by_system.xml")
 
-        result, data_time, current, expires = self.map.sov_by_system()
+        (result, data_time), current, expires = self.map.sov_by_system()
 
         self.assertEqual(result, {
                 30000480: {

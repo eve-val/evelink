@@ -1,8 +1,13 @@
 import mock
 import unittest2 as unittest
 
+import evelink.api as evelink_api
 import evelink.corp as evelink_corp
 from tests.utils import APITestCase
+
+
+API_RESULT_SENTINEL = evelink_api.APIResult(mock.sentinel.api_result, 12345, 67890)
+
 
 class CorpTestCase(APITestCase):
 
@@ -86,7 +91,7 @@ class CorpTestCase(APITestCase):
 
     @mock.patch('evelink.corp.parse_industry_jobs')
     def test_industry_jobs(self, mock_parse):
-        self.api.get.return_value = mock.sentinel.industry_jobs_api_result, 12345, 67890
+        self.api.get.return_value = API_RESULT_SENTINEL
         mock_parse.return_value = mock.sentinel.industry_jobs
 
         result, current, expires = self.corp.industry_jobs()
@@ -96,7 +101,7 @@ class CorpTestCase(APITestCase):
                 mock.call.get('corp/IndustryJobs'),
             ])
         self.assertEqual(mock_parse.mock_calls, [
-                mock.call(mock.sentinel.industry_jobs_api_result),
+                mock.call(mock.sentinel.api_result),
             ])
         self.assertEqual(current, 12345)
         self.assertEqual(expires, 67890)
@@ -137,7 +142,7 @@ class CorpTestCase(APITestCase):
 
     @mock.patch('evelink.corp.parse_kills')
     def test_kills(self, mock_parse):
-        self.api.get.return_value = mock.sentinel.kills_api_result, 12345, 67890
+        self.api.get.return_value = API_RESULT_SENTINEL
         mock_parse.return_value = mock.sentinel.kills
 
         result, current, expires = self.corp.kills()
@@ -147,20 +152,20 @@ class CorpTestCase(APITestCase):
                 mock.call.get('corp/KillLog', {}),
             ])
         self.assertEqual(mock_parse.mock_calls, [
-                mock.call(mock.sentinel.kills_api_result),
+                mock.call(mock.sentinel.api_result),
             ])
         self.assertEqual(current, 12345)
         self.assertEqual(expires, 67890)
 
     @mock.patch('evelink.corp.parse_contract_bids')
     def test_contract_bids(self, mock_parse):
-        self.api.get.return_value = mock.sentinel.contract_bids_api_result, 12345, 67890
+        self.api.get.return_value = API_RESULT_SENTINEL
         mock_parse.return_value = mock.sentinel.parsed_contract_bids
 
         result, current, expires = self.corp.contract_bids()
         self.assertEqual(result, mock.sentinel.parsed_contract_bids)
         self.assertEqual(mock_parse.mock_calls, [
-                mock.call(mock.sentinel.contract_bids_api_result),
+                mock.call(mock.sentinel.api_result),
             ])
         self.assertEqual(self.api.mock_calls, [
                 mock.call.get('corp/ContractBids'),
@@ -170,13 +175,13 @@ class CorpTestCase(APITestCase):
 
     @mock.patch('evelink.corp.parse_contract_items')
     def test_contract_items(self, mock_parse):
-        self.api.get.return_value = mock.sentinel.contract_items_api_result, 12345, 67890
+        self.api.get.return_value = API_RESULT_SENTINEL
         mock_parse.return_value = mock.sentinel.parsed_contract_items
 
         result, current, expires = self.corp.contract_items(12345)
         self.assertEqual(result, mock.sentinel.parsed_contract_items)
         self.assertEqual(mock_parse.mock_calls, [
-                mock.call(mock.sentinel.contract_items_api_result),
+                mock.call(mock.sentinel.api_result),
             ])
         self.assertEqual(self.api.mock_calls, [
                 mock.call.get('corp/ContractItems', {'contractID': 12345}),
@@ -186,13 +191,13 @@ class CorpTestCase(APITestCase):
 
     @mock.patch('evelink.corp.parse_contracts')
     def test_contracts(self, mock_parse):
-        self.api.get.return_value = mock.sentinel.contracts_api_result, 12345, 67890
+        self.api.get.return_value = API_RESULT_SENTINEL
         mock_parse.return_value = mock.sentinel.parsed_contracts
 
         result, current, expires = self.corp.contracts()
         self.assertEqual(result, mock.sentinel.parsed_contracts)
         self.assertEqual(mock_parse.mock_calls, [
-                mock.call(mock.sentinel.contracts_api_result),
+                mock.call(mock.sentinel.api_result),
             ])
         self.assertEqual(self.api.mock_calls, [
                 mock.call.get('corp/Contracts'),
@@ -202,13 +207,13 @@ class CorpTestCase(APITestCase):
 
     @mock.patch('evelink.corp.parse_contact_list')
     def test_contacts(self, mock_parse):
-        self.api.get.return_value = mock.sentinel.contacts_api_result, 12345, 67890
+        self.api.get.return_value = API_RESULT_SENTINEL
         mock_parse.return_value = mock.sentinel.parsed_contacts
 
         result, current, expires = self.corp.contacts()
         self.assertEqual(result, mock.sentinel.parsed_contacts)
         self.assertEqual(mock_parse.mock_calls, [
-                mock.call(mock.sentinel.contacts_api_result),
+                mock.call(mock.sentinel.api_result),
             ])
         self.assertEqual(self.api.mock_calls, [
                 mock.call.get('corp/ContactList'),
@@ -238,13 +243,13 @@ class CorpTestCase(APITestCase):
 
     @mock.patch('evelink.corp.parse_wallet_journal')
     def test_wallet_journal(self, mock_parse):
-        self.api.get.return_value = mock.sentinel.journal_api_result, 12345, 67890
+        self.api.get.return_value = API_RESULT_SENTINEL
         mock_parse.return_value = mock.sentinel.parsed_journal
 
         result, current, expires = self.corp.wallet_journal()
         self.assertEqual(result, mock.sentinel.parsed_journal)
         self.assertEqual(mock_parse.mock_calls, [
-                mock.call(mock.sentinel.journal_api_result),
+                mock.call(mock.sentinel.api_result),
             ])
         self.assertEqual(self.api.mock_calls, [
                 mock.call.get('corp/WalletJournal', {}),
@@ -270,13 +275,13 @@ class CorpTestCase(APITestCase):
 
     @mock.patch('evelink.corp.parse_wallet_transactions')
     def test_wallet_transcations(self, mock_parse):
-        self.api.get.return_value = mock.sentinel.transactions_api_result, 12345, 67890
+        self.api.get.return_value = API_RESULT_SENTINEL
         mock_parse.return_value = mock.sentinel.parsed_transactions
 
         result, current, expires = self.corp.wallet_transactions()
         self.assertEqual(result, mock.sentinel.parsed_transactions)
         self.assertEqual(mock_parse.mock_calls, [
-                mock.call(mock.sentinel.transactions_api_result),
+                mock.call(mock.sentinel.api_result),
             ])
         self.assertEqual(self.api.mock_calls, [
                 mock.call.get('corp/WalletTransactions', {}),
@@ -302,13 +307,13 @@ class CorpTestCase(APITestCase):
 
     @mock.patch('evelink.corp.parse_market_orders')
     def test_orders(self, mock_parse):
-        self.api.get.return_value = mock.sentinel.orders_api_result, 12345, 67890
+        self.api.get.return_value = API_RESULT_SENTINEL
         mock_parse.return_value = mock.sentinel.parsed_orders
 
         result, current, expires = self.corp.orders()
         self.assertEqual(result, mock.sentinel.parsed_orders)
         self.assertEqual(mock_parse.mock_calls, [
-                mock.call(mock.sentinel.orders_api_result),
+                mock.call(mock.sentinel.api_result),
             ])
         self.assertEqual(self.api.mock_calls, [
                 mock.call.get('corp/MarketOrders'),
@@ -336,13 +341,13 @@ class CorpTestCase(APITestCase):
 
     @mock.patch('evelink.corp.parse_assets')
     def test_assets(self, mock_parse):
-        self.api.get.return_value = mock.sentinel.assets_api_result, 12345, 67890
+        self.api.get.return_value = API_RESULT_SENTINEL
         mock_parse.return_value = mock.sentinel.parsed_assets
 
         result, current, expires = self.corp.assets()
         self.assertEqual(result, mock.sentinel.parsed_assets)
         self.assertEqual(mock_parse.mock_calls, [
-                mock.call(mock.sentinel.assets_api_result),
+                mock.call(mock.sentinel.api_result),
             ])
         self.assertEqual(self.api.mock_calls, [
                 mock.call.get('corp/AssetList'),
