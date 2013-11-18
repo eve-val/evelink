@@ -1,4 +1,5 @@
 import calendar
+import collections
 import functools
 import logging
 import re
@@ -170,6 +171,13 @@ class APICache(object):
         self.cache[key] = (value, expiration)
 
 
+APIResult = collections.namedtuple("APIResult", [
+        "result",
+        "timestamp",
+        "expires",
+    ])
+
+
 class API(object):
     """A wrapper around the EVE API."""
 
@@ -246,7 +254,7 @@ class API(object):
             raise exc
 
         result = tree.find('result')
-        return result, current_time, expires_time
+        return APIResult(result, current_time, expires_time)
 
     def send_request(self, full_path, params):
         if _has_requests:
