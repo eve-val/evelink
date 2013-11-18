@@ -2,5 +2,6 @@ dist
 build
 venv
 MANIFEST
+.coverage
 *.py[co]
 .*.swp
