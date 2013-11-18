@@ -8,7 +8,7 @@ from evelink.parsing import wallet_transactions as evelink_w
 class TransactionsTestCase(unittest.TestCase):
 
     def test_parse_wallet_transactions(self):
-        api_result = make_api_result("char/wallet_transactions.xml")
+        api_result, _, _ = make_api_result("char/wallet_transactions.xml")
 
         result = evelink_w.parse_wallet_transactions(api_result)
 

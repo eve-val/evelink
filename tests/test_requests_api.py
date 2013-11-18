@@ -58,7 +58,7 @@ class RequestsAPITestCase(unittest.TestCase):
         self.mock_sessions.post.return_value = DummyResponse(self.test_xml)
         self.cache.get.return_value = None
 
-        tree = self.api.get('foo/Bar', {'a':[1,2,3]})
+        tree, current, expires = self.api.get('foo/Bar', {'a':[1,2,3]})
 
         rowset = tree.find('rowset')
         rows = rowset.findall('row')
@@ -68,6 +68,8 @@ class RequestsAPITestCase(unittest.TestCase):
             'current_time': 1255885531,
             'cached_until': 1258563931,
         })
+        self.assertEqual(current, 1255885531)
+        self.assertEqual(expires, 1258563931)
 
     def test_cached_get(self):
         """Make sure that we don't try to call the API if the result is cached."""
@@ -76,7 +78,7 @@ class RequestsAPITestCase(unittest.TestCase):
         self.mock_sessions.post.return_value = DummyResponse(self.error_xml)
         self.cache.get.return_value = self.test_xml
 
-        result = self.api.get('foo/Bar', {'a':[1,2,3]})
+        result, current, expires = self.api.get('foo/Bar', {'a':[1,2,3]})
 
         rowset = result.find('rowset')
         rows = rowset.findall('row')
@@ -89,6 +91,8 @@ class RequestsAPITestCase(unittest.TestCase):
             'current_time': 1255885531,
             'cached_until': 1258563931,
         })
+        self.assertEqual(current, 1255885531)
+        self.assertEqual(expires, 1258563931)
 
     def test_get_with_apikey(self):
         self.mock_sessions.post.return_value = DummyResponse(self.test_xml)

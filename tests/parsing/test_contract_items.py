@@ -6,7 +6,7 @@ from evelink.parsing import contract_items as evelink_c
 
 class ContractItemsTestCase(unittest.TestCase):
     def test_parse_contract_items(self):
-        api_result = make_api_result("char/contract_items.xml")
+        api_result, _, _ = make_api_result("char/contract_items.xml")
         result = evelink_c.parse_contract_items(api_result)
         self.assertEqual(result, [
             {'id': 779703190, 'quantity': 490, 'type_id': 17867, 'action': 'offered', 'singleton': False},

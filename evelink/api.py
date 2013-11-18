@@ -1,4 +1,5 @@
 import calendar
+import collections
 import functools
 import logging
 import re
@@ -116,12 +117,15 @@ def parse_ms_date(date_string):
 class APIError(Exception):
     """Exception raised when the EVE API returns an error."""
 
-    def __init__(self, code=None, message=None):
+    def __init__(self, code=None, message=None, timestamp=None, expires=None):
         self.code = code
         self.message = message
+        self.timestamp = timestamp
+        self.expires = expires
 
     def __repr__(self):
-        return "APIError(%r, %r)" % (self.code, self.message)
+        return "APIError(%r, %r, timestamp=%r, expires=%r)" % (
+            self.code, self.message, self.timestamp, self.expires)
 
     def __str__(self):
         return "%s (code=%d)" % (self.message, int(self.code))
@@ -164,6 +168,13 @@ class APICache(object):
         """
         expiration = time.time() + duration
         self.cache[key] = (value, expiration)
+
+
+APIResult = collections.namedtuple("APIResult", [
+        "result",
+        "timestamp",
+        "expires",
+    ])
 
 
 class API(object):
@@ -237,12 +248,12 @@ class API(object):
         if error is not None:
             code = error.attrib['code']
             message = error.text.strip()
-            exc = APIError(code, message)
+            exc = APIError(code, message, current_time, expires_time)
             _log.error("Raising API error: %r" % exc)
             raise exc
 
         result = tree.find('result')
-        return result
+        return APIResult(result, current_time, expires_time)
 
     def send_request(self, full_path, params):
         if _has_requests:

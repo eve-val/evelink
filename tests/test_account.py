@@ -14,7 +14,7 @@ class AccountTestCase(APITestCase):
     def test_status(self):
         self.api.get.return_value = self.make_api_result("account/status.xml")
 
-        result = self.account.status()
+        result, current, expires = self.account.status()
 
         self.assertEqual(result, {
                 'create_ts': 1072915200,
@@ -25,11 +25,13 @@ class AccountTestCase(APITestCase):
         self.assertEqual(self.api.mock_calls, [
                 mock.call.get('account/AccountStatus'),
             ])
+        self.assertEqual(current, 12345)
+        self.assertEqual(expires, 67890)
 
     def test_key_info(self):
         self.api.get.return_value = self.make_api_result("account/key_info.xml")
 
-        result = self.account.key_info()
+        result, current, expires = self.account.key_info()
 
         self.assertEqual(result, {
                 'access_mask': 59760264,
@@ -49,11 +51,13 @@ class AccountTestCase(APITestCase):
         self.assertEqual(self.api.mock_calls, [
                 mock.call.get('account/APIKeyInfo'),
             ])
+        self.assertEqual(current, 12345)
+        self.assertEqual(expires, 67890)
 
     def test_characters(self):
         self.api.get.return_value = self.make_api_result("account/characters.xml")
 
-        result = self.account.characters()
+        result, current, expires = self.account.characters()
 
         self.assertEqual(result, {
                 1365215823: {
@@ -68,6 +72,8 @@ class AccountTestCase(APITestCase):
         self.assertEqual(self.api.mock_calls, [
                 mock.call.get('account/Characters'),
             ])
+        self.assertEqual(current, 12345)
+        self.assertEqual(expires, 67890)
 
 
 if __name__ == "__main__":
