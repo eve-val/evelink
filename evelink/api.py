@@ -117,16 +117,15 @@ def parse_ms_date(date_string):
 class APIError(Exception):
     """Exception raised when the EVE API returns an error."""
 
-    def __init__(self, code=None, message=None, current_time=None,
-                 expires_time=None):
+    def __init__(self, code=None, message=None, timestamp=None, expires=None):
         self.code = code
         self.message = message
-        self.current_time = current_time
-        self.expires_time = expires_time
+        self.timestamp = timestamp
+        self.expires = expires
 
     def __repr__(self):
-        return "APIError(%r, %r, current_time=%r, expiry_time=%r)" % (
-            self.code, self.message, self.current_time, self.expires_time)
+        return "APIError(%r, %r, timestamp=%r, expires=%r)" % (
+            self.code, self.message, self.timestamp, self.expires)
 
     def __str__(self):
         return "%s (code=%d)" % (self.message, int(self.code))
