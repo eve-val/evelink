@@ -2,6 +2,7 @@ from StringIO import StringIO
 import unittest2 as unittest
 
 import mock
+import urllib2
 
 import evelink.api as evelink_api
 
@@ -161,7 +162,11 @@ class APITestCase(unittest.TestCase):
 
     @mock.patch('urllib2.urlopen')
     def test_get_with_error(self, mock_urlopen):
-        mock_urlopen.return_value = StringIO(self.error_xml)
+        # I had to go digging in the source code for urllib2 to find out
+        # how to manually instantiate HTTPError instances. :( The empty
+        # dict is the headers object.
+        mock_urlopen.return_value = urllib2.HTTPError(
+            "http://api.eveonline.com/eve/Error", 404, "Not found!", {}, StringIO(self.error_xml))
         self.cache.get.return_value = None
 
         self.assertRaises(evelink_api.APIError,
