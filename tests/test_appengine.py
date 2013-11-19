@@ -96,7 +96,7 @@ class AppEngineAPITestCase(GAETestCase):
         mock_urlfetch.return_value.content = self.test_xml
 
         api = appengine.AppEngineAPI()
-        result = api.get('foo/Bar', {'a':[1,2,3]})
+        result = api.get('foo/Bar', {'a':[1,2,3]}).result
 
         rowset = result.find('rowset')
         rows = rowset.findall('row')
