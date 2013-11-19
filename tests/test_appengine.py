@@ -10,6 +10,7 @@ except ImportError:
 else:
     NOGAE = False
     from evelink import appengine
+    from evelink.api import APIError
 
 
 @unittest.skipIf(sys.version_info < (2, 7,), 'GAE requires python 2.7')
@@ -90,6 +91,17 @@ class AppEngineAPITestCase(GAETestCase):
             </eveapi>
         """.strip()
 
+        self.error_xml = r"""
+            <?xml version='1.0' encoding='UTF-8'?>
+            <eveapi version="2">
+                <currentTime>2009-10-18 17:05:31</currentTime>
+                <error code="123">
+                    Test error message.
+                </error>
+                <cachedUntil>2009-11-18 19:05:31</cachedUntil>
+            </eveapi>
+        """.strip()
+
     @mock.patch('google.appengine.api.urlfetch.fetch')
     def test_get(self, mock_urlfetch):
         mock_urlfetch.return_value.status_code = 200
@@ -105,6 +117,19 @@ class AppEngineAPITestCase(GAETestCase):
         self.assertEqual(api.last_timestamps, {
             'current_time': 1255885531,
             'cached_until': 1258563931,
+        })
+
+    @mock.patch('google.appengine.api.urlfetch.fetch')
+    def test_get_raise_api_error(self, mock_urlfetch):
+        mock_urlfetch.return_value.status_code = 400
+        mock_urlfetch.return_value.content = self.error_xml
+
+        api = appengine.AppEngineAPI()
+
+        self.assertRaises(APIError, api.get, 'eve/Error')
+        self.assertEqual(api.last_timestamps, {
+            'current_time': 1255885531,
+            'cached_until': 1258571131,
         })
 
 
