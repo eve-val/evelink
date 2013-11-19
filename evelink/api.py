@@ -274,6 +274,13 @@ class API(object):
             result = r.read()
             r.close()
             return result
+        except urllib2.HTTPError as e:
+            # urllib2 handles non-2xx responses by raising an exception that
+            # can also behave as a file-like object. The EVE API will return
+            # non-2xx HTTP codes on API errors (since Odyssey, apparently)
+            result = e.read()
+            e.close()
+            return result
         except urllib2.URLError as e:
             # TODO: Handle this better?
             raise e
