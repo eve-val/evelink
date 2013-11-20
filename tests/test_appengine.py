@@ -13,11 +13,11 @@ else:
     from evelink.api import APIError
 
 
-@unittest.skipIf(sys.version_info < (2, 7,), 'GAE requires python 2.7')
+@unittest.skipIf(sys.version_info[0:2] != (2, 7,), 'GAE requires python 2.7')
 @unittest.skipIf(NO_GAE, 'No GAE SDK found')
 class GAETestCase(unittest.TestCase):
     """
-    Those test cases require python 2.6 and the Google App Engine SDK 
+    Those test cases require python 2.7 and the Google App Engine SDK 
     to be installed.
 
     """

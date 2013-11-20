@@ -11,7 +11,7 @@ TEST_PATH = './tests/'
 
 
 def setup_gae(sdk_path):
-    if sys.version_info < (2, 7,):
+    if sys.version_info[0:2] != (2, 7,):
         return
 
     sys.path.insert(0, sdk_path)
