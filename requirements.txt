@@ -1,5 +1,5 @@
 argparse==1.2.1
-distribute==0.6.24
+setuptools>=0.7
 mock==1.0b1
 nose==1.1.2
 unittest2==0.5.1
