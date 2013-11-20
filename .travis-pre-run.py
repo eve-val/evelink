@@ -7,11 +7,11 @@ import argparse
 import logging
 import os
 import re
-import sys
 import urllib
+import urllib2
+from xml.etree import ElementTree as ET
 from zipfile import ZipFile
 
-import feedparser
 
 GAE_FEED_URL = 'https://code.google.com/feeds/p/googleappengine/downloads/basic'
 SDK_PATTERN = r'http://googleappengine.googlecode.com/files/google_appengine_(\d\.)+zip'
@@ -38,18 +38,19 @@ def get_args_parser():
     return parser
 
 
-def get_direct_link(entry):
-    for link in entry.links:
-        if link['rel'] == 'direct':
-            return link['href']
-
-
 def get_sdk_url(feed, pattern):
-    _log.info("Fetching atom feed of the GAE sdk releases...")
-    gae_feed = feedparser.parse(feed)
-    for entry in gae_feed.entries:
-        url = get_direct_link(entry)
-        if re.match(pattern, url):
+    try:
+        _log.info("Fetching atom feed for GAE sdk releases...")
+        f = urllib2.urlopen(feed)
+        tree = ET.fromstring(f.read())
+    finally:
+        f.close()
+
+    ns = {'a': 'http://www.w3.org/2005/Atom'}
+    for link in tree.findall("a:entry/a:link[@rel='direct']", namespaces=ns):
+        url = link.get('href')
+        if re.match(SDK_PATTERN, url):
+            _log.info("Found last release: %s", url)
             return url
 
 
@@ -70,10 +71,7 @@ def unzip(file, dst):
 
 
 def main(gae_lib_dst):
-    if sys.version_info[0:2] != (2, 7,):
-        print "Google App Engine is not required."
-        return
-    
+
     try:
         url = get_sdk_url(GAE_FEED_URL, SDK_PATTERN)
         _log.info("Found GAE SDK url: %s", url)
