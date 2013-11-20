@@ -3,7 +3,8 @@ python:
   - "2.6"
   - "2.7"
 install: pip install -r requirements.txt --use-mirrors
-script: nosetests -v
+before_script: ./.travis-pre-run.py ./vendors
+script: ./.travis-runner.py -l ./vendors/google_appengine ./tests
 notifications:
   email:
     - d-eve-lopment@googlegroups.com

@@ -28,8 +28,6 @@ class AppEngineAPI(api.API):
                 headers={'Content-Type': 'application/x-www-form-urlencoded'}
                         if params else {}
                 )
-        if result.status_code != 200:
-            raise ValueError("Bad result from server: {}".format(result.status_code))
         return result.content
 
 
