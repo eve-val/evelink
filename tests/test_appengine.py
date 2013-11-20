@@ -6,15 +6,15 @@ import unittest2 as unittest
 try:
     from google.appengine.ext import testbed
 except ImportError:
-    NOGAE = True
+    NO_GAE = True
 else:
-    NOGAE = False
+    NO_GAE = False
     from evelink import appengine
     from evelink.api import APIError
 
 
 @unittest.skipIf(sys.version_info < (2, 7,), 'GAE requires python 2.7')
-@unittest.skipIf(NOGAE, 'No GAE SDK found')
+@unittest.skipIf(NO_GAE, 'No GAE SDK found')
 class GAETestCase(unittest.TestCase):
     """
     Those test cases require python 2.6 and the Google App Engine SDK 
