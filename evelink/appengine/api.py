@@ -1,3 +1,4 @@
+import functools
 import time
 from urllib import urlencode
 from xml.etree import ElementTree
@@ -149,3 +150,19 @@ class AppEngineDatastoreCache(api.APICache):
         expiration = int(time.time() + duration)
         cache = EveLinkCache(id=cache_key, value=value, expiration=expiration)
         yield cache.put_async()
+
+
+def auto_gae_api(func):
+    """A decorator to automatically provide an API instance.
+
+    Functions decorated with this will have the api= kwarg
+    automatically supplied with a default-initialized API()
+    object if no other API object is supplied.
+    """
+
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        if 'api' not in kwargs:
+            kwargs['api'] = AppEngineAPI()
+        return func(*args, **kwargs)
+    return wrapper

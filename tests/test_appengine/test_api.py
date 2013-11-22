@@ -1,7 +1,7 @@
-import sys
-
 import mock
 import unittest2 as unittest
+
+from tests.test_appengine import GAETestCase
 
 try:
     from google.appengine.ext import testbed
@@ -10,23 +10,12 @@ try:
     from google.appengine.api import apiproxy_stub_map
 
 except ImportError:
-    NO_GAE = True
     apiproxy_stub = mock.Mock()
 else:
-    NO_GAE = False
 
     from evelink import appengine
     from evelink.api import APIError
 
-
-@unittest.skipIf(sys.version_info[0:2] != (2, 7,), 'GAE requires python 2.7')
-@unittest.skipIf(NO_GAE, 'No GAE SDK found')
-class GAETestCase(unittest.TestCase):
-    """
-    Those test cases require python 2.7 and the Google App Engine SDK 
-    to be installed.
-
-    """
 
 class URLFetchServiceMock(apiproxy_stub.APIProxyStub):
     """Mock for google.appengine.api.urlfetch.

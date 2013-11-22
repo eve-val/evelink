@@ -305,6 +305,7 @@ class API(object):
             # TODO: Handle this better?
             raise e
 
+
 def auto_api(func):
     """A decorator to automatically provide an API instance.
 
@@ -320,5 +321,29 @@ def auto_api(func):
         return func(*args, **kwargs)
     return wrapper
 
+
+class auto_call(object):
+    """A decorator to automatically provide an api response to method.
+    
+    Only support parameter-less api call.
+
+    TODO: add support for call needing parameters?
+
+    """
+
+    def __init__(self, path):
+        self.path = path
+
+    def __call__(self, method):
+
+        @functools.wraps(method)
+        def wrapper(instance, api_result=None):
+            if api_result is None:
+                api_result = instance.api.get(self.path)
+            return method(instance, api_result=api_result)
+
+        return wrapper
+
+        
 
 # vim: set ts=4 sts=4 sw=4 et:
