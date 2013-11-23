@@ -168,9 +168,9 @@ def auto_gae_api(func):
     return wrapper
 
 def _make_async(method_name, method):
-    def _async(self):
-        api_result = yield self.api.get_async(method._path)
-        raise ndb.Return(getattr(self, method_name)(api_result=api_result))
+    def _async(self, *args, **kw):
+        kw['api_result'] = yield self.api.get_async(method._path)
+        raise ndb.Return(getattr(self, method_name)(*args, **kw))
     return ndb.tasklet(_async)
 
 def auto_async(cls):

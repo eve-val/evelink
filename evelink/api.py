@@ -323,25 +323,46 @@ def auto_api(func):
 
 
 class auto_call(object):
-    """A decorator to automatically provide an api response to method.
+    """A decorator to automatically provide an api response to a method.
     
-    Only support parameter-less api call.
+    'path' is the path of the request to query.
 
-    TODO: add support for call needing parameters?
+    'required_params' is a list or required parameter to pass to the 
+    query. They should be listed in the same order than the method
+    positional arguments they refer to.
+
+    'map_params' is a dictionary of extra parameters where the key is 
+    the name of one of the method keyword arguments or property 
+    and the value is the corresponding parameter name 
+    (e.g. `{'char_id': 'characterID'}`).
 
     """
 
-    def __init__(self, path):
+    def __init__(self, path, required_params=None, map_params=None):
         self.path = path
+        self.required_params = required_params or tuple()
+        self.map_params = map_params or {}
 
     def __call__(self, method):
         method._path = self.path
+        method._required_params = self.required_params
+        method._map_params = self.map_params
 
         @functools.wraps(method)
-        def wrapper(instance, api_result=None):
-            if api_result is None:
-                api_result = instance.api.get(self.path)
-            return method(instance, api_result=api_result)
+        def wrapper(instance, *args, **kw):
+            api_result = kw.get('api_result', None)
+            if api_result is not None:
+                return method(instance, *args, **kw)
+            
+            params = dict(zip(self.required_params, args))
+            for key, name in self.map_params.iteritems():
+                value = kw.get(key, None) or getattr(instance, key, None)
+                if value is None:
+                    continue
+                params[name] = value
+
+            kw['api_result'] = instance.api.get(self.path, params=params)
+            return method(instance, *args, **kw)
 
         return wrapper
 

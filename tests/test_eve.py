@@ -44,7 +44,7 @@ class EVETestCase(APITestCase):
                 'id': 3,
                 'name': 'Core'}})
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('eve/CertificateTree'),
+                mock.call.get('eve/CertificateTree', params={}),
             ])
         self.assertEqual(current, 12345)
         self.assertEqual(expires, 67890)
@@ -52,11 +52,11 @@ class EVETestCase(APITestCase):
     def test_character_names_from_ids(self):
         self.api.get.return_value = self.make_api_result("eve/character_name.xml")
 
-        result, current, expires = self.eve.character_names_from_ids([1,2])
+        result, current, expires = self.eve.character_names_from_ids(set([1,2]))
 
         self.assertEqual(result, {1:"EVE System", 2:"EVE Central Bank"})
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('eve/CharacterName', {'IDs': set([1,2])}),
+                mock.call.get('eve/CharacterName', params={'IDs': set([1,2])}),
             ])
         self.assertEqual(current, 12345)
         self.assertEqual(expires, 67890)
@@ -68,7 +68,7 @@ class EVETestCase(APITestCase):
 
         self.assertEqual(result, "EVE System")
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('eve/CharacterName', {'IDs': set([1])}),
+                mock.call.get('eve/CharacterName', params={'IDs': [1]}),
             ])
         self.assertEqual(current, 12345)
         self.assertEqual(expires, 67890)
@@ -76,10 +76,10 @@ class EVETestCase(APITestCase):
     def test_character_ids_from_names(self):
         self.api.get.return_value = self.make_api_result("eve/character_id.xml")
 
-        result, current, expires = self.eve.character_ids_from_names(["EVE System", "EVE Central Bank"])
+        result, current, expires = self.eve.character_ids_from_names(set(["EVE System", "EVE Central Bank"]))
         self.assertEqual(result, {"EVE System":1, "EVE Central Bank":2})
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('eve/CharacterID', {'names': set(["EVE System","EVE Central Bank"])}),
+                mock.call.get('eve/CharacterID', params={'names': set(["EVE System","EVE Central Bank"])}),
             ])
         self.assertEqual(current, 12345)
         self.assertEqual(expires, 67890)
@@ -90,7 +90,7 @@ class EVETestCase(APITestCase):
         result, current, expires = self.eve.character_id_from_name("EVE System")
         self.assertEqual(result, 1)
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('eve/CharacterID', {'names': set(["EVE System"])}),
+                mock.call.get('eve/CharacterID', params={'names': ["EVE System"]}),
             ])
         self.assertEqual(current, 12345)
         self.assertEqual(expires, 67890)
@@ -117,7 +117,7 @@ class EVETestCase(APITestCase):
             'skillpoints': None,
         })
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('eve/CharacterInfo', {'characterID': 1234}),
+                mock.call.get('eve/CharacterInfo', params={'characterID': 1234}),
             ])
         self.assertEqual(current, 12345)
         self.assertEqual(expires, 67890)
@@ -142,7 +142,7 @@ class EVETestCase(APITestCase):
                 }
             })
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('eve/AllianceList'),
+                mock.call.get('eve/AllianceList', params={}),
             ])
         self.assertEqual(current, 12345)
         self.assertEqual(expires, 67890)
@@ -153,7 +153,7 @@ class EVETestCase(APITestCase):
         result, current, expires = self.eve.errors()
         self.assertEqual(result, {1:"Foo", 2:"Bar"})
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('eve/ErrorList'),
+                mock.call.get('eve/ErrorList', params={}),
             ])
         self.assertEqual(current, 12345)
         self.assertEqual(expires, 67890)
@@ -235,7 +235,7 @@ class EVETestCase(APITestCase):
                 ],
             })
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('eve/FacWarStats'),
+                mock.call.get('eve/FacWarStats', params={}),
             ])
         self.assertEqual(current, 12345)
         self.assertEqual(expires, 67890)
@@ -289,7 +289,7 @@ class EVETestCase(APITestCase):
                 },
             })
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('eve/FacWarTopStats'),
+                mock.call.get('eve/FacWarTopStats', params={}),
             ])
         self.assertEqual(current, 12345)
         self.assertEqual(expires, 67890)
@@ -317,7 +317,7 @@ class EVETestCase(APITestCase):
                 }
            })
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('eve/ConquerableStationlist'),
+                mock.call.get('eve/ConquerableStationlist', params={}),
             ])
         self.assertEqual(current, 12345)
         self.assertEqual(expires, 67890)
@@ -425,7 +425,7 @@ class EVETestCase(APITestCase):
         self.assertEqual(expires, 67890)
 
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('eve/SkillTree')
+                mock.call.get('eve/SkillTree', params={})
                 ])
 
 
@@ -446,7 +446,7 @@ class EVETestCase(APITestCase):
         self.assertEqual(expires, 67890)
 
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('eve/RefTypes')
+                mock.call.get('eve/RefTypes', params={})
                 ])
 
 

@@ -74,6 +74,7 @@ class EVE(object):
 
         return api.APIResult(result, api_result.timestamp, api_result.expires)
 
+    @api.auto_call('eve/CharacterName', ('IDs',))
     def character_names_from_ids(self, id_list, api_result=None):
         """Retrieve a dict mapping character IDs to names.
 
@@ -83,13 +84,8 @@ class EVE(object):
         NOTE: *ALL* character IDs passed to this function
         must be valid - an invalid character ID will cause
         the entire call to fail.
+        
         """
-
-        if api_result is None:
-            api_result = self.api.get('eve/CharacterName', {
-                    'IDs': set(id_list),
-                })
-
         if api_result is None:
             # The API doesn't actually tell us which character IDs are invalid
             msg = "One or more of these character IDs are invalid: %r"
@@ -114,6 +110,7 @@ class EVE(object):
         api_result = self.character_names_from_ids([char_id])
         return api.APIResult(api_result.result.get(char_id), api_result.timestamp, api_result.expires)
 
+    @api.auto_call('eve/CharacterID', ('names',))
     def character_ids_from_names(self, name_list, api_result=None):
         """Retrieve a dict mapping character names to IDs.
 
@@ -121,12 +118,8 @@ class EVE(object):
             A list of names to retrieve character IDs.
 
         Names of unknown characters will map to None.
+        
         """
-        if api_result is None:
-            api_result = self.api.get('eve/CharacterID', {
-                    'names': set(name_list),
-                })
-
         rowset = api_result.result.find('rowset')
         rows = rowset.findall('row')
 
@@ -146,14 +139,9 @@ class EVE(object):
         api_result = self.character_ids_from_names([name])
         return api.APIResult(api_result.result.get(name), api_result.timestamp, api_result.expires)
 
+    @api.auto_call('eve/CharacterInfo', ('characterID',))
     def character_info_from_id(self, char_id, api_result=None):
         """Retrieve a dict of info about the designated character."""
-
-        if api_result is None:
-            api_result = self.api.get('eve/CharacterInfo', {
-                    'characterID': char_id,
-                })
-
         if api_result is None:
             raise ValueError("Unable to fetch info for character %r" % char_id)
 
