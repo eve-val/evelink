@@ -1,8 +1,6 @@
-import mock
 import unittest2 as unittest
 
-from tests.test_appengine import GAETestCase, mock_async_method
-from tests.utils import make_api_result
+from tests.test_appengine import GAEAsyncTestCase
 
 try:
     from evelink.appengine.eve import EVE
@@ -10,23 +8,11 @@ except ImportError:
     pass
 
 
-class AppEngineEVETestCase(GAETestCase):
+class AppEngineEVETestCase(GAEAsyncTestCase):
 
     def setUp(self):
-        self.eve = EVE()
-        self.eve.api.get = mock.Mock()
-
-    def mock_gets(self, xml_file_path):
-        raw_resp = make_api_result(xml_file_path) 
-        self.eve.api.get.return_value = raw_resp
-        mock_async_method(self.eve.api, 'get_async', raw_resp)
-
-    def compare(self, method_name, *args, **kw):
-        sync = getattr(self.eve, method_name)
-        async = getattr(self.eve, '%s_async' %method_name)
-        self.assertEqual(sync(*args, **kw), async(*args, **kw).get_result())
-        self.assertEqual(1, self.eve.api.get.call_count)
-        self.assertEqual(1, self.eve.api.get_async.call_count)
+        super(AppEngineEVETestCase, self).setUp()
+        self.client = EVE(api=self.api)
 
     def test_certificate_tree(self):
         self.mock_gets("eve/certificate_tree.xml") 
