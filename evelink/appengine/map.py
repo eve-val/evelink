@@ -5,7 +5,7 @@ from evelink.appengine.api import auto_gae_api
 
 
 class Map(map_.Map):
-    """Wrapper around /map/ of the EVE API."""
+    __doc__ = map_.Map.__doc__
 
     @auto_gae_api
     def __init__(self, api=None):

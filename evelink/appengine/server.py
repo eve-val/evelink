@@ -5,11 +5,7 @@ from evelink.appengine.api import auto_gae_api
 
 
 class Server(server.Server):
-    """Wrapper around /server/ of the EVE API for Google App Engine.
-
-    Implement async methods
-
-    """
+    __doc__ = server.Server.__doc__
 
     @auto_gae_api
     def __init__(self, api=None):
@@ -17,5 +13,6 @@ class Server(server.Server):
 
     @ndb.tasklet
     def server_status_async(self):
+        """Asynchronous version of server_status."""
         api_result = yield self.api.get_async('server/ServerStatus')
         raise ndb.Return(self.server_status(api_result=api_result))
