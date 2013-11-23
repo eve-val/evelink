@@ -166,3 +166,27 @@ def auto_gae_api(func):
             kwargs['api'] = AppEngineAPI()
         return func(*args, **kwargs)
     return wrapper
+
+def _make_async(method_name, method):
+    def _async(self):
+        api_result = yield self.api.get_async(method._path)
+        raise ndb.Return(getattr(self, method_name)(api_result=api_result))
+    return ndb.tasklet(_async)
+
+def auto_async(cls):
+    """Class decoration which add a async version of any method with a
+    a '_path' attribute, which the auto_call decorator adds.
+
+    """
+
+    for attr_name in dir(cls):
+
+        attr = getattr(cls, attr_name)
+        if not hasattr(attr, '_path'):
+            continue
+        
+        async_method = _make_async(attr_name, attr)
+        async_method.__doc__ = """Asynchronous version of %s.""" % attr_name
+        setattr(cls, '%s_async' % attr_name, async_method)
+        
+    return cls

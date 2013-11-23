@@ -335,6 +335,7 @@ class auto_call(object):
         self.path = path
 
     def __call__(self, method):
+        method._path = self.path
 
         @functools.wraps(method)
         def wrapper(instance, api_result=None):
