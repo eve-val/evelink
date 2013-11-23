@@ -11,6 +11,20 @@ else:
     NO_GAE = False
 
 
+def mock_async_method(class_, method_name, result):
+    future = ndb.Future()
+    future.set_result(result)
+    method = getattr(class_, method_name)
+    setattr(
+        class_,
+        method_name,
+        mock.create_autospec(
+            method,
+            return_value=future
+        )
+    )
+
+
 @unittest.skipIf(sys.version_info[0:2] != (2, 7,), 'GAE requires python 2.7')
 @unittest.skipIf(NO_GAE, 'No GAE SDK found')
 class GAETestCase(unittest.TestCase):
