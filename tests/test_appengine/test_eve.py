@@ -1,73 +1,73 @@
+import mock
+
 import unittest2 as unittest
 
-from tests.test_appengine import GAEAsyncTestCase
+from tests.test_appengine import (
+    GAEAsyncTestCase, auto_test_async_method
+)
 
 try:
     from evelink.appengine.eve import EVE
 except ImportError:
-    pass
+    EVE = mock.Mock()
 
 
+_specs = (
+    'certificate_tree', 
+    'alliances', 
+    'errors', 
+    'faction_warfare_stats', 
+    'faction_warfare_leaderboard', 
+    'conquerable_stations', 
+    'skill_tree',
+    'reference_types',
+)
+
+
+@auto_test_async_method(EVE, _specs)
 class AppEngineEVETestCase(GAEAsyncTestCase):
 
-    def setUp(self):
-        super(AppEngineEVETestCase, self).setUp()
-        self.client = EVE(api=self.api)
-
-    def test_certificate_tree(self):
-        self.mock_gets("eve/certificate_tree.xml") 
-        self.compare('certificate_tree')
-
     def test_character_names_from_ids_async(self):
-        self.mock_gets("eve/character_name.xml") 
-        self.compare('character_names_from_ids', [1,2])
+        self.compare(
+            EVE,
+            'character_names_from_ids',
+            "eve/character_name.xml",
+            [1,2]
+        )
 
     def test_character_name_from_id_async(self):
-        self.mock_gets("eve/character_name_single.xml") 
-        self.compare('character_name_from_id', 1)
+        "eve/character_name_single.xml"
+        self.compare(
+            EVE,
+            'character_name_from_id',
+            "eve/character_name_single.xml",
+            1
+        )
 
     def test_character_ids_from_names_async(self):
-        self.mock_gets("eve/character_id.xml") 
         self.compare(
+            EVE,
             'character_ids_from_names',
+            "eve/character_id.xml",
             ["EVE System", "EVE Central Bank"]
         )
 
     def test_character_id_from_name_async(self):
-        self.mock_gets("eve/character_id_single.xml") 
-        self.compare('character_id_from_name', "EVE System")
+        self.compare(
+            EVE,
+            'character_id_from_name',
+            "eve/character_id_single.xml",
+            "EVE System"
+        )
 
     def test_character_info_from_id_async(self):
-        self.mock_gets("eve/character_info.xml") 
-        self.compare('character_info_from_id', 1234)
-
-    def test_alliances_async(self):
-        self.mock_gets("eve/alliances.xml") 
-        self.compare('alliances')
-
-    def test_errors_async(self):
-        self.mock_gets("eve/errors.xml") 
-        self.compare('errors')
-
-    def test_faction_warfare_stats_async(self):
-        self.mock_gets("eve/faction_warfare_stats.xml") 
-        self.compare('faction_warfare_stats')
-
-    def test_faction_warfare_leaderboard_async(self):
-        self.mock_gets("eve/faction_warfare_leaderboard.xml") 
-        self.compare('faction_warfare_leaderboard')
-
-    def test_conquerable_stations_async(self):
-        self.mock_gets("eve/conquerable_stations.xml") 
-        self.compare('conquerable_stations')
-
-    def test_skill_tree_async(self):
-        self.mock_gets("eve/skill_tree.xml") 
-        self.compare('skill_tree')
-
-    def test_reference_types_async(self):
-        self.mock_gets("eve/reference_types.xml") 
-        self.compare('reference_types')
+        
+        self.compare(
+            EVE,
+            'character_info_from_id',
+            "eve/character_info.xml",
+            1234
+        )
 
 
 if __name__ == "__main__":

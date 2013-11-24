@@ -27,6 +27,19 @@ def mock_async_method(class_, method_name, result):
         )
     )
 
+def run_gets(api_wrapper, method_name, src, *args, **kw):
+    api = AppEngineAPI()
+    client = api_wrapper(api=api)
+    
+    raw_resp = make_api_result(src)
+    api.get = mock.Mock()
+    api.get.return_value = raw_resp
+    mock_async_method(api, 'get_async', raw_resp)
+
+    sync = getattr(client, method_name)
+    async = getattr(client, '%s_async' % method_name)
+    return api, sync(*args, **kw), async(*args, **kw).get_result()    
+
 
 @unittest.skipIf(sys.version_info[0:2] != (2, 7,), 'GAE requires python 2.7')
 @unittest.skipIf(NO_GAE, 'No GAE SDK found')
@@ -38,22 +51,41 @@ class GAETestCase(unittest.TestCase):
     """
 
 
+
+class auto_test_async_method(object):
+    # TODO: should be a metaclass
+
+    def __init__(self, api_wrapper, method_list):
+        self.api_wrapper = api_wrapper
+        self.method_list = method_list
+        self.src_root = api_wrapper.__name__.lower()
+
+    def __call__(self,  cls):
+        for name in self.method_list:
+            src = "%s/%s.xml" % (self.src_root, name)
+
+            setattr(
+                cls,
+                'test_%s_async' % name, 
+                self._make_test(self.api_wrapper, name, src)
+            )
+
+        return cls
+
+    def _make_test(self, api_wrapper, method_name, src):
+        def test(instance):
+            instance.compare(api_wrapper, method_name, src)
+        return test
+
+
 class GAEAsyncTestCase(GAETestCase):
     """Extends GAETestCase to provide helper to test async methods."""
 
-    def setUp(self):
-        self.client = None
-        self.api = AppEngineAPI()
-        self.api.get = mock.Mock()
+    def compare(self, api_wrapper, method_name, src, *args, **kw):
+        api, sync_r, async_r = run_gets(
+            api_wrapper, method_name, src, *args, **kw
+        )
+        self.assertEqual(sync_r, async_r)
+        self.assertEqual(1, api.get.call_count)
+        self.assertEqual(1, api.get_async.call_count)
 
-    def mock_gets(self, xml_file_path):
-        raw_resp = make_api_result(xml_file_path) 
-        self.api.get.return_value = raw_resp
-        mock_async_method(self.client.api, 'get_async', raw_resp)
-
-    def compare(self, method_name, *args, **kw):
-        sync = getattr(self.client, method_name)
-        async = getattr(self.client, '%s_async' %method_name)
-        self.assertEqual(sync(*args, **kw), async(*args, **kw).get_result())
-        self.assertEqual(1, self.client.api.get.call_count)
-        self.assertEqual(1, self.client.api.get_async.call_count)
