@@ -129,7 +129,7 @@ class AppEngineAPITestCase(GAETestCase):
         self.testbed.activate()
         self.testbed.init_memcache_stub()
         self.urlfetch_mock = URLFetchServiceMock()
-        apiproxy_stub_map.apiproxy.RegisterStub(
+        apiproxy_stub_map.apiproxy.ReplaceStub(
             'urlfetch', 
             self.urlfetch_mock
         )
