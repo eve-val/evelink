@@ -57,10 +57,16 @@ class auto_test_async_method(object):
 
     def __init__(self, api_wrapper, method_list):
         self.api_wrapper = api_wrapper
+        if isinstance(self.api_wrapper, mock.Mock):
+            return
+
         self.method_list = method_list
         self.src_root = api_wrapper.__name__.lower()
 
     def __call__(self,  cls):
+        if isinstance(self.api_wrapper, mock.Mock):
+            return cls
+
         for name in self.method_list:
             src = "%s/%s.xml" % (self.src_root, name)
 

@@ -10,7 +10,7 @@ from tests.test_appengine import (
 try:
     from evelink.appengine.server import Server
 except ImportError:
-    Sever = mock.Mock()
+    Server = mock.Mock()
 
 @auto_test_async_method(Server, ('server_status',))
 class AppEngineServerTestCase(GAEAsyncTestCase):
