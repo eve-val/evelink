@@ -26,7 +26,7 @@ class CharTestCase(APITestCase):
                 mock.call(mock.sentinel.api_result),
             ])
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('char/AssetList', {'characterID': 1}),
+                mock.call.get('char/AssetList', params={'characterID': 1}),
             ])
         self.assertEqual(current, 12345)
         self.assertEqual(expires, 67890)
@@ -42,7 +42,7 @@ class CharTestCase(APITestCase):
                 mock.call(mock.sentinel.api_result),
             ])
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('char/ContractBids', {'characterID': 1}),
+                mock.call.get('char/ContractBids', params={'characterID': 1}),
             ])
         self.assertEqual(current, 12345)
         self.assertEqual(expires, 67890)
@@ -58,7 +58,7 @@ class CharTestCase(APITestCase):
                 mock.call(mock.sentinel.api_result),
             ])
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('char/ContractItems', {'characterID': 1, 'contractID': 12345}),
+                mock.call.get('char/ContractItems', params={'characterID': 1, 'contractID': 12345}),
             ])
         self.assertEqual(current, 12345)
         self.assertEqual(expires, 67890)
@@ -74,7 +74,7 @@ class CharTestCase(APITestCase):
                 mock.call(mock.sentinel.api_result),
             ])
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('char/Contracts', {'characterID': 1}),
+                mock.call.get('char/Contracts', params={'characterID': 1}),
             ])
         self.assertEqual(current, 12345)
         self.assertEqual(expires, 67890)
@@ -90,7 +90,7 @@ class CharTestCase(APITestCase):
                 mock.call(mock.sentinel.api_result),
             ])
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('char/WalletJournal', {'characterID': 1}),
+                mock.call.get('char/WalletJournal', params={'characterID': 1}),
             ])
         self.assertEqual(current, 12345)
         self.assertEqual(expires, 67890)
@@ -100,7 +100,7 @@ class CharTestCase(APITestCase):
 
         self.char.wallet_journal(before_id=1234)
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('char/WalletJournal', {'characterID': 1, 'fromID': 1234}),
+                mock.call.get('char/WalletJournal', params={'characterID': 1, 'fromID': 1234}),
             ])
 
     def test_wallet_limit(self):
@@ -108,7 +108,7 @@ class CharTestCase(APITestCase):
 
         self.char.wallet_journal(limit=100)
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('char/WalletJournal', {'characterID': 1, 'rowCount': 100}),
+                mock.call.get('char/WalletJournal', params={'characterID': 1, 'rowCount': 100}),
             ])
 
     def test_wallet_info(self):
@@ -126,7 +126,7 @@ class CharTestCase(APITestCase):
             }
         )
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('char/AccountBalance', {'characterID': 1}),
+                mock.call.get('char/AccountBalance', params={'characterID': 1}),
             ])
 
     def test_wallet_balance(self):
@@ -138,7 +138,7 @@ class CharTestCase(APITestCase):
 
         self.assertEqual(result, 209127923.31)
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('char/AccountBalance', {'characterID': 1}),
+                mock.call.get('char/AccountBalance', params={'characterID': 1}),
             ])
 
     @mock.patch('evelink.char.parse_wallet_transactions')
@@ -152,7 +152,7 @@ class CharTestCase(APITestCase):
                 mock.call(mock.sentinel.api_result),
             ])
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('char/WalletTransactions', {'characterID': 1}),
+                mock.call.get('char/WalletTransactions', params={'characterID': 1}),
             ])
         self.assertEqual(current, 12345)
         self.assertEqual(expires, 67890)
@@ -162,7 +162,7 @@ class CharTestCase(APITestCase):
 
         self.char.wallet_transactions(before_id=1234)
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('char/WalletTransactions', {'characterID': 1, 'fromID': 1234}),
+                mock.call.get('char/WalletTransactions', params={'characterID': 1, 'fromID': 1234}),
             ])
 
     def test_wallet_transactions_limit(self):
@@ -170,7 +170,7 @@ class CharTestCase(APITestCase):
 
         self.char.wallet_transactions(limit=100)
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('char/WalletTransactions', {'characterID': 1, 'rowCount': 100}),
+                mock.call.get('char/WalletTransactions', params={'characterID': 1, 'rowCount': 100}),
             ])
 
     @mock.patch('evelink.char.parse_industry_jobs')
@@ -184,7 +184,7 @@ class CharTestCase(APITestCase):
 
         self.assertEqual(result, mock.sentinel.industry_jobs)
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('char/IndustryJobs', {'characterID': 1}),
+                mock.call.get('char/IndustryJobs', params={'characterID': 1}),
             ])
         self.assertEqual(mock_parse.mock_calls, [
                 mock.call(mock.sentinel.api_result),
@@ -201,7 +201,7 @@ class CharTestCase(APITestCase):
 
         self.assertEqual(result, mock.sentinel.kills)
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('char/KillLog', {'characterID': 1}),
+                mock.call.get('char/KillLog', params={'characterID': 1}),
             ])
         self.assertEqual(mock_parse.mock_calls, [
                 mock.call(mock.sentinel.api_result),
@@ -210,9 +210,9 @@ class CharTestCase(APITestCase):
     def test_kills_paged(self):
         self.api.get.return_value = self.make_api_result("char/kills_paged.xml")
 
-        self.char.kills(12345)
+        self.char.kills(before_kill=12345)
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('char/KillLog', {'characterID': 1, 'beforeKillID': 12345}),
+                mock.call.get('char/KillLog', params={'characterID': 1, 'beforeKillID': 12345}),
             ])
 
     def test_character_sheet(self):
@@ -278,7 +278,7 @@ class CharTestCase(APITestCase):
         'titles': {1: {'id': 1, 'name': 'Member'}},
         })
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('char/CharacterSheet', {'characterID': 1}),
+                mock.call.get('char/CharacterSheet', params={'characterID': 1}),
             ])
 
     @mock.patch('evelink.char.parse_contact_list')
@@ -292,7 +292,7 @@ class CharTestCase(APITestCase):
                 mock.call(mock.sentinel.api_result),
             ])
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('char/ContactList', {'characterID': 1}),
+                mock.call.get('char/ContactList', params={'characterID': 1}),
             ])
         self.assertEqual(current, 12345)
         self.assertEqual(expires, 67890)
@@ -308,7 +308,7 @@ class CharTestCase(APITestCase):
                 mock.call(mock.sentinel.api_result),
             ])
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('char/MarketOrders', {'characterID': 1}),
+                mock.call.get('char/MarketOrders', params={'characterID': 1}),
             ])
         self.assertEqual(current, 12345)
         self.assertEqual(expires, 67890)
@@ -334,7 +334,7 @@ class CharTestCase(APITestCase):
             })
 
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('char/Notifications', {'characterID': 1}),
+                mock.call.get('char/Notifications', params={'characterID': 1}),
             ])
 
     def test_notification_texts(self):
@@ -373,7 +373,7 @@ class CharTestCase(APITestCase):
                         'id': 374133265}})
 
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('char/NotificationTexts', {'characterID': 1, 'IDs': 1234}),
+                mock.call.get('char/NotificationTexts', params={'characterID': 1, 'IDs': 1234}),
             ])
 
     def test_standings(self):
@@ -394,7 +394,7 @@ class CharTestCase(APITestCase):
                 )
 
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('char/Standings', {'characterID': 1}),
+                mock.call.get('char/Standings', params={'characterID': 1}),
             ])
 
     def test_research(self):
@@ -414,7 +414,7 @@ class CharTestCase(APITestCase):
             })
 
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('char/Research', {'characterID': 1}),
+                mock.call.get('char/Research', params={'characterID': 1}),
             ])
 
     def test_current_training(self):
@@ -436,7 +436,7 @@ class CharTestCase(APITestCase):
             })
 
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('char/SkillInTraining', {'characterID': 1}),
+                mock.call.get('char/SkillInTraining', params={'characterID': 1}),
             ])
 
     def test_skill_queue(self):
@@ -466,7 +466,7 @@ class CharTestCase(APITestCase):
             ])
 
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('char/SkillQueue', {'characterID': 1}),
+                mock.call.get('char/SkillQueue', params={'characterID': 1}),
             ])
 
     def test_messages(self):
@@ -512,7 +512,7 @@ class CharTestCase(APITestCase):
                 },
             ])
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('char/MailMessages', {'characterID': 1}),
+                mock.call.get('char/MailMessages', params={'characterID': 1}),
             ])
 
     def test_message_bodies(self):
@@ -529,7 +529,7 @@ class CharTestCase(APITestCase):
                 297023723: 'Hi.<br><br>This is a message.<br><br>',
             })
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('char/MailBodies', {
+                mock.call.get('char/MailBodies', params={
                     'characterID': 1,
                     'ids': [297023723,297023208,297023210,297023211],
                 }),
@@ -548,7 +548,7 @@ class CharTestCase(APITestCase):
                 141157801: "Exploration Wormholes",
             })
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('char/MailingLists'),
+                mock.call.get('char/MailingLists', params={'characterID': 1}),
             ])
 
     def test_calendar_events(self):
@@ -575,7 +575,7 @@ class CharTestCase(APITestCase):
                 },
             })
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('char/UpcomingCalendarEvents', {
+                mock.call.get('char/UpcomingCalendarEvents', params={
                     'characterID': 1,
                 }),
             ])
@@ -615,7 +615,7 @@ class CharTestCase(APITestCase):
                 345: {},
             })
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('char/CalendarEventAttendees', {
+                mock.call.get('char/CalendarEventAttendees', params={
                     'characterID': 1,
                     'eventIDs': [123, 234, 345],
                 }),
@@ -645,7 +645,7 @@ class CharTestCase(APITestCase):
                 'rank': {'current': 4, 'highest': 4},
             })
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('char/FacWarStats', {'characterID': 1}),
+                mock.call.get('char/FacWarStats', params={'characterID': 1}),
             ])
 
     def test_medals(self):
@@ -669,7 +669,7 @@ class CharTestCase(APITestCase):
             })
 
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('char/Medals', {
+                mock.call.get('char/Medals', params={
                     'characterID': 1
                 }),
             ])
@@ -696,7 +696,7 @@ class CharTestCase(APITestCase):
                 },
             })
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('char/ContactNotifications', {'characterID': 1}),
+                mock.call.get('char/ContactNotifications', params={'characterID': 1}),
             ])
 
     def test_locations(self):
@@ -704,7 +704,7 @@ class CharTestCase(APITestCase):
 
         result, current, expires = self.char.locations((1009661446486L, 1007448817800L))
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('char/Locations', {'characterID': 1, 'IDs': (1009661446486L, 1007448817800L),}),
+                mock.call.get('char/Locations', params={'characterID': 1, 'IDs': (1009661446486L, 1007448817800L),}),
             ])
         self.assertEqual(result,
             {1009661446486L:
