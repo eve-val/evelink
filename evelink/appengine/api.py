@@ -169,7 +169,18 @@ def auto_gae_api(func):
 
 def _make_async(method_name, method):
     def _async(self, *args, **kw):
-        kw['api_result'] = yield self.api.get_async(method._path)
+        
+        params = dict(zip(method._required_params, args))
+        for key, name in method._map_params.iteritems():
+            value = kw.get(key, None) or getattr(self, key, None)
+            if value is None:
+                continue
+            params[name] = value
+
+        kw['api_result'] = yield self.api.get_async(
+            method._path,
+            params=params
+        )
         raise ndb.Return(getattr(self, method_name)(*args, **kw))
     return ndb.tasklet(_async)
 

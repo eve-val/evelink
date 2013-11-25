@@ -28,8 +28,12 @@ def mock_async_method(class_, method_name, result):
     )
 
 def run_gets(api_wrapper, method_name, src, *args, **kw):
-    api = AppEngineAPI()
-    client = api_wrapper(api=api)
+    if kw.get('_client', None) is None:
+        api = AppEngineAPI()
+        client = api_wrapper(api=api)
+    else:
+        client = kw.pop('_client')
+        api = client.api
     
     raw_resp = make_api_result(src)
     api.get = mock.Mock()
@@ -94,4 +98,5 @@ class GAEAsyncTestCase(GAETestCase):
         self.assertEqual(sync_r, async_r)
         self.assertEqual(1, api.get.call_count)
         self.assertEqual(1, api.get_async.call_count)
+        self.assertEqual(api.get.call_args, api.get_async.call_args)
 

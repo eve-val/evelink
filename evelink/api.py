@@ -344,9 +344,13 @@ class auto_call(object):
         self.map_params = map_params or {}
 
     def __call__(self, method):
-        method._path = self.path
-        method._required_params = self.required_params
-        method._map_params = self.map_params
+        wrapper = self._wrap_method(method)
+        wrapper._path = self.path
+        wrapper._required_params = self.required_params
+        wrapper._map_params = self.map_params
+        return wrapper
+
+    def _wrap_method(self, method):
 
         @functools.wraps(method)
         def wrapper(instance, *args, **kw):
