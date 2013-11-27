@@ -15,7 +15,7 @@ _specs = ('status','key_info','characters',)
 
 
 @auto_test_async_method(Account, _specs)
-class AppEngineEVETestCase(GAEAsyncTestCase):
+class AppEngineAccountTestCase(GAEAsyncTestCase):
     pass
 
 

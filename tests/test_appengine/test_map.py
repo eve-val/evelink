@@ -20,7 +20,7 @@ except ImportError:
         'sov_by_system',
     )
 )
-class AppEngineEVETestCase(GAEAsyncTestCase):
+class AppEngineMapTestCase(GAEAsyncTestCase):
     pass
 
 
