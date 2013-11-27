@@ -449,7 +449,7 @@ class auto_call(object):
             )
 
             params = translate_args(args_map.iteritems(), self.map_params)
-            params = filter(lambda x: x[1] is not None, params)
+            params = filter(lambda x: bool(x[1]), params)
             
             kw['api_result'] = client.api.get(self.path, params=dict(params))
             return self.method(client, *args, **kw)
