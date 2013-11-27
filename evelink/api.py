@@ -1,6 +1,7 @@
 import calendar
 import collections
 import functools
+import inspect
 import logging
 import re
 import time
@@ -322,54 +323,138 @@ def auto_api(func):
     return wrapper
 
 
-class auto_call(object):
-    """A decorator to automatically provide an api response to a method.
-    
-    'path' is the path of the request to query.
+_args_map = (
+    ('before_id', 'fromID'),
+    ('before_kill', 'beforeKillID'),
+    ('char_id', 'characterID'),
+    ('contract_id', 'contractID'),
+    ('corp_id', 'corporationID'),
+    ('event_ids', 'eventIDs'),
+    ('extended', 'extended'),
+    ('id_list', 'IDs'),
+    ('limit', 'rowCount'),
+    ('location_list', 'IDs'),
+    ('message_ids', 'ids'),
+    ('name_list', 'names'),
+    ('notification_ids', 'IDs'),
+    ('starbase_id', 'itemID'),
+    ('station_id', 'itemID'),
+)
 
-    'required_params' is a list or required parameter to pass to the 
-    query. They should be listed in the same order than the method
-    positional arguments they refer to.
 
-    'map_params' is a dictionary of extra parameters where the key is 
-    the name of one of the method keyword arguments or property 
-    and the value is the corresponding parameter name 
-    (e.g. `{'char_id': 'characterID'}`).
+def translate_args(args, map_=tuple()):
+    """Translate python name variable into API parameter name."""
+    map_ = dict(_args_map + tuple(map_))
+    return map(lambda x: (map_.get(x[0], x[0]), x[1]), args)
+
+
+def inspect_func(func):
+    """Return the list of argument names and a dict of default values"""
+    specs = inspect.getargspec(func)
+    return (
+        specs.args,
+        dict(zip(specs.args[-len(specs.defaults):], specs.defaults)),
+    )
+
+
+def map_func_args(args, kw, args_names, defaults):
+    """Associate positional (*args) and key (**kw) arguments values 
+    with their argument names.
+
+    'args_names' should be the list of argument names and 'default' 
+    should be a dict associting the keyword arguments to their defaults.
 
     """
+    if (len(args)+len(kw)) > len(args_names):
+        raise TypeError('Too many arguments.')
 
-    def __init__(self, path, required_params=None, map_params=None):
+    map_ = dict(zip(args_names, args))
+    for k, v in kw.iteritems():
+        if k in map_:
+            raise TypeError(
+                "got multiple values for keyword argument '%s'" % k
+            )
+        map_[k] = v
+
+    for k, v in defaults.iteritems():
+        map_.setdefault(k, v)
+
+    required_args = args_names[0:-len(defaults)]
+    for k in required_args:
+        if k not in map_:
+            raise TypeError("Too few arguments")
+    return map_
+
+
+def extend_map_from_properties(map_, obj, names):
+    for n in names:
+        map_[n] = getattr(obj, n, None)
+    return map_
+
+
+class auto_call(object):
+    """A decorator to automatically provide an api response to a method."""
+    
+    def __init__(self, path, prop_to_param=tuple(), map_params=None):
+        # method to decorate
+        self.method = None
+
+        # path the method needs to be queried
         self.path = path
-        self.required_params = required_params or tuple()
-        self.map_params = map_params or {}
+
+        # method's argument names
+        self.args = None
+
+        # method's keyword arguments and theirs default value
+        self.defaults = None
+
+        # properties to add as parameter to the api query
+        self.prop_to_param = prop_to_param
+
+        # dictionary associating argument name to a paramater name
+        self.map_params = map_params.items() if map_params else tuple()
 
     def __call__(self, method):
-        wrapper = self._wrap_method(method)
-        wrapper._path = self.path
-        wrapper._required_params = self.required_params
-        wrapper._map_params = self.map_params
+        if self.method is not None:
+            raise TypeError("This decorator method cannot be shared.")
+        self.method = method
+        
+        wrapper = self._wrapped_method()
+        
+        args, self.defaults = inspect_func(self.method)
+
+        self.args = args[1:]
+        self.args.remove('api_result')
+        self.defaults.pop('api_result')  # TODO: better exception
+
+        wrapper._request_specs = {
+            'path': self.path,
+            'args': self.args,
+            'defaults': self.defaults,
+            'prop_to_param': self.prop_to_param,
+            'map_params': self.map_params
+        }
+
         return wrapper
 
-    def _wrap_method(self, method):
+    def _wrapped_method(self):
+        
+        def wrapper(client, *args, **kw):
+            if 'api_result' in kw:
+                return self.method(client, *args, **kw)
+                
+            args_map = map_func_args(args, kw, self.args, self.defaults)
+            args_map = extend_map_from_properties(
+                args_map, client, self.prop_to_param
+            )
 
-        @functools.wraps(method)
-        def wrapper(instance, *args, **kw):
-            api_result = kw.get('api_result', None)
-            if api_result is not None:
-                return method(instance, *args, **kw)
+            params = translate_args(args_map.iteritems(), self.map_params)
+            params = filter(lambda x: x[1] is not None, params)
             
-            params = dict(zip(self.required_params, args))
-            for key, name in self.map_params.iteritems():
-                value = kw.get(key, None) or getattr(instance, key, None)
-                if value is None:
-                    continue
-                params[name] = value
-
-            kw['api_result'] = instance.api.get(self.path, params=params)
-            return method(instance, *args, **kw)
+            kw['api_result'] = client.api.get(self.path, params=dict(params))
+            return self.method(client, *args, **kw)
 
         return wrapper
-
         
 
 # vim: set ts=4 sts=4 sw=4 et:

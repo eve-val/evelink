@@ -167,36 +167,44 @@ def auto_gae_api(func):
         return func(*args, **kwargs)
     return wrapper
 
-def _make_async(method_name, method):
-    def _async(self, *args, **kw):
-        
-        params = dict(zip(method._required_params, args))
-        for key, name in method._map_params.iteritems():
-            value = kw.get(key, None) or getattr(self, key, None)
-            if value is None:
-                continue
-            params[name] = value
 
-        kw['api_result'] = yield self.api.get_async(
-            method._path,
-            params=params
+def _make_async(method):
+    def _async(self, *args, **kw):
+        # method specs
+        path = method._request_specs['path']
+        args_names = method._request_specs['args']
+        defaults = method._request_specs['defaults']
+        prop_to_param = method._request_specs['prop_to_param']
+        map_params = method._request_specs['map_params']
+
+        # build parameter map
+        args_map = api.map_func_args(args, kw, args_names, defaults)
+        args_map = api.extend_map_from_properties(
+            args_map, self, prop_to_param
         )
-        raise ndb.Return(getattr(self, method_name)(*args, **kw))
+
+        # fix params name and remove params with None values
+        params = api.translate_args(args_map.iteritems(), map_params)
+        params = filter(lambda x: x[1] is not None, params)
+        
+        kw['api_result'] = yield self.api.get_async(path, params=dict(params))
+        raise ndb.Return(method(self, *args, **kw))
     return ndb.tasklet(_async)
+
 
 def auto_async(cls):
     """Class decoration which add a async version of any method with a
-    a '_path' attribute, which the auto_call decorator adds.
+    a '_request_specs' attribute (metadata added by api.auto_add).
 
     """
 
     for attr_name in dir(cls):
 
         attr = getattr(cls, attr_name)
-        if not hasattr(attr, '_path'):
+        if not hasattr(attr, '_request_specs'):
             continue
         
-        async_method = _make_async(attr_name, attr)
+        async_method = _make_async(attr)
         async_method.__doc__ = """Asynchronous version of %s.""" % attr_name
         setattr(cls, '%s_async' % attr_name, async_method)
         

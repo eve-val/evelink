@@ -193,5 +193,262 @@ class APITestCase(unittest.TestCase):
         })
 
 
+class AutoCallTestCase(unittest.TestCase):
+
+    def test_python_func(self):
+        def func(a, b, c=None, d=None):
+            return a, b, c, d
+
+        self.assertEqual((1, 2, 3, 4,), func(1, 2, c=3, d=4))
+        self.assertEqual((1, 2, 3, 4,), func(a=1, b=2, c=3, d=4))
+        self.assertEqual((1, 2, 3, 4,), func(c=3, a=1, b=2, d=4))
+        self.assertEqual((1, 2, 3, 4,), func(1, b=2, c=3, d=4))
+        self.assertRaises(TypeError, func, 2, a=1, c=3, d=4)
+
+    def test_translate_args(self):
+        args = (
+            ('before_id', None,),
+            ('before_kill', None,),
+            ('char_id', None,),
+            ('contract_id', None,),
+            ('corp_id', None,),
+            ('event_ids', None,),
+            ('extended', None,),
+            ('id_list', None,),
+            ('limit', None,),
+            ('location_list', None,),
+            ('message_ids', None,),
+            ('name_list', None,),
+            ('notification_ids', None,),
+            ('starbase_id', None,),
+            ('station_id', None,),
+        )
+        expected = [
+            ('fromID', None,),
+            ('beforeKillID', None,),
+            ('characterID', None,),
+            ('contractID', None,),
+            ('corporationID', None,),
+            ('eventIDs', None,),
+            ('extended', None,),
+            ('IDs', None,),
+            ('rowCount', None,),
+            ('IDs', None,),
+            ('ids', None,),
+            ('names', None,),
+            ('IDs', None,),
+            ('itemID', None,),
+            ('itemID', None,),
+        ]
+        self.assertEqual(expected, evelink_api.translate_args(args))
+
+    def test_translate_special_param(self):
+        args = (('before_kill', None),)
+        my_map = (('before_kill', 'fromID'),)
+        self.assertEqual(
+            [('fromID', None,)],
+            evelink_api.translate_args(args, my_map)
+        )
+
+    def test_inspect_func(self):
+        def target(a, b, c=None, d=None):
+            pass
+        args_specs, defaults = evelink_api.inspect_func(target)
+        self.assertEqual(['a', 'b', 'c', 'd'], args_specs)
+        self.assertEqual({'c': None, 'd': None}, defaults)
+
+    def test_map_func_args(self):
+        args = [1, 2]
+        kw = {'c': 3, 'd': 4}
+        args_names = ('a', 'b', 'c', 'd',)
+        defaults = {'c': None, 'd': None}
+        map_ = evelink_api.map_func_args(args, kw, args_names, defaults)
+        self.assertEqual({'a': 1, 'b': 2, 'c': 3, 'd': 4}, map_)
+
+    def test_map_func_args_with_default(self):
+        args = [1, 2]
+        kw = {'c': 3}
+        args_names = ('a', 'b', 'c', 'd',)
+        defaults = {'c': None, 'd': None}
+        map_ = evelink_api.map_func_args(args, kw, args_names, defaults)
+        self.assertEqual({'a': 1, 'b': 2, 'c': 3, 'd': None}, map_)
+
+    def test_map_func_args_with_all_positional_arguments(self):
+        args = [1, 2, 3, 4]
+        kw = {}
+        args_names = ('a', 'b', 'c', 'd',)
+        defaults = {'c': None, 'd': None}
+        map_ = evelink_api.map_func_args(args, kw, args_names, defaults)
+        self.assertEqual({'a': 1, 'b': 2, 'c': 3, 'd': 4}, map_)
+
+    def test_map_func_args_with_too_many_argument(self):
+        args = [1, 2, 3]
+        kw = {'c': 4, 'd': 5}
+        args_names = ('a', 'b', 'c', 'd',)
+        defaults = {'c': None, 'd': None}
+        self.assertRaises(
+            TypeError,
+            evelink_api.map_func_args,
+            args,
+            kw,
+            args_names,
+            defaults
+        )
+
+    def test_map_func_args_with_twice_same_argument(self):
+        args = [2]
+        kw = {'a': 1, 'c': 3, 'd': 4}
+        args_names = ('a', 'b', 'c', 'd',)
+        defaults = {'c': None, 'd': None}
+        self.assertRaises(
+            TypeError,
+            evelink_api.map_func_args,
+            args,
+            kw,
+            args_names,
+            defaults
+        )
+
+    def test_map_func_args_with_too_few_args(self):
+        args = [1, ]
+        kw = {'c': 3, 'd': 4}
+        args_names = ('a', 'b', 'c', 'd',)
+        defaults = {'c': None, 'd': None}
+        self.assertRaises(
+            TypeError,
+            evelink_api.map_func_args,
+            args,
+            kw,
+            args_names,
+            defaults
+        )
+
+    def test_extend_map_from_properties(self):
+        obj = mock.Mock()
+        obj.char_id = 1
+        self.assertEqual(
+            {'char_id': 1},
+            evelink_api.extend_map_from_properties({}, obj, ('char_id',))
+        )
+
+    def test_deco_add_request_specs(self):
+        
+        @evelink_api.auto_call('foo/bar')
+        def func(self, char_id, limit=None, before_kill=None, api_result=None):
+            pass
+
+        self.assertEqual(
+            {
+                'path': 'foo/bar',
+                'args': [
+                    'char_id', 'limit', 'before_kill'
+                ],
+                'defaults': dict(limit=None, before_kill=None),
+                'prop_to_param': tuple(),
+                'map_params': tuple()
+            },
+            func._request_specs
+            )
+
+    def test_call_wrapped_method(self):
+        repeat = mock.Mock()
+        client = mock.Mock(name='foo')
+
+        @evelink_api.auto_call('foo/bar')
+        def func(self, char_id, limit=None, before_kill=None, api_result=None):
+            repeat(
+                self, char_id, limit=limit,
+                before_kill=before_kill, api_result=api_result
+            )
+
+        func(client, 1, limit=2, before_kill=3)
+        repeat.assert_called_once_with(
+            client, 1, limit=2, before_kill=3, api_result=client.api.get.return_value
+        )
+        client.api.get.assert_called_once_with(
+            'foo/bar',
+            params={'characterID':1, 'beforeKillID': 3, 'rowCount': 2}
+        )
+
+    def test_call_wrapped_method_none_arguments(self):
+        repeat = mock.Mock()
+        client = mock.Mock(name='foo')
+
+        @evelink_api.auto_call('foo/bar')
+        def func(self, char_id, limit=None, before_kill=None, api_result=None):
+            repeat(
+                self, char_id, limit=limit,
+                before_kill=before_kill, api_result=api_result
+            )
+
+        func(client, 1)
+        repeat.assert_called_once_with(
+            client, 1, limit=None, before_kill=None, api_result=client.api.get.return_value
+        )
+        client.api.get.assert_called_once_with(
+            'foo/bar',
+            params={'characterID':1}
+        )
+
+    def test_call_wrapped_method_with_map_params(self):
+        repeat = mock.Mock()
+        client = mock.Mock(name='client')
+
+        @evelink_api.auto_call('foo/bar', map_params={'limit': 'max'})
+        def func(self, char_id, limit=None, before_kill=None, api_result=None):
+            repeat(
+                self, char_id, limit=limit,
+                before_kill=before_kill, api_result=api_result
+            )
+
+        func(client, 1, limit=2, before_kill=3)
+        repeat.assert_called_once_with(
+            client, 1, limit=2, before_kill=3, api_result=client.api.get.return_value
+        )
+        client.api.get.assert_called_once_with(
+            'foo/bar',
+            params={'characterID':1, 'beforeKillID': 3, 'max': 2}
+        )
+
+    def test_call_wrapped_method_with_properties(self):
+        repeat = mock.Mock()
+        client = mock.Mock(name='client')
+        client.char_id = 1
+
+        @evelink_api.auto_call('foo/bar', prop_to_param=('char_id',))
+        def func(self, limit=None, before_kill=None, api_result=None):
+            repeat(
+                self, 
+                limit=limit, before_kill=before_kill, api_result=api_result
+            )
+
+        func(client, limit=2, before_kill=3)
+        repeat.assert_called_once_with(
+            client, limit=2, before_kill=3, api_result=client.api.get.return_value
+        )
+        client.api.get.assert_called_once_with(
+            'foo/bar',
+            params={'characterID':1, 'beforeKillID': 3, 'rowCount': 2}
+        )
+
+    def test_call_wrapped_method_with_api_result(self):
+        repeat = mock.Mock()
+        client = mock.Mock(name='client')
+        results = mock.Mock(name='APIResult')
+
+        @evelink_api.auto_call('foo/bar')
+        def func(self, char_id, limit=None, before_kill=None, api_result=None):
+            repeat(
+                self, char_id, limit=limit,
+                before_kill=before_kill, api_result=api_result
+            )
+
+        func(client, 1, limit=2, before_kill=3, api_result=results)
+        repeat.assert_called_once_with(
+            client, 1, limit=2, before_kill=3, api_result=results
+        )
+        self.assertFalse(client.get.called)
+
+
 if __name__ == "__main__":
     unittest.main()
