@@ -163,6 +163,9 @@ class APITestCase(unittest.TestCase):
         api.get('foo', {'a':[2,3,4]})
 
         # Make sure the api key id and verification code were passed
+        self.assertTrue(mock_urlopen.called)
+        self.assertTrue(len(mock_urlopen.call_args[0]) > 0)
+
         request = mock_urlopen.call_args[0][0]
         self.assertEqual(
             'https://api.eveonline.com/foo.xml.aspx',
@@ -175,6 +178,29 @@ class APITestCase(unittest.TestCase):
 
     @mock.patch('urllib2.urlopen')
     def test_get_with_error(self, mock_urlopen):
+        # I had to go digging in the source code for urllib2 to find out
+        # how to manually instantiate HTTPError instances. :( The empty
+        # dict is the headers object.
+        def raise_http_error(*args, **kw):
+            raise urllib2.HTTPError(
+                "http://api.eveonline.com/eve/Error",
+                404,
+                "Not found!",
+                {},
+                StringIO(self.error_xml)
+            )
+        mock_urlopen.side_effect = raise_http_error
+        self.cache.get.return_value = None
+
+        self.assertRaises(evelink_api.APIError,
+            self.api.get, 'eve/Error')
+        self.assertEqual(self.api.last_timestamps, {
+            'current_time': 1255885531,
+            'cached_until': 1258571131,
+        })
+
+    @mock.patch('urllib2.urlopen')
+    def test_get_with_compressed_error(self, mock_urlopen):
         # I had to go digging in the source code for urllib2 to find out
         # how to manually instantiate HTTPError instances. :( The empty
         # dict is the headers object.
@@ -219,6 +245,8 @@ class APITestCase(unittest.TestCase):
         self.cache.get.return_value = None
 
         result = self.api.get('foo/Bar', {'a':[1,2,3]})
+        self.assertTrue(mock_urlopen.called)
+        self.assertTrue(len(mock_urlopen.call_args[0]) > 0)
         self.assertEqual(
             'gzip', 
             mock_urlopen.call_args[0][0].get_header('Accept-encoding')
