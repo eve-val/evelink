@@ -1,3 +1,4 @@
+import gzip
 from StringIO import StringIO
 import unittest2 as unittest
 
@@ -5,6 +6,15 @@ import mock
 import urllib2
 
 import evelink.api as evelink_api
+
+
+def compress(s):
+    out = StringIO()
+    f = gzip.GzipFile(fileobj=out, mode='w')
+    f.write(s)
+    f.close()
+    return out.getvalue()
+
 
 class HelperTestCase(unittest.TestCase):
 
@@ -94,7 +104,7 @@ class APITestCase(unittest.TestCase):
     def test_get(self, mock_urlopen):
         # mock up an urlopen compatible response object and pretend to have no
         # cached results; similar pattern for all test_get_* methods below.
-        mock_urlopen.return_value = StringIO(self.test_xml)
+        mock_urlopen.return_value.read.return_value = self.test_xml
         self.cache.get.return_value = None
 
         result = self.api.get('foo/Bar', {'a':[1,2,3]})
@@ -118,7 +128,7 @@ class APITestCase(unittest.TestCase):
         """Make sure that we don't try to call the API if the result is cached."""
         # mock up a urlopen compatible error response, and pretend to have a
         # good test response cached.
-        mock_urlopen.return_value = StringIO(self.error_xml)
+        mock_urlopen.return_value.read.return_value = self.error_xml
         self.cache.get.return_value = self.test_xml
 
         result = self.api.get('foo/Bar', {'a':[1,2,3]})
@@ -144,7 +154,7 @@ class APITestCase(unittest.TestCase):
 
     @mock.patch('urllib2.urlopen')
     def test_get_with_apikey(self, mock_urlopen):
-        mock_urlopen.return_value = StringIO(self.test_xml)
+        mock_urlopen.return_value.read.return_value = self.test_xml
         self.cache.get.return_value = None
 
         api_key = (1, 'code')
@@ -153,20 +163,30 @@ class APITestCase(unittest.TestCase):
         api.get('foo', {'a':[2,3,4]})
 
         # Make sure the api key id and verification code were passed
-        self.assertEqual(mock_urlopen.mock_calls, [
-                mock.call(
-                    'https://api.eveonline.com/foo.xml.aspx',
-                    'a=2%2C3%2C4&vCode=code&keyID=1',
-                ),
-            ])
+        request = mock_urlopen.call_args[0][0]
+        self.assertEqual(
+            'https://api.eveonline.com/foo.xml.aspx',
+            request.get_full_url()
+        )
+        self.assertEqual(
+            'a=2%2C3%2C4&vCode=code&keyID=1',
+            request.get_data()
+        )
 
     @mock.patch('urllib2.urlopen')
     def test_get_with_error(self, mock_urlopen):
         # I had to go digging in the source code for urllib2 to find out
         # how to manually instantiate HTTPError instances. :( The empty
         # dict is the headers object.
-        mock_urlopen.return_value = urllib2.HTTPError(
-            "http://api.eveonline.com/eve/Error", 404, "Not found!", {}, StringIO(self.error_xml))
+        def raise_http_error(*args, **kw):
+            raise urllib2.HTTPError(
+                "http://api.eveonline.com/eve/Error",
+                404,
+                "Not found!",
+                {'Content-Encoding': 'gzip'},
+                StringIO(compress(self.error_xml))
+            )
+        mock_urlopen.side_effect = raise_http_error
         self.cache.get.return_value = None
 
         self.assertRaises(evelink_api.APIError,
@@ -180,7 +200,7 @@ class APITestCase(unittest.TestCase):
     def test_cached_get_with_error(self, mock_urlopen):
         """Make sure that we don't try to call the API if the result is cached."""
         # mocked response is good now, with the error response cached.
-        mock_urlopen.return_value = StringIO(self.test_xml)
+        mock_urlopen.return_value.read.return_value = self.test_xml
         self.cache.get.return_value = self.error_xml
 
         self.assertRaises(evelink_api.APIError,
@@ -192,6 +212,31 @@ class APITestCase(unittest.TestCase):
             'cached_until': 1258571131,
         })
 
+    @mock.patch('urllib2.urlopen')
+    def test_get_request_compress_response(self, mock_urlopen):
+        mock_urlopen.return_value.read.return_value = compress(self.test_xml)
+        mock_urlopen.return_value.info.return_value.get.return_value = 'gzip'
+        self.cache.get.return_value = None
+
+        result = self.api.get('foo/Bar', {'a':[1,2,3]})
+        self.assertEqual(
+            'gzip', 
+            mock_urlopen.call_args[0][0].get_header('Accept-encoding')
+        )
+
+        self.assertEqual(len(result), 3)
+        result, current, expiry = result
+
+        rowset = result.find('rowset')
+        rows = rowset.findall('row')
+        self.assertEqual(len(rows), 2)
+        self.assertEqual(rows[0].attrib['foo'], 'bar')
+        self.assertEqual(self.api.last_timestamps, {
+            'current_time': 1255885531,
+            'cached_until': 1258563931,
+        })
+        self.assertEqual(current, 1255885531)
+        self.assertEqual(expiry, 1258563931)
 
 if __name__ == "__main__":
     unittest.main()
