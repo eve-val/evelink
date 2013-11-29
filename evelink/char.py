@@ -12,6 +12,11 @@ from evelink.parsing.wallet_transactions import parse_wallet_transactions
 
 
 class auto_call(api.auto_call):
+    """Extends 'evelink.api.auto_call' to add 'Char.char_id' as an api 
+    request argument.
+
+    """
+
     def __init__(self, path, **kw):
         super(auto_call, self).__init__(
             path, prop_to_param=('char_id',), **kw

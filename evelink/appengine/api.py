@@ -153,12 +153,7 @@ class AppEngineDatastoreCache(api.APICache):
 
 
 def auto_gae_api(func):
-    """A decorator to automatically provide an API instance.
-
-    Functions decorated with this will have the api= kwarg
-    automatically supplied with a default-initialized API()
-    object if no other API object is supplied.
-    """
+    """A decorator to automatically provide an AppEngineAPI instance."""
 
     @functools.wraps(func)
     def wrapper(*args, **kwargs):

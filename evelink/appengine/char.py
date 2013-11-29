@@ -9,6 +9,7 @@ class Char(char.Char):
 
     @ndb.tasklet
     def wallet_balance_async(self):
+        """Asynchronous version of wallet_balance."""
         api_result = yield self.wallet_info_async()
         raise ndb.Return(
             api.APIResult(
@@ -20,14 +21,7 @@ class Char(char.Char):
 
     @ndb.tasklet
     def event_attendees_async(self, event_id, api_result=None):
-        """Returns the attendees for a single event.
-
-        (This is a convenience wrapper around 'calendar_attendees'.)
-
-        NOTE: You must have recently fetched the list of calendar events
-        (using the 'calendar_events' method) before calling this method.
-
-        """
+        """Asynchronous version of event_attendees."""
         api_result = yield self.calendar_attendees_async([event_id])
         raise ndb.Return(
             api.APIResult(

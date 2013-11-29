@@ -362,7 +362,7 @@ def map_func_args(args, kw, args_names, defaults):
     with their argument names.
 
     'args_names' should be the list of argument names and 'default' 
-    should be a dict associting the keyword arguments to their defaults.
+    should be a dict associating the keyword arguments to their defaults.
 
     """
     if (len(args)+len(kw)) > len(args_names):
@@ -393,25 +393,36 @@ def extend_map_from_properties(map_, obj, names):
 
 
 class auto_call(object):
-    """A decorator to automatically provide an api response to a method."""
+    """A decorator to automatically provide an api response to a method.
+
+    The object the method will be bound to should have an api attribute 
+    and the method should have a keyword argument named 'api_result'.
+
+    The decorated method will have a '_request_specs' dict attribute 
+    holding:
+
+    - 'path': path of the request needs to be queried.
+
+    - 'args': method argument names.
+
+    - 'defaults': method keyword arguments and theirs default value.
+
+    - 'prop_to_param': properties of the instance the method is bound 
+    to to add as parameter of api request.
+
+    - 'map_params': dictionary associating argument name to a 
+    paramater name. They will be added to 'evelink.api._args_map' to 
+    translate argument names to parameter names.
+
+    """
     
     def __init__(self, path, prop_to_param=tuple(), map_params=None):
-        # method to decorate
         self.method = None
 
-        # path the method needs to be queried
         self.path = path
-
-        # method's argument names
         self.args = None
-
-        # method's keyword arguments and theirs default value
         self.defaults = None
-
-        # properties to add as parameter to the api query
         self.prop_to_param = prop_to_param
-
-        # dictionary associating argument name to a paramater name
         self.map_params = map_params.items() if map_params else tuple()
 
     def __call__(self, method):
