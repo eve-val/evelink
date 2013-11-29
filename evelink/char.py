@@ -1,5 +1,3 @@
-from collections import defaultdict
-
 from evelink import api, constants
 from evelink.parsing.assets import parse_assets
 from evelink.parsing.contact_list import parse_contact_list
@@ -429,7 +427,7 @@ class Char(object):
         (using the 'calendar_events' method) before calling this method.
 
         """
-        results = defaultdict(dict, ((id_, {},) for id_ in event_ids))
+        results = dict((id_, {},) for id_ in event_ids)
         rowset = api_result.result.find('rowset')
         for row in rowset.findall('row'):
             a = row.attrib

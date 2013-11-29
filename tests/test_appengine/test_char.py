@@ -32,7 +32,7 @@ class AppEngineCharTestCase(GAEAsyncTestCase):
             Char,
             'calendar_attendees',
             'char/calendar_attendees.xml',
-            [123456789,987654321,192837645,918273465,],
+            [123,234,],
             _client=self.client
         )
     
@@ -105,8 +105,8 @@ class AppEngineCharTestCase(GAEAsyncTestCase):
         self.compare(
             Char,
             'event_attendees',
-            'char/calendar_attendees.xml',
-            123,
+            'char/calendar_attendees_by_id.xml',
+            234,
             _client=self.client
         )
     
