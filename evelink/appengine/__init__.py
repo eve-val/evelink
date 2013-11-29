@@ -2,15 +2,23 @@ try:
 	from evelink.appengine.api import AppEngineAPI
 	from evelink.appengine.api import AppEngineCache
 	from evelink.appengine.api import AppEngineDatastoreCache
-	from evelink.appengine import server
+	from evelink.appengine import account
+	from evelink.appengine import char
+	from evelink.appengine import corp
 	from evelink.appengine import eve
+	from evelink.appengine import map
+	from evelink.appengine import server
 
 	__all__ = [
 	  "AppEngineAPI",
 	  "AppEngineCache",
 	  "AppEngineDatastoreCache",
-	  "server",
+	  "account",
+	  "char",
+	  "corp",
 	  "eve",
+	  "map",
+	  "server",
 	]
 	
 except ImportError:
