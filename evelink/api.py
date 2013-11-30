@@ -434,7 +434,7 @@ class auto_call(object):
                 args_map[attr_name] = getattr(client, attr_name, None)
 
             params = translate_args(args_map, self.map_params)
-            params =  dict((k, v,) for k, v in params.iteritems() if v)
+            params =  dict((k, v,) for k, v in params.iteritems() if v is not None)
             
             kw['api_result'] = client.api.get(self.path, params=params)
             return self.method(client, *args, **kw)

@@ -429,9 +429,14 @@ class Corp(object):
 
         return api.APIResult(result, api_result.timestamp, api_result.expires)
 
-    @api.auto_call('corp/MemberTracking', map_params={'extended': 'extended'})
     def members(self, extended=True, api_result=None):
         """Returns details about each member of the corporation."""
+        if api_result is None:
+            args = {}
+            if extended:
+                args['extended'] = 1
+            api_result = self.api.get('corp/MemberTracking', params=args)
+
         rowset = api_result.result.find('rowset')
         results = {}
         for row in rowset.findall('row'):
