@@ -326,9 +326,9 @@ def auto_api(func):
 def translate_args(args, mapping=None):
     """Translate python name variable into API parameter name."""
     mapping = mapping if mapping else {}
-    return dict((mapping.get(k, k), v,) for k, v in args.iteritems())
+    return dict((mapping[k], v,) for k, v in args.iteritems())
 
-
+# TODO: needs better name
 def inspect_func(func):
     """Return the list of argument names and a dict of default values"""
     specs = inspect.getargspec(func)

@@ -317,7 +317,10 @@ class AutoCallTestCase(unittest.TestCase):
         repeat = mock.Mock()
         client = mock.Mock(name='foo')
 
-        @evelink_api.auto_call('foo/bar')
+        @evelink_api.auto_call(
+            'foo/bar', 
+            map_params={'char_id': 'id', 'limit': 'limit', 'before_kill': 'prev'}
+        )
         def func(self, char_id, limit=None, before_kill=None, api_result=None):
             repeat(
                 self, char_id, limit=limit,
@@ -330,47 +333,37 @@ class AutoCallTestCase(unittest.TestCase):
         )
         client.api.get.assert_called_once_with(
             'foo/bar',
-            params={'char_id':1, 'before_kill': 3, 'limit': 2}
+            params={'id':1, 'prev': 3, 'limit': 2}
         )
+
+    def test_call_wrapped_method_raise_key_error(self):
+        repeat = mock.Mock()
+        client = mock.Mock(name='foo')
+
+        @evelink_api.auto_call('foo/bar')
+        def func(self, char_id, api_result=None):
+            repeat(self, char_id)
+
+        # TODO: raise error when decorating the method
+        self.assertRaises(KeyError, func, client, 1)
 
     def test_call_wrapped_method_none_arguments(self):
         repeat = mock.Mock()
         client = mock.Mock(name='foo')
 
-        @evelink_api.auto_call('foo/bar')
-        def func(self, char_id, limit=None, before_kill=None, api_result=None):
-            repeat(
-                self, char_id, limit=limit,
-                before_kill=before_kill, api_result=api_result
-            )
+        @evelink_api.auto_call(
+            'foo/bar', map_params={'char_id': 'char_id', 'limit': 'limit'}
+        )
+        def func(self, char_id, limit=None, api_result=None):
+            repeat(self, char_id, limit=limit, api_result=api_result)
 
         func(client, 1)
         repeat.assert_called_once_with(
-            client, 1, limit=None, before_kill=None, api_result=client.api.get.return_value
+            client, 1, limit=None, api_result=client.api.get.return_value
         )
         client.api.get.assert_called_once_with(
             'foo/bar',
             params={'char_id':1}
-        )
-
-    def test_call_wrapped_method_with_map_params(self):
-        repeat = mock.Mock()
-        client = mock.Mock(name='client')
-
-        @evelink_api.auto_call('foo/bar', map_params={'limit': 'max'})
-        def func(self, char_id, limit=None, before_kill=None, api_result=None):
-            repeat(
-                self, char_id, limit=limit,
-                before_kill=before_kill, api_result=api_result
-            )
-
-        func(client, 1, limit=2, before_kill=3)
-        repeat.assert_called_once_with(
-            client, 1, limit=2, before_kill=3, api_result=client.api.get.return_value
-        )
-        client.api.get.assert_called_once_with(
-            'foo/bar',
-            params={'char_id':1, 'before_kill': 3, 'max': 2}
         )
 
     def test_call_wrapped_method_with_properties(self):
@@ -378,20 +371,24 @@ class AutoCallTestCase(unittest.TestCase):
         client = mock.Mock(name='client')
         client.char_id = 1
 
-        @evelink_api.auto_call('foo/bar', prop_to_param=('char_id',))
-        def func(self, limit=None, before_kill=None, api_result=None):
+        @evelink_api.auto_call(
+            'foo/bar',
+            prop_to_param=('char_id',),
+            map_params={'char_id': 'char_id', 'limit': 'limit'}
+        )
+        def func(self, limit=None, api_result=None):
             repeat(
                 self, 
-                limit=limit, before_kill=before_kill, api_result=api_result
+                limit=limit, api_result=api_result
             )
 
-        func(client, limit=2, before_kill=3)
+        func(client, limit=2)
         repeat.assert_called_once_with(
-            client, limit=2, before_kill=3, api_result=client.api.get.return_value
+            client, limit=2, api_result=client.api.get.return_value
         )
         client.api.get.assert_called_once_with(
             'foo/bar',
-            params={'char_id':1, 'before_kill': 3, 'limit': 2}
+            params={'char_id':1, 'limit': 2}
         )
 
     def test_call_wrapped_method_with_api_result(self):
