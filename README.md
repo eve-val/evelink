@@ -84,7 +84,7 @@ To acquire a development copy of the library and set up the requirements for tes
 ```bash
 $ git clone https://github.com/eve-val/evelink.git
 $ cd evelink
-$ virtualenv venv --distribute
+$ virtualenv venv
 $ source venv/bin/activate
 $ pip install -r requirements.txt
 ```
