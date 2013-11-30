@@ -20,7 +20,7 @@ class AppEngineAPI(api.API):
                 cache=cache, api_key=api_key)
 
     @ndb.tasklet
-    def get_async(self, path, params):
+    def get_async(self, path, params=None):
         """Asynchronous request a specific path from the EVE API.
         
         TODO: refactor evelink.api.API.get
