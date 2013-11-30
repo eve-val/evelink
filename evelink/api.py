@@ -329,7 +329,7 @@ def translate_args(args, mapping=None):
     return dict((mapping[k], v,) for k, v in args.iteritems())
 
 # TODO: needs better name
-def inspect_func(func):
+def get_args_and_defaults(func):
     """Return the list of argument names and a dict of default values"""
     specs = inspect.getargspec(func)
     return (
@@ -407,7 +407,7 @@ class auto_call(object):
         
         wrapper = self._wrapped_method()
         
-        args, self.defaults = inspect_func(self.method)
+        args, self.defaults = get_args_and_defaults(self.method)
 
         self.args = args[1:]
         self.args.remove('api_result')

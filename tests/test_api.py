@@ -213,10 +213,10 @@ class AutoCallTestCase(unittest.TestCase):
             evelink_api.translate_args(args, mapping)
         )
 
-    def test_inspect_func(self):
+    def test_get_args_and_defaults(self):
         def target(a, b, c=None, d=None):
             pass
-        args_specs, defaults = evelink_api.inspect_func(target)
+        args_specs, defaults = evelink_api.get_args_and_defaults(target)
         self.assertEqual(['a', 'b', 'c', 'd'], args_specs)
         self.assertEqual({'c': None, 'd': None}, defaults)
 
