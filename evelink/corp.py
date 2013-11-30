@@ -30,7 +30,6 @@ class Corp(object):
         key is necessary. If a corporation ID is *not* specified,
         a corp api key *must* be provided, and the private information
         for that corporation will be returned along with the public info.
-        
         """
 
         def get_logo_details(logo_result):
@@ -103,8 +102,8 @@ class Corp(object):
 
         NOTE: This is *only* NPC standings. Player standings are accessed
         via the 'contacts' method.
-
         """
+
         container = api_result.result.find('corporationNPCStandings')
 
         rowsets = dict((r.attrib['name'], r) for r in container.findall('rowset'))
@@ -138,8 +137,8 @@ class Corp(object):
 
         before_kill:
             Optional. Only show kills before this kill id. (Used for paging.)
-
         """
+
         return api.APIResult(parse_kills(api_result.result), api_result.timestamp, api_result.expires)
 
     @api.auto_call('corp/AccountBalance')
@@ -194,8 +193,8 @@ class Corp(object):
         key, which maps to a list of items.  That is, you can think of
         the top-level values as "containers" with no fields except for
         "contents" and "location_id".
-
         """
+
         return api.APIResult(parse_assets(api_result.result), api_result.timestamp, api_result.expires)
 
     @api.auto_call('corp/FacWarStats')
@@ -204,8 +203,8 @@ class Corp(object):
 
         NOTE: This will raise an APIError if the corp is not enrolled in
         Faction Warfare.
-
         """
+
         _str, _int, _float, _bool, _ts = api.elem_getters(api_result.result)
 
         result = {

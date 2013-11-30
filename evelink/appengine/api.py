@@ -25,8 +25,8 @@ class AppEngineAPI(api.API):
         """Asynchronous request a specific path from the EVE API.
         
         TODO: refactor evelink.api.API.get
-
         """
+
         params = params or {}
         params = dict((k, api._clean(v)) for k,v in params.iteritems())
 
@@ -97,7 +97,6 @@ class AppEngineCache(api.APICache):
         """Dummy async method.
 
         Memcache doesn't have an async get method.
-
         """
         raise ndb.Return(self.get(key))
 
@@ -109,9 +108,7 @@ class AppEngineCache(api.APICache):
 
     @ndb.tasklet
     def put_async(self, key,  value, duration):
-        """Dummy async method (see get_async).
-
-        """
+        """Dummy async method (see get_async)."""
         self.put(key, value, duration)
 
 

@@ -14,8 +14,8 @@ class Map(object):
         Returns a tuple of ({system:jumps...}, timestamp).
 
         NOTE: Systems with 0 jumps in the last hour are not included!
-        
         """
+
         rowset = api_result.result.find('rowset')
         results = {}
         for row in rowset.findall('row'):
@@ -34,8 +34,8 @@ class Map(object):
         Returns a tuple of ({system:{killdata}, timestamp).
 
         Each {killdata} is {'faction':count, 'ship':count, 'pod':count}.
-        
         """
+        
         rowset = api_result.result.find('rowset')
         results = {}
         for row in rowset.findall('row'):

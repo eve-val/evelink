@@ -84,8 +84,8 @@ class EVE(object):
         NOTE: *ALL* character IDs passed to this function
         must be valid - an invalid character ID will cause
         the entire call to fail.
-        
         """
+        
         if api_result is None:
             # The API doesn't actually tell us which character IDs are invalid
             msg = "One or more of these character IDs are invalid: %r"
@@ -118,8 +118,8 @@ class EVE(object):
             A list of names to retrieve character IDs.
 
         Names of unknown characters will map to None.
-        
         """
+
         rowset = api_result.result.find('rowset')
         rows = rowset.findall('row')
 

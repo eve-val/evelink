@@ -14,7 +14,6 @@ from evelink.parsing.wallet_transactions import parse_wallet_transactions
 class auto_call(api.auto_call):
     """Extends 'evelink.api.auto_call' to add 'Char.char_id' as an api 
     request argument.
-
     """
 
     def __init__(self, path, map_params=None, **kw):
@@ -30,7 +29,6 @@ class Char(object):
     """Wrapper around /char/ of the EVE API.
 
     Note that a valid API key is required.
-    
     """
 
     def __init__(self, char_id, api):
@@ -59,8 +57,8 @@ class Char(object):
         key, which maps to a list of items.  That is, you can think of
         the top-level values as "containers" with no fields except for
         "contents" and "location_id".
-        
         """
+
         return api.APIResult(parse_assets(api_result.result), api_result.timestamp, api_result.expires)
 
     @auto_call('char/ContractBids')
@@ -116,8 +114,8 @@ class Char(object):
 
         before_kill:
             Optional. Only show kills before this kill id. (Used for paging.)
-
         """
+
         return api.APIResult(parse_kills(api_result.result), api_result.timestamp, api_result.expires)
 
     @auto_call('char/Notifications')
@@ -372,8 +370,8 @@ class Char(object):
         NOTE: You *must* have recently looked up the headers of
         any messages you are requesting bodies for (via the 'messages'
         method) or else this call will fail.
-
         """
+
         rowset = api_result.result.find('rowset')
         results = {}
         for row in rowset.findall('row'):
@@ -455,8 +453,8 @@ class Char(object):
 
         NOTE: You must have recently fetched the list of calendar events
         (using the 'calendar_events' method) before calling this method.
-
         """
+
         api_result = self.calendar_attendees([event_id])
         return api.APIResult(api_result.result[int(event_id)], api_result.timestamp, api_result.expires)
 
