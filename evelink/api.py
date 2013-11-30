@@ -367,12 +367,6 @@ def map_func_args(args, kw, args_names, defaults):
     return map_
 
 
-def extend_map_from_properties(map_, obj, names):
-    for n in names:
-        map_[n] = getattr(obj, n, None)
-    return map_
-
-
 class auto_call(object):
     """A decorator to automatically provide an api response to a method.
 
@@ -436,9 +430,8 @@ class auto_call(object):
                 return self.method(client, *args, **kw)
                 
             args_map = map_func_args(args, kw, self.args, self.defaults)
-            args_map = extend_map_from_properties(
-                args_map, client, self.prop_to_param
-            )
+            for attr_name in self.prop_to_param:
+                args_map[attr_name] = getattr(client, attr_name, None)
 
             params = translate_args(args_map, self.map_params)
             params =  dict((k, v,) for k, v in params.iteritems() if v)

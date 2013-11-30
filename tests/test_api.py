@@ -286,14 +286,6 @@ class AutoCallTestCase(unittest.TestCase):
             defaults
         )
 
-    def test_extend_map_from_properties(self):
-        obj = mock.Mock()
-        obj.char_id = 1
-        self.assertEqual(
-            {'char_id': 1},
-            evelink_api.extend_map_from_properties({}, obj, ('char_id',))
-        )
-
     def test_deco_add_request_specs(self):
         
         @evelink_api.auto_call('foo/bar')

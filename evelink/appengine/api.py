@@ -172,9 +172,8 @@ def _make_async(method):
 
         # build parameter map
         args_map = api.map_func_args(args, kw, args_names, defaults)
-        args_map = api.extend_map_from_properties(
-            args_map, self, prop_to_param
-        )
+        for attr_name in prop_to_param:
+            args_map[attr_name] = getattr(self, attr_name, None)
 
         # fix params name and remove params with None values
         params = api.translate_args(args_map, map_params)
