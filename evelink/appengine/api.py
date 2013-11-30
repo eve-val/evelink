@@ -1,4 +1,5 @@
 import functools
+import inspect
 import time
 from urllib import urlencode
 from xml.etree import ElementTree
@@ -190,17 +191,13 @@ def _make_async(method):
 def auto_async(cls):
     """Class decoration which add a async version of any method with a
     a '_request_specs' attribute (metadata added by api.auto_add).
-
     """
-
-    for attr_name in dir(cls):
-
-        attr = getattr(cls, attr_name)
-        if not hasattr(attr, '_request_specs'):
+    for method_name, method in inspect.getmembers(cls, inspect.ismethod):
+        if not hasattr(method, '_request_specs'):
             continue
         
-        async_method = _make_async(attr)
-        async_method.__doc__ = """Asynchronous version of %s.""" % attr_name
-        setattr(cls, '%s_async' % attr_name, async_method)
+        async_method = _make_async(method)
+        async_method.__doc__ = """Asynchronous version of %s.""" % method_name
+        setattr(cls, '%s_async' % method_name, async_method)
         
     return cls
