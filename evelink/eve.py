@@ -74,7 +74,7 @@ class EVE(object):
 
         return api.APIResult(result, api_result.timestamp, api_result.expires)
 
-    @api.auto_call('eve/CharacterName')
+    @api.auto_call('eve/CharacterName', map_params={'id_list': 'IDs'})
     def character_names_from_ids(self, id_list, api_result=None):
         """Retrieve a dict mapping character IDs to names.
 
@@ -110,7 +110,7 @@ class EVE(object):
         api_result = self.character_names_from_ids([char_id])
         return api.APIResult(api_result.result.get(char_id), api_result.timestamp, api_result.expires)
 
-    @api.auto_call('eve/CharacterID')
+    @api.auto_call('eve/CharacterID', map_params={'name_list': 'names'})
     def character_ids_from_names(self, name_list, api_result=None):
         """Retrieve a dict mapping character names to IDs.
 
@@ -139,7 +139,7 @@ class EVE(object):
         api_result = self.character_ids_from_names([name])
         return api.APIResult(api_result.result.get(name), api_result.timestamp, api_result.expires)
 
-    @api.auto_call('eve/CharacterInfo')
+    @api.auto_call('eve/CharacterInfo', map_params={'char_id': 'characterID'})
     def character_info_from_id(self, char_id, api_result=None):
         """Retrieve a dict of info about the designated character."""
         if api_result is None:

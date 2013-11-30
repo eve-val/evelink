@@ -206,48 +206,11 @@ class AutoCallTestCase(unittest.TestCase):
         self.assertRaises(TypeError, func, 2, a=1, c=3, d=4)
 
     def test_translate_args(self):
-        args = (
-            ('before_id', None,),
-            ('before_kill', None,),
-            ('char_id', None,),
-            ('contract_id', None,),
-            ('corp_id', None,),
-            ('event_ids', None,),
-            ('extended', None,),
-            ('id_list', None,),
-            ('limit', None,),
-            ('location_list', None,),
-            ('message_ids', None,),
-            ('name_list', None,),
-            ('notification_ids', None,),
-            ('starbase_id', None,),
-            ('station_id', None,),
-        )
-        expected = [
-            ('fromID', None,),
-            ('beforeKillID', None,),
-            ('characterID', None,),
-            ('contractID', None,),
-            ('corporationID', None,),
-            ('eventIDs', None,),
-            ('extended', None,),
-            ('IDs', None,),
-            ('rowCount', None,),
-            ('IDs', None,),
-            ('ids', None,),
-            ('names', None,),
-            ('IDs', None,),
-            ('itemID', None,),
-            ('itemID', None,),
-        ]
-        self.assertEqual(expected, evelink_api.translate_args(args))
-
-    def test_translate_special_param(self):
-        args = (('before_kill', None),)
-        my_map = (('before_kill', 'fromID'),)
+        args = {'foo': 'bar'}
+        mapping = {'foo': 'baz'}
         self.assertEqual(
-            [('fromID', None,)],
-            evelink_api.translate_args(args, my_map)
+            {'baz': 'bar'}, 
+            evelink_api.translate_args(args, mapping)
         )
 
     def test_inspect_func(self):
@@ -345,7 +308,7 @@ class AutoCallTestCase(unittest.TestCase):
                 ],
                 'defaults': dict(limit=None, before_kill=None),
                 'prop_to_param': tuple(),
-                'map_params': tuple()
+                'map_params': {}
             },
             func._request_specs
             )
@@ -367,7 +330,7 @@ class AutoCallTestCase(unittest.TestCase):
         )
         client.api.get.assert_called_once_with(
             'foo/bar',
-            params={'characterID':1, 'beforeKillID': 3, 'rowCount': 2}
+            params={'char_id':1, 'before_kill': 3, 'limit': 2}
         )
 
     def test_call_wrapped_method_none_arguments(self):
@@ -387,7 +350,7 @@ class AutoCallTestCase(unittest.TestCase):
         )
         client.api.get.assert_called_once_with(
             'foo/bar',
-            params={'characterID':1}
+            params={'char_id':1}
         )
 
     def test_call_wrapped_method_with_map_params(self):
@@ -407,7 +370,7 @@ class AutoCallTestCase(unittest.TestCase):
         )
         client.api.get.assert_called_once_with(
             'foo/bar',
-            params={'characterID':1, 'beforeKillID': 3, 'max': 2}
+            params={'char_id':1, 'before_kill': 3, 'max': 2}
         )
 
     def test_call_wrapped_method_with_properties(self):
@@ -428,7 +391,7 @@ class AutoCallTestCase(unittest.TestCase):
         )
         client.api.get.assert_called_once_with(
             'foo/bar',
-            params={'characterID':1, 'beforeKillID': 3, 'rowCount': 2}
+            params={'char_id':1, 'before_kill': 3, 'limit': 2}
         )
 
     def test_call_wrapped_method_with_api_result(self):

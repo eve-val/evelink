@@ -17,9 +17,12 @@ class auto_call(api.auto_call):
 
     """
 
-    def __init__(self, path, **kw):
+    def __init__(self, path, map_params=None, **kw):
+        map_params = map_params if map_params else {}
+        map_params['char_id'] = 'characterID'
+
         super(auto_call, self).__init__(
-            path, prop_to_param=('char_id',), **kw
+            path, prop_to_param=('char_id',), map_params=map_params, **kw
         )
 
 
@@ -65,7 +68,7 @@ class Char(object):
         """Lists the latest bids that have been made to any recent auctions."""
         return api.APIResult(parse_contract_bids(api_result.result), api_result.timestamp, api_result.expires)
 
-    @auto_call('char/ContractItems')
+    @auto_call('char/ContractItems', map_params={'contract_id': 'contractID'})
     def contract_items(self, contract_id, api_result=None):
         """Lists items that a specified contract contains"""
         return api.APIResult(parse_contract_items(api_result.result), api_result.timestamp, api_result.expires)
@@ -75,7 +78,7 @@ class Char(object):
         """Returns a record of all contracts for a specified character"""
         return api.APIResult(parse_contracts(api_result.result), api_result.timestamp, api_result.expires)
 
-    @auto_call('char/WalletJournal')
+    @auto_call('char/WalletJournal', map_params={'before_id': 'fromID', 'limit': 'rowCount'})
     def wallet_journal(self, before_id=None, limit=None, api_result=None):
         """Returns a complete record of all wallet activity for a specified character"""
         return api.APIResult(parse_wallet_journal(api_result.result), api_result.timestamp, api_result.expires)
@@ -97,7 +100,7 @@ class Char(object):
         api_result = self.wallet_info()
         return api.APIResult(api_result.result['balance'], api_result.timestamp, api_result.expires)
 
-    @auto_call('char/WalletTransactions')
+    @auto_call('char/WalletTransactions', map_params={'before_id': 'fromID', 'limit': 'rowCount'})
     def wallet_transactions(self, before_id=None, limit=None, api_result=None):
         """Returns wallet transactions for a character."""
         return api.APIResult(parse_wallet_transactions(api_result.result), api_result.timestamp, api_result.expires)
@@ -107,7 +110,7 @@ class Char(object):
         """Get a list of jobs for a character"""
         return api.APIResult(parse_industry_jobs(api_result.result), api_result.timestamp, api_result.expires)
 
-    @auto_call('char/KillLog')
+    @auto_call('char/KillLog', map_params={'before_kill': 'beforeKillID'})
     def kills(self, before_kill=None, api_result=None):
         """Look up recent kills for a character.
 
@@ -135,7 +138,7 @@ class Char(object):
 
         return api.APIResult(result, api_result.timestamp, api_result.expires)
 
-    @auto_call('char/NotificationTexts')
+    @auto_call('char/NotificationTexts', map_params={'notification_ids': 'IDs'})
     def notification_texts(self, notification_ids, api_result=None):
         """Returns the message bodies for notifications."""
         result = {}
@@ -362,7 +365,7 @@ class Char(object):
 
         return api.APIResult(results, api_result.timestamp, api_result.expires)
 
-    @auto_call('char/MailBodies')
+    @auto_call('char/MailBodies', map_params={'message_ids': 'ids'})
     def message_bodies(self, message_ids, api_result=None):
         """Returns the actual body content of a set of mail messages.
 
@@ -420,7 +423,7 @@ class Char(object):
 
         return api.APIResult(results, api_result.timestamp, api_result.expires)
 
-    @auto_call('char/CalendarEventAttendees')
+    @auto_call('char/CalendarEventAttendees', map_params={'event_ids': 'eventIDs'})
     def calendar_attendees(self, event_ids, api_result=None):
         """Returns the list of attendees for the specified calendar event.
 
@@ -537,7 +540,7 @@ class Char(object):
 
         return api.APIResult(results, api_result.timestamp, api_result.expires)
 
-    @auto_call('char/Locations')
+    @auto_call('char/Locations', map_params={'location_list': 'IDs'})
     def locations(self, location_list, api_result=None):
         rowset = api_result.result.find('rowset')
         rows = rowset.findall('row')

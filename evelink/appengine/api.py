@@ -179,10 +179,10 @@ def _make_async(method):
         )
 
         # fix params name and remove params with None values
-        params = api.translate_args(args_map.iteritems(), map_params)
-        params = filter(lambda x: x[1] is not None, params)
+        params = api.translate_args(args_map, map_params)
+        params =  dict((k, v,) for k, v in params.iteritems() if v)
         
-        kw['api_result'] = yield self.api.get_async(path, params=dict(params))
+        kw['api_result'] = yield self.api.get_async(path, params=params)
         raise ndb.Return(method(self, *args, **kw))
     return ndb.tasklet(_async)
 

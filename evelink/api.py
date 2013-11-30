@@ -323,29 +323,10 @@ def auto_api(func):
     return wrapper
 
 
-_args_map = (
-    ('before_id', 'fromID'),
-    ('before_kill', 'beforeKillID'),
-    ('char_id', 'characterID'),
-    ('contract_id', 'contractID'),
-    ('corp_id', 'corporationID'),
-    ('event_ids', 'eventIDs'),
-    ('extended', 'extended'),
-    ('id_list', 'IDs'),
-    ('limit', 'rowCount'),
-    ('location_list', 'IDs'),
-    ('message_ids', 'ids'),
-    ('name_list', 'names'),
-    ('notification_ids', 'IDs'),
-    ('starbase_id', 'itemID'),
-    ('station_id', 'itemID'),
-)
-
-
-def translate_args(args, map_=tuple()):
+def translate_args(args, mapping=None):
     """Translate python name variable into API parameter name."""
-    map_ = dict(_args_map + tuple(map_))
-    return map(lambda x: (map_.get(x[0], x[0]), x[1]), args)
+    mapping = mapping if mapping else {}
+    return dict((mapping.get(k, k), v,) for k, v in args.iteritems())
 
 
 def inspect_func(func):
@@ -423,7 +404,7 @@ class auto_call(object):
         self.args = None
         self.defaults = None
         self.prop_to_param = prop_to_param
-        self.map_params = map_params.items() if map_params else tuple()
+        self.map_params = map_params if map_params else {}
 
     def __call__(self, method):
         if self.method is not None:
@@ -459,10 +440,10 @@ class auto_call(object):
                 args_map, client, self.prop_to_param
             )
 
-            params = translate_args(args_map.iteritems(), self.map_params)
-            params = filter(lambda x: bool(x[1]), params)
+            params = translate_args(args_map, self.map_params)
+            params =  dict((k, v,) for k, v in params.iteritems() if v)
             
-            kw['api_result'] = client.api.get(self.path, params=dict(params))
+            kw['api_result'] = client.api.get(self.path, params=params)
             return self.method(client, *args, **kw)
 
         return wrapper

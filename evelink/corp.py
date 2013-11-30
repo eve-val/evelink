@@ -10,6 +10,7 @@ from evelink.parsing.orders import parse_market_orders
 from evelink.parsing.wallet_journal import parse_wallet_journal
 from evelink.parsing.wallet_transactions import parse_wallet_transactions
 
+
 class Corp(object):
     """Wrapper around /corp/ of the EVE API.
 
@@ -19,7 +20,7 @@ class Corp(object):
     def __init__(self, api):
         self.api = api
 
-    @api.auto_call('corp/CorporationSheet')
+    @api.auto_call('corp/CorporationSheet', map_params={'corp_id': 'corporationID'})
     def corporation_sheet(self, corp_id=None, api_result=None):
         """Get information about a corporation.
 
@@ -131,7 +132,7 @@ class Corp(object):
 
         return api.APIResult(results, api_result.timestamp, api_result.expires)
 
-    @api.auto_call('corp/KillLog')
+    @api.auto_call('corp/KillLog', map_params={'before_kill': 'beforeKillID'})
     def kills(self, before_kill=None, api_result=None):
         """Look up recent kills for a corporation.
 
@@ -156,12 +157,12 @@ class Corp(object):
 
         return api.APIResult(results, api_result.timestamp, api_result.expires)
 
-    @api.auto_call('corp/WalletJournal')
+    @api.auto_call('corp/WalletJournal', map_params={'before_id': 'fromID', 'limit': 'rowCount'})
     def wallet_journal(self, before_id=None, limit=None, api_result=None):
         """Returns wallet journal for a corporation."""
         return api.APIResult(parse_wallet_journal(api_result.result), api_result.timestamp, api_result.expires)
 
-    @api.auto_call('corp/WalletTransactions')
+    @api.auto_call('corp/WalletTransactions', map_params={'before_id': 'fromID', 'limit': 'rowCount'})
     def wallet_transactions(self, before_id=None, limit=None, api_result=None):
         """Returns wallet transactions for a corporation."""
         return api.APIResult(parse_wallet_transactions(api_result.result), api_result.timestamp, api_result.expires)
@@ -233,7 +234,7 @@ class Corp(object):
         """Lists the latest bids that have been made to any recent auctions."""
         return api.APIResult(parse_contract_bids(api_result.result), api_result.timestamp, api_result.expires)
 
-    @api.auto_call('corp/ContractItems')
+    @api.auto_call('corp/ContractItems', map_params={'contract_id': 'contractID'})
     def contract_items(self, contract_id, api_result=None):
         """Lists items that a specified contract contains"""
         return api.APIResult(parse_contract_items(api_result.result), api_result.timestamp, api_result.expires)
@@ -341,7 +342,7 @@ class Corp(object):
 
         return api.APIResult(results, api_result.timestamp, api_result.expires)
 
-    @api.auto_call('corp/StarbaseDetail')
+    @api.auto_call('corp/StarbaseDetail', map_params={'starbase_id': 'itemID'})
     def starbase_details(self, starbase_id, api_result=None):
         """Returns details about the specified POS."""
         _str, _int, _float, _bool, _ts = api.elem_getters(api_result.result)
@@ -575,7 +576,7 @@ class Corp(object):
 
         return api.APIResult(results, api_result.timestamp, api_result.expires)
 
-    @api.auto_call('corp/OutpostServiceDetail')
+    @api.auto_call('corp/OutpostServiceDetail', map_params={'station_id': 'itemID'})
     def station_services(self, station_id, api_result=None):
         """Returns information about a given station's services."""
         rowset = api_result.result.find('rowset')
@@ -671,7 +672,7 @@ class Corp(object):
 
         return api.APIResult(results, api_result.timestamp, api_result.expires)
 
-    @api.auto_call('corp/Locations')
+    @api.auto_call('corp/Locations', map_params={'location_list': 'IDs'})
     def locations(self, location_list, api_result=None):
         rowset = api_result.result.find('rowset')
         rows = rowset.findall('row')
