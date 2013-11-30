@@ -433,9 +433,9 @@ class Char(object):
 
         NOTE: You must have recently fetched the list of calendar events
         (using the 'calendar_events' method) before calling this method.
-
         """
-        results = dict((id_, {},) for id_ in event_ids)
+
+        results = dict((int(i),{}) for i in event_ids)
         rowset = api_result.result.find('rowset')
         for row in rowset.findall('row'):
             a = row.attrib
@@ -446,7 +446,7 @@ class Char(object):
             }
             results[int(a['eventID'])][attendee['id']] = attendee
 
-        return api.APIResult(dict(results), api_result.timestamp, api_result.expires)
+        return api.APIResult(results, api_result.timestamp, api_result.expires)
 
     def event_attendees(self, event_id, api_result=None):
         """Returns the attendees for a single event.
