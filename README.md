@@ -77,12 +77,14 @@ Object access is the highest layer of access and the most encapsulated. Though i
 Development
 -----------
 
+[![Build Status](https://travis-ci.org/eve-val/evelink.png?branch=master)](https://travis-ci.org/eve-val/evelink)
+
 To acquire a development copy of the library and set up the requirements for testing:
 
 ```bash
 $ git clone https://github.com/eve-val/evelink.git
 $ cd evelink
-$ virtualenv venv --distribute
+$ virtualenv venv
 $ source venv/bin/activate
 $ pip install -r requirements.txt
 ```

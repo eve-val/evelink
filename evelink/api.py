@@ -1,9 +1,11 @@
 import calendar
 import collections
 import functools
+import gzip
 import inspect
 import logging
 import re
+from StringIO import StringIO
 import time
 from urllib import urlencode
 import urllib2
@@ -24,6 +26,16 @@ def _clean(v):
         return ",".join(str(i) for i in v)
     else:
         return str(v)
+
+def decompress(s):
+    """Decode a gzip compressed string."""
+    buf = StringIO(s)
+    f = gzip.GzipFile(fileobj=buf)
+    try:
+        return f.read()
+    finally:
+        f.close()
+        buf.close()
 
 
 def parse_ts(v):
@@ -267,24 +279,30 @@ class API(object):
             if params:
                 # POST request
                 _log.debug("POSTing request")
-                r = urllib2.urlopen(full_path, params)
+                req = urllib2.Request(full_path, data=params)
             else:
                 # GET request
+                req = urllib2.Request(full_path)
                 _log.debug("GETting request")
-                r = urllib2.urlopen(full_path)
-            result = r.read()
-            r.close()
-            return result
-        except urllib2.HTTPError as e:
+
+            req.add_header('Accept-Encoding', 'gzip')
+            r = urllib2.urlopen(req)
+        except urllib2.HTTPError as r:
             # urllib2 handles non-2xx responses by raising an exception that
             # can also behave as a file-like object. The EVE API will return
             # non-2xx HTTP codes on API errors (since Odyssey, apparently)
-            result = e.read()
-            e.close()
-            return result
+            pass
         except urllib2.URLError as e:
             # TODO: Handle this better?
             raise e
+
+        try:
+            if r.info().get('Content-Encoding') == 'gzip':
+                return decompress(r.read())
+            else:
+                return r.read()
+        finally:
+            r.close()
 
     def requests_request(self, full_path, params):
         session = getattr(self, 'session', None)
