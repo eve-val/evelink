@@ -361,7 +361,10 @@ def map_func_args(args, kw, args_names, defaults):
     with their argument names.
 
     'args_names' should be the list of argument names and 'default' 
-    should be a dict associating the keyword arguments to their defaults.
+    should be a dict associating the keyword arguments to their 
+    defaults.
+
+    Similar to inspect.getcallargs() but compatible with python 2.6.
 
     """
     if (len(args)+len(kw)) > len(args_names):
