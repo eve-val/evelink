@@ -443,6 +443,7 @@ class auto_call(object):
 
     def _wrapped_method(self):
         
+        @functools.wraps(self.method)
         def wrapper(client, *args, **kw):
             if 'api_result' in kw:
                 return self.method(client, *args, **kw)

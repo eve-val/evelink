@@ -194,6 +194,7 @@ def auto_async(cls):
         
         async_method = _make_async(method)
         async_method.__doc__ = """Asynchronous version of %s.""" % method_name
-        setattr(cls, '%s_async' % method_name, async_method)
+        async_method.__name__ = '%s_async' % method_name
+        setattr(cls, async_method.__name__, async_method)
         
     return cls
