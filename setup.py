@@ -22,6 +22,7 @@ setup(
     download_url="https://github.com/eve-val/evelink/downloads",
     packages=[
         "evelink",
+        "evelink.appengine",
         "evelink.cache",
         "evelink.parsing",
         "evelink.thirdparty",

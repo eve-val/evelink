@@ -40,7 +40,7 @@ class CorpTestCase(APITestCase):
                 'url': 'some url',
             })
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('corp/CorporationSheet', {'corporationID': 123}),
+                mock.call.get('corp/CorporationSheet', params={'corporationID': 123}),
             ])
         self.assertEqual(current, 12345)
         self.assertEqual(expires, 67890)
@@ -84,7 +84,7 @@ class CorpTestCase(APITestCase):
                                      1006: 'Wallet Division 7'}
             })
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('corp/CorporationSheet', {}),
+                mock.call.get('corp/CorporationSheet', params={}),
             ])
         self.assertEqual(current, 12345)
         self.assertEqual(expires, 67890)
@@ -98,7 +98,7 @@ class CorpTestCase(APITestCase):
 
         self.assertEqual(result, mock.sentinel.industry_jobs)
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('corp/IndustryJobs'),
+                mock.call.get('corp/IndustryJobs', params={}),
             ])
         self.assertEqual(mock_parse.mock_calls, [
                 mock.call(mock.sentinel.api_result),
@@ -135,7 +135,7 @@ class CorpTestCase(APITestCase):
                 },
             })
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('corp/Standings'),
+                mock.call.get('corp/Standings', params={}),
             ])
         self.assertEqual(current, 12345)
         self.assertEqual(expires, 67890)
@@ -149,7 +149,7 @@ class CorpTestCase(APITestCase):
 
         self.assertEqual(result, mock.sentinel.kills)
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('corp/KillLog', {}),
+                mock.call.get('corp/KillLog', params={}),
             ])
         self.assertEqual(mock_parse.mock_calls, [
                 mock.call(mock.sentinel.api_result),
@@ -168,7 +168,7 @@ class CorpTestCase(APITestCase):
                 mock.call(mock.sentinel.api_result),
             ])
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('corp/ContractBids'),
+                mock.call.get('corp/ContractBids', params={}),
             ])
         self.assertEqual(current, 12345)
         self.assertEqual(expires, 67890)
@@ -184,7 +184,7 @@ class CorpTestCase(APITestCase):
                 mock.call(mock.sentinel.api_result),
             ])
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('corp/ContractItems', {'contractID': 12345}),
+                mock.call.get('corp/ContractItems', params={'contractID': 12345}),
             ])
         self.assertEqual(current, 12345)
         self.assertEqual(expires, 67890)
@@ -200,7 +200,7 @@ class CorpTestCase(APITestCase):
                 mock.call(mock.sentinel.api_result),
             ])
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('corp/Contracts'),
+                mock.call.get('corp/Contracts', params={}),
             ])
         self.assertEqual(current, 12345)
         self.assertEqual(expires, 67890)
@@ -216,7 +216,7 @@ class CorpTestCase(APITestCase):
                 mock.call(mock.sentinel.api_result),
             ])
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('corp/ContactList'),
+                mock.call.get('corp/ContactList', params={}),
             ])
         self.assertEqual(current, 12345)
         self.assertEqual(expires, 67890)
@@ -236,7 +236,7 @@ class CorpTestCase(APITestCase):
             1006: {'balance': 0.0, 'id': 5692, 'key': 1006},
         })
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('corp/AccountBalance'),
+                mock.call.get('corp/AccountBalance', params={}),
             ])
         self.assertEqual(current, 12345)
         self.assertEqual(expires, 67890)
@@ -252,7 +252,7 @@ class CorpTestCase(APITestCase):
                 mock.call(mock.sentinel.api_result),
             ])
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('corp/WalletJournal', {}),
+                mock.call.get('corp/WalletJournal', params={}),
             ])
         self.assertEqual(current, 12345)
         self.assertEqual(expires, 67890)
@@ -262,7 +262,7 @@ class CorpTestCase(APITestCase):
 
         self.corp.wallet_journal(before_id=1234)
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('corp/WalletJournal', {'fromID': 1234}),
+                mock.call.get('corp/WalletJournal', params={'fromID': 1234}),
             ])
 
     def test_wallet_journal_limit(self):
@@ -270,7 +270,7 @@ class CorpTestCase(APITestCase):
 
         self.corp.wallet_journal(limit=100)
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('corp/WalletJournal', {'rowCount': 100}),
+                mock.call.get('corp/WalletJournal', params={'rowCount': 100}),
             ])
 
     @mock.patch('evelink.corp.parse_wallet_transactions')
@@ -284,7 +284,7 @@ class CorpTestCase(APITestCase):
                 mock.call(mock.sentinel.api_result),
             ])
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('corp/WalletTransactions', {}),
+                mock.call.get('corp/WalletTransactions', params={}),
             ])
         self.assertEqual(current, 12345)
         self.assertEqual(expires, 67890)
@@ -294,7 +294,7 @@ class CorpTestCase(APITestCase):
 
         self.corp.wallet_transactions(before_id=1234)
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('corp/WalletTransactions', {'fromID': 1234}),
+                mock.call.get('corp/WalletTransactions', params={'fromID': 1234}),
             ])
 
     def test_wallet_transactions_limit(self):
@@ -302,7 +302,7 @@ class CorpTestCase(APITestCase):
 
         self.corp.wallet_transactions(limit=100)
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('corp/WalletTransactions', {'rowCount': 100}),
+                mock.call.get('corp/WalletTransactions', params={'rowCount': 100}),
             ])
 
     @mock.patch('evelink.corp.parse_market_orders')
@@ -316,7 +316,7 @@ class CorpTestCase(APITestCase):
                 mock.call(mock.sentinel.api_result),
             ])
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('corp/MarketOrders'),
+                mock.call.get('corp/MarketOrders', params={}),
             ])
         self.assertEqual(current, 12345)
         self.assertEqual(expires, 67890)
@@ -334,7 +334,7 @@ class CorpTestCase(APITestCase):
                 'start_ts': 1213135800,
             })
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('corp/FacWarStats'),
+                mock.call.get('corp/FacWarStats', params={}),
             ])
         self.assertEqual(current, 12345)
         self.assertEqual(expires, 67890)
@@ -350,7 +350,7 @@ class CorpTestCase(APITestCase):
                 mock.call(mock.sentinel.api_result),
             ])
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('corp/AssetList'),
+                mock.call.get('corp/AssetList', params={}),
             ])
         self.assertEqual(current, 12345)
         self.assertEqual(expires, 67890)
@@ -381,7 +381,7 @@ class CorpTestCase(APITestCase):
                 },
             })
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('corp/Shareholders'),
+                mock.call.get('corp/Shareholders', params={}),
             ])
         self.assertEqual(current, 12345)
         self.assertEqual(expires, 67890)
@@ -417,7 +417,7 @@ class CorpTestCase(APITestCase):
                 },
             })
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('corp/Titles'),
+                mock.call.get('corp/Titles', params={}),
             ])
         self.assertEqual(current, 12345)
         self.assertEqual(expires, 67890)
@@ -440,7 +440,7 @@ class CorpTestCase(APITestCase):
                 },
             })
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('corp/StarbaseList'),
+                mock.call.get('corp/StarbaseList', params={}),
             ])
         self.assertEqual(current, 12345)
         self.assertEqual(expires, 67890)
@@ -479,7 +479,7 @@ class CorpTestCase(APITestCase):
                 'state_ts': 1241299896,
             })
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('corp/StarbaseDetail', {'itemID': 123}),
+                mock.call.get('corp/StarbaseDetail', params={'itemID': 123}),
             ])
         self.assertEqual(current, 12345)
         self.assertEqual(expires, 67890)
@@ -524,7 +524,7 @@ class CorpTestCase(APITestCase):
                 },
             })
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('corp/MemberTracking', {'extended': 1}),
+                mock.call.get('corp/MemberTracking', params={'extended': 1}),
             ])
         self.assertEqual(current, 12345)
         self.assertEqual(expires, 67890)
@@ -533,7 +533,7 @@ class CorpTestCase(APITestCase):
         self.api.get.return_value = self.make_api_result("corp/members.xml")
         result, current, expires = self.corp.members(extended=False)
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('corp/MemberTracking', {}),
+                mock.call.get('corp/MemberTracking', params={}),
             ])
         self.assertEqual(current, 12345)
         self.assertEqual(expires, 67890)
@@ -566,7 +566,7 @@ class CorpTestCase(APITestCase):
                 },
             })
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('corp/MemberSecurity'),
+                mock.call.get('corp/MemberSecurity', params={}),
             ])
         self.assertEqual(current, 12345)
         self.assertEqual(expires, 67890)
@@ -629,7 +629,7 @@ class CorpTestCase(APITestCase):
                 },
             ])
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('corp/MemberSecurityLog'),
+                mock.call.get('corp/MemberSecurityLog', params={}),
             ])
         self.assertEqual(current, 12345)
         self.assertEqual(expires, 67890)
@@ -653,7 +653,7 @@ class CorpTestCase(APITestCase):
                 },
             })
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('corp/OutpostList'),
+                mock.call.get('corp/OutpostList', params={}),
             ])
         self.assertEqual(current, 12345)
         self.assertEqual(expires, 67890)
@@ -684,7 +684,7 @@ class CorpTestCase(APITestCase):
                 },
             })
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('corp/OutpostServiceDetail', {'itemID': 123}),
+                mock.call.get('corp/OutpostServiceDetail', params={'itemID': 123}),
             ])
         self.assertEqual(current, 12345)
         self.assertEqual(expires, 67890)
@@ -704,7 +704,7 @@ class CorpTestCase(APITestCase):
                 },
             })
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('corp/Medals'),
+                mock.call.get('corp/Medals', params={}),
             ])
         self.assertEqual(current, 12345)
         self.assertEqual(expires, 67890)
@@ -727,7 +727,7 @@ class CorpTestCase(APITestCase):
                 },
             })
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('corp/MemberMedals'),
+                mock.call.get('corp/MemberMedals', params={}),
             ])
         self.assertEqual(current, 12345)
         self.assertEqual(expires, 67890)
@@ -780,7 +780,7 @@ class CorpTestCase(APITestCase):
                  'timestamp': 1229846880}
             ])
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('corp/ContainerLog'),
+                mock.call.get('corp/ContainerLog', params={}),
             ])
         self.assertEqual(current, 12345)
         self.assertEqual(expires, 67890)
@@ -790,7 +790,7 @@ class CorpTestCase(APITestCase):
 
         result, current, expires = self.corp.locations((1009661446486,1007448817800L))
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('corp/Locations', {'IDs': (1009661446486,1007448817800L),}),
+                mock.call.get('corp/Locations', params={'IDs': (1009661446486,1007448817800L),}),
             ])
         self.assertEqual(result,
             {1009661446486L:

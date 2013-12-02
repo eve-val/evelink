@@ -98,7 +98,6 @@ $ nosetests
 To run the tests, including the appengine ones (this requires that you have Google AppEngine's python SDK installed):
 
 ```bash
-$ cd tests
 $ nosetests --with-gae
 ```
 

@@ -7,10 +7,9 @@ class Server(object):
     def __init__(self, api=None):
         self.api = api
 
-    def server_status(self):
+    @api.auto_call('server/ServerStatus')
+    def server_status(self, api_result=None):
         """Check the current server status."""
-
-        api_result = self.api.get('server/ServerStatus')
 
         result = {
             'online': api.get_bool_value(api_result.result, 'serverOpen'),

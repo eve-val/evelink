@@ -19,7 +19,7 @@ class ServerTestCase(APITestCase):
         self.assertEqual(current, 12345)
         self.assertEqual(expires, 67890)
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('server/ServerStatus'),
+                mock.call.get('server/ServerStatus', params={}),
             ])
 
 if __name__ == "__main__":

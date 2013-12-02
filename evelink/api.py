@@ -2,6 +2,7 @@ import calendar
 import collections
 import functools
 import gzip
+import inspect
 import logging
 import re
 from StringIO import StringIO
@@ -323,6 +324,7 @@ class API(object):
             # TODO: Handle this better?
             raise e
 
+
 def auto_api(func):
     """A decorator to automatically provide an API instance.
 
@@ -338,5 +340,128 @@ def auto_api(func):
         return func(*args, **kwargs)
     return wrapper
 
+
+def translate_args(args, mapping=None):
+    """Translate python name variable into API parameter name."""
+    mapping = mapping if mapping else {}
+    return dict((mapping[k], v,) for k, v in args.iteritems())
+
+# TODO: needs better name
+def get_args_and_defaults(func):
+    """Return the list of argument names and a dict of default values"""
+    specs = inspect.getargspec(func)
+    return (
+        specs.args,
+        dict(zip(specs.args[-len(specs.defaults):], specs.defaults)),
+    )
+
+
+def map_func_args(args, kw, args_names, defaults):
+    """Associate positional (*args) and key (**kw) arguments values 
+    with their argument names.
+
+    'args_names' should be the list of argument names and 'default' 
+    should be a dict associating the keyword arguments to their 
+    defaults.
+
+    Similar to inspect.getcallargs() but compatible with python 2.6.
+
+    """
+    if (len(args)+len(kw)) > len(args_names):
+        raise TypeError('Too many arguments.')
+
+    map_ = dict(zip(args_names, args))
+    for k, v in kw.iteritems():
+        if k in map_:
+            raise TypeError(
+                "got multiple values for keyword argument '%s'" % k
+            )
+        map_[k] = v
+
+    for k, v in defaults.iteritems():
+        map_.setdefault(k, v)
+
+    required_args = args_names[0:-len(defaults)]
+    for k in required_args:
+        if k not in map_:
+            raise TypeError("Too few arguments")
+    return map_
+
+
+class auto_call(object):
+    """A decorator to automatically provide an api response to a method.
+
+    The object the method will be bound to should have an api attribute 
+    and the method should have a keyword argument named 'api_result'.
+
+    The decorated method will have a '_request_specs' dict attribute 
+    holding:
+
+    - 'path': path of the request needs to be queried.
+
+    - 'args': method argument names.
+
+    - 'defaults': method keyword arguments and theirs default value.
+
+    - 'prop_to_param': properties of the instance the method is bound 
+    to to add as parameter of api request.
+
+    - 'map_params': dictionary associating argument name to a 
+    paramater name. They will be added to 'evelink.api._args_map' to 
+    translate argument names to parameter names.
+
+    """
+    
+    def __init__(self, path, prop_to_param=tuple(), map_params=None):
+        self.method = None
+
+        self.path = path
+        self.args = None
+        self.defaults = None
+        self.prop_to_param = prop_to_param
+        self.map_params = map_params if map_params else {}
+
+    def __call__(self, method):
+        if self.method is not None:
+            raise TypeError("This decorator method cannot be shared.")
+        self.method = method
+        
+        wrapper = self._wrapped_method()
+        
+        args, self.defaults = get_args_and_defaults(self.method)
+
+        self.args = args[1:]
+        self.args.remove('api_result')
+        self.defaults.pop('api_result')  # TODO: better exception
+
+        wrapper._request_specs = {
+            'path': self.path,
+            'args': self.args,
+            'defaults': self.defaults,
+            'prop_to_param': self.prop_to_param,
+            'map_params': self.map_params
+        }
+
+        return wrapper
+
+    def _wrapped_method(self):
+        
+        @functools.wraps(self.method)
+        def wrapper(client, *args, **kw):
+            if 'api_result' in kw:
+                return self.method(client, *args, **kw)
+                
+            args_map = map_func_args(args, kw, self.args, self.defaults)
+            for attr_name in self.prop_to_param:
+                args_map[attr_name] = getattr(client, attr_name, None)
+
+            params = translate_args(args_map, self.map_params)
+            params =  dict((k, v,) for k, v in params.iteritems() if v is not None)
+            
+            kw['api_result'] = client.api.get(self.path, params=params)
+            return self.method(client, *args, **kw)
+
+        return wrapper
+        
 
 # vim: set ts=4 sts=4 sw=4 et:

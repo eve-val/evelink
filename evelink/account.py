@@ -10,10 +10,9 @@ class Account(object):
     def __init__(self, api):
         self.api = api
 
-    def status(self):
+    @api.auto_call('account/AccountStatus')
+    def status(self, api_result=None):
         """Returns the account's subscription status."""
-        api_result = self.api.get('account/AccountStatus')
-
         _str, _int, _float, _bool, _ts = api.elem_getters(api_result.result)
 
         result = {
@@ -25,11 +24,9 @@ class Account(object):
 
         return api.APIResult(result, api_result.timestamp, api_result.expires)
 
-    def key_info(self):
+    @api.auto_call('account/APIKeyInfo')
+    def key_info(self, api_result=None):
         """Returns the details of the API key being used to auth."""
-
-        api_result = self.api.get('account/APIKeyInfo')
-
         key = api_result.result.find('key')
         result = {
             'access_mask': int(key.attrib['accessMask']),
@@ -52,11 +49,9 @@ class Account(object):
 
         return api.APIResult(result, api_result.timestamp, api_result.expires)
 
-    def characters(self):
+    @api.auto_call('account/Characters')
+    def characters(self, api_result=None):
         """Returns all of the characters on an account."""
-
-        api_result = self.api.get('account/Characters')
-
         rowset = api_result.result.find('rowset')
         result = {}
         for row in rowset.findall('row'):

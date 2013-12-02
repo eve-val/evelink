@@ -7,6 +7,7 @@ import argparse
 import logging
 import os
 import re
+import sys
 import urllib
 import urllib2
 from xml.etree import ElementTree as ET
@@ -71,6 +72,9 @@ def unzip(file, dst):
 
 
 def main(gae_lib_dst):
+    if sys.version_info[0:2] != (2, 7,):
+        _log.info("Python 2.7 is required to run AppEngine.")
+        return
 
     try:
         url = get_sdk_url(GAE_FEED_URL, SDK_PATTERN)

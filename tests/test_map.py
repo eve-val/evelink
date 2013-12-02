@@ -19,7 +19,7 @@ class MapTestCase(APITestCase):
         self.assertEqual(result, {30001984:10})
         self.assertEqual(data_time, 1197460238)
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('map/Jumps'),
+                mock.call.get('map/Jumps', params={}),
             ])
         self.assertEqual(current, 12345)
         self.assertEqual(expires, 67890)
@@ -36,7 +36,7 @@ class MapTestCase(APITestCase):
             })
         self.assertEqual(data_time, 1197802673)
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('map/Kills'),
+                mock.call.get('map/Kills', params={}),
             ])
         self.assertEqual(current, 12345)
         self.assertEqual(expires, 67890)
@@ -67,7 +67,7 @@ class MapTestCase(APITestCase):
                 },
             })
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('map/FacWarSystems'),
+                mock.call.get('map/FacWarSystems', params={}),
             ])
         self.assertEqual(current, 12345)
         self.assertEqual(expires, 67890)
@@ -102,7 +102,7 @@ class MapTestCase(APITestCase):
             })
         self.assertEqual(data_time, 1261545398)
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('map/Sovereignty'),
+                mock.call.get('map/Sovereignty', params={}),
             ])
         self.assertEqual(current, 12345)
         self.assertEqual(expires, 67890)

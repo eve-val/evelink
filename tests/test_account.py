@@ -23,7 +23,7 @@ class AccountTestCase(APITestCase):
                 'paid_ts': 1293840000,
             })
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('account/AccountStatus'),
+                mock.call.get('account/AccountStatus', params={}),
             ])
         self.assertEqual(current, 12345)
         self.assertEqual(expires, 67890)
@@ -49,7 +49,7 @@ class AccountTestCase(APITestCase):
                 },
             })
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('account/APIKeyInfo'),
+                mock.call.get('account/APIKeyInfo', params={}),
             ])
         self.assertEqual(current, 12345)
         self.assertEqual(expires, 67890)
@@ -70,7 +70,7 @@ class AccountTestCase(APITestCase):
                 },
             })
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('account/Characters'),
+                mock.call.get('account/Characters', params={}),
             ])
         self.assertEqual(current, 12345)
         self.assertEqual(expires, 67890)
