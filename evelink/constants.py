@@ -2,6 +2,9 @@ ACCOUNT = 'account'
 CHARACTER = 'char'
 CORPORATION = 'corp'
 
+BLUEPRINT_ORIGINAL = -1
+BLUEPRINT_COPY = -2
+
 _role_type_bases = {
     'global': '',
     'at_hq': 'AtHQ',

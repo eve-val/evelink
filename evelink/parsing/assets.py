@@ -9,6 +9,9 @@ def parse_assets(api_result):
                     'quantity': int(row.attrib['quantity']),
                     'packaged': row.attrib['singleton'] == '0',
             }
+            raw_quantity = row.attrib.get('rawQuantity')
+            if raw_quantity is not None:
+                item['raw_quantity'] = int(raw_quantity)
             contents = row.find('rowset')
             if contents is not None:
                 item['contents'] = handle_rowset(contents, item['location_id'])
