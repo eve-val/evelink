@@ -13,5 +13,6 @@ class ContractItemsTestCase(unittest.TestCase):
             {'id': 779703191, 'quantity': 60, 'type_id': 17868, 'action': 'offered', 'singleton': False},
             {'id': 779703192, 'quantity': 8360, 'type_id': 1228, 'action': 'offered', 'singleton': False},
             {'id': 779703193, 'quantity': 16617, 'type_id': 1228, 'action': 'offered', 'singleton': False},
+            {'id': 779703194, 'quantity': 1, 'type_id': 973, 'action': 'offered', 'singleton': True, 'raw_quantity': -2},
         ])
 

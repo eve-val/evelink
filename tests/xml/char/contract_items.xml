@@ -4,6 +4,7 @@
       <row included="1" quantity="60" recordID="779703191" singleton="0" typeID="17868" />
       <row included="1" quantity="8360" recordID="779703192" singleton="0" typeID="1228" />
       <row included="1" quantity="16617" recordID="779703193" singleton="0" typeID="1228" />
+      <row included="1" quantity="1" recordID="779703194" singleton="1" typeID="973" rawQuantity="-2" />
     </rowset>
   </result>
 
