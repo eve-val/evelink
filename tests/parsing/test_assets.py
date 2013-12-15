@@ -32,7 +32,8 @@ class AssetsTestCase(unittest.TestCase):
                      'location_flag': 0,
                      'location_id': 30003719,
                      'packaged': False,
-                     'quantity': 1}],
+                     'quantity': 1,
+                     'raw_quantity': -1}],
                 'location_id': 30003719},
             67000050: {
                 'contents': [
@@ -41,5 +42,13 @@ class AssetsTestCase(unittest.TestCase):
                      'location_flag': 0,
                      'location_id': 67000050,
                      'packaged': False,
-                     'quantity': 1}],
+                     'quantity': 1,
+                     'raw_quantity': -1},
+                    {'id': 374680079,
+                     'item_type_id': 973,
+                     'location_flag': 0,
+                     'location_id': 67000050,
+                     'packaged': False,
+                     'quantity': 1,
+                     'raw_quantity': -2}],
                 'location_id': 67000050}})

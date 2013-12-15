@@ -1,7 +1,8 @@
 <result>
   <rowset name="assets" key="itemID" columns="itemID,locationID,typeID,quantity,flag,singleton">
     <row itemID="1007221285456" locationID="67000050" typeID="13780" quantity="1" flag="0" singleton="1" rawQuantity="-1"/>
-		<row itemID="1007222140712" locationID="30003719" typeID="16216" quantity="1" flag="0" singleton="1" rawQuantity="-1">
+    <row itemID="374680079" locationID="67000050" typeID="973" quantity="1" flag="0" singleton="1" rawQuantity="-2"/>
+    <row itemID="1007222140712" locationID="30003719" typeID="16216" quantity="1" flag="0" singleton="1" rawQuantity="-1">
       <rowset name="contents" key="itemID" columns="itemID,typeID,quantity,flag,singleton">
         <row itemID="1007353294812" typeID="34" quantity="100" flag="42" singleton="0"/>
         <row itemID="1007353294813" typeID="34" quantity="200" flag="42" singleton="0"/>

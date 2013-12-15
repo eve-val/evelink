@@ -10,8 +10,8 @@ def parse_contract_items(api_result):
             'singleton': a['singleton'] == '1',
             'action': 'offered' if a['included'] == '1' else 'requested',
         }
-
-        # TODO(zigdon): figure out the raw quantity mess.
+        if 'rawQuantity' in a:
+          item['raw_quantity'] = int(a['rawQuantity'])
 
         results.append(item)
 
