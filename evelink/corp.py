@@ -161,8 +161,8 @@ class Corp(object):
         """Returns wallet journal for a corporation."""
         return api.APIResult(parse_wallet_journal(api_result.result), api_result.timestamp, api_result.expires)
 
-    @api.auto_call('corp/WalletTransactions', map_params={'before_id': 'fromID', 'limit': 'rowCount'})
-    def wallet_transactions(self, before_id=None, limit=None, api_result=None):
+    @api.auto_call('corp/WalletTransactions', map_params={'before_id': 'fromID', 'limit': 'rowCount', 'account': 'accountKey'})
+    def wallet_transactions(self, before_id=None, limit=None, account=None, api_result=None):
         """Returns wallet transactions for a corporation."""
         return api.APIResult(parse_wallet_transactions(api_result.result), api_result.timestamp, api_result.expires)
 

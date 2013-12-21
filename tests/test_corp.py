@@ -313,6 +313,14 @@ class CorpTestCase(APITestCase):
                 mock.call.get('corp/WalletTransactions', params={'rowCount': 100}),
             ])
 
+    def test_wallet_transactions_account_key(self):
+        self.api.get.return_value = self.make_api_result("char/wallet_transactions.xml")
+
+        self.corp.wallet_transactions(account='0004')
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('corp/WalletTransactions', params={'accountKey': '0004'}),
+            ])
+
     @mock.patch('evelink.corp.parse_market_orders')
     def test_orders(self, mock_parse):
         self.api.get.return_value = API_RESULT_SENTINEL
