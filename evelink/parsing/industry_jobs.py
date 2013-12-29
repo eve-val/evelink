@@ -45,7 +45,7 @@ def parse_industry_jobs(api_result):
                 },
                 'container_type_id': int(a['containerTypeID']),
                 'completed': completed,
-                'successful': a['completedSuccessfully'] == 1,
+                'successful': a['completedSuccessfully'] == '1',
                 'status': (
                     constants.Industry.job_status[int(a['completedStatus'])]
                     if completed else 'in-progress'
