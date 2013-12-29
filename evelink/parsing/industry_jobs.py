@@ -12,6 +12,7 @@ def parse_industry_jobs(api_result):
             # shortcut to make the following block less painful
             a = row.attrib
             jobID = int(a['jobID'])
+            completed = a['completed'] == 1
             result[jobID] = {
                 'line_id': int(a['assemblyLineID']),
                 'container_id': int(a['containerID']),
@@ -43,14 +44,22 @@ def parse_industry_jobs(api_result):
                     'char_time': float(a['charTimeMultiplier']),
                 },
                 'container_type_id': int(a['containerTypeID']),
-                'delivered': a['completed'] == '1',
-                'finished': a['completedSuccessfully'] == '1',
-                'status': constants.Industry.job_status[int(a['completedStatus'])],
+                'completed': completed,
+                'successful': a['completedSuccessfully'] == 1,
+                'status': (
+                    constants.Industry.job_status[int(a['completedStatus'])]
+                    if completed else 'in-progress'
+                ),
                 'activity_id': int(a['activityID']),
                 'install_ts': api.parse_ts(a['installTime']),
                 'begin_ts': api.parse_ts(a['beginProductionTime']),
                 'end_ts': api.parse_ts(a['endProductionTime']),
                 'pause_ts': api.parse_ts(a['pauseProductionTime']),
+
+                # deprecated - use 'completed' instead
+                'delivered': completed,
+                # deprecated - use 'successful' instead
+                'finished': a['completedSuccessfully'] == '1',
             }
 
         return result
