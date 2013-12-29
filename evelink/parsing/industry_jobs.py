@@ -12,7 +12,7 @@ def parse_industry_jobs(api_result):
             # shortcut to make the following block less painful
             a = row.attrib
             jobID = int(a['jobID'])
-            completed = a['completed'] == 1
+            completed = a['completed'] == '1'
             result[jobID] = {
                 'line_id': int(a['assemblyLineID']),
                 'container_id': int(a['containerID']),

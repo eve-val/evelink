@@ -51,9 +51,9 @@ class IndustryJobsTestCase(unittest.TestCase):
             37051255: {
                 'activity_id': 1,
                 'begin_ts': 1233500820,
-                'delivered': False,
-                'completed': False,
-                'status': 'in-progress',
+                'delivered': True,
+                'completed': True,
+                'status': 'failed',
                 'finished': False,
                 'successful': False,
                 'container_id': 61000211,
