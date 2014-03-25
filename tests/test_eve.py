@@ -95,6 +95,78 @@ class EVETestCase(APITestCase):
         self.assertEqual(current, 12345)
         self.assertEqual(expires, 67890)
 
+    def test_affiliations_for_characters(self):
+        self.api.get.return_value = self.make_api_result("eve/character_affiliation.xml")
+
+        result, current, expires = self.eve.affiliations_for_characters(set([92168909, 401111892, 1979087900]))
+        self.assertEqual(result, {
+            1979087900: {
+                'id': 1979087900,
+                'name': 'Marcel Devereux',
+                'faction': {
+                    'id': 500004,
+                    'name': 'Gallente Federation'
+                },
+                'corp': {
+                    'id': 1894214152,
+                    'name': 'Aideron Robotics'
+                }
+            },
+            401111892: {
+                'id': 401111892,
+                'name': 'ShadowMaster',
+                'alliance': {
+                    'id': 99000652,
+                    'name': 'RvB - BLUE Republic'
+                },
+                'corp': {
+                    'id': 1741770561,
+                    'name': 'Blue Republic'
+                }
+            },
+            92168909: {
+                'id': 92168909,
+                'name': 'CCP FoxFour',
+                'alliance': {
+                    'id': 434243723,
+                    'name': 'C C P Alliance'
+                },
+                'corp': {
+                    'id': 109299958,
+                    'name': 'C C P'
+                }
+            }
+        })
+
+        self.assertEqual(self.api.mock_calls, [
+            mock.call.get('eve/CharacterAffiliation', params={'ids': set([92168909, 401111892, 1979087900])})
+        ])
+        self.assertEqual(current, 12345)
+        self.assertEqual(expires, 67890)
+
+    def test_affiliations_for_character(self):
+        self.api.get.return_value = self.make_api_result("eve/character_affiliation_single.xml")
+
+        result, current, expires = self.eve.affiliations_for_character(92168909)
+        self.assertEqual(result, {
+            'id': 92168909,
+            'name': 'CCP FoxFour',
+            'alliance': {
+                'id': 434243723,
+                'name': 'C C P Alliance'
+            },
+            'corp': {
+                'id': 109299958,
+                'name': 'C C P'
+            }
+        })
+
+        self.assertEqual(self.api.mock_calls, [
+            mock.call.get('eve/CharacterAffiliation', params={'ids': [92168909]})
+        ])
+        self.assertEqual(current, 12345)
+        self.assertEqual(expires, 67890)
+
     def test_character_info_from_id(self):
         self.api.get.return_value = self.make_api_result("eve/character_info.xml")
 
