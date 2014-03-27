@@ -5,8 +5,8 @@ import unittest2 as unittest
 import mock
 import urllib2
 
+from evelink import constants
 import evelink.api as evelink_api
-
 
 def compress(s):
     out = StringIO()
@@ -40,8 +40,9 @@ class CacheTestCase(unittest.TestCase):
 class APITestCase(unittest.TestCase):
 
     def setUp(self):
+        self.custom_useragent = 'test UA'
         self.cache = mock.MagicMock(spec=evelink_api.APICache)
-        self.api = evelink_api.API(cache=self.cache)
+        self.api = evelink_api.API(cache=self.cache, user_agent=self.custom_useragent)
         # force disable requests if enabled.
         self._has_requests = evelink_api._has_requests
         evelink_api._has_requests = False
@@ -122,6 +123,16 @@ class APITestCase(unittest.TestCase):
         })
         self.assertEqual(current, 1255885531)
         self.assertEqual(expiry, 1258563931)
+
+    @mock.patch('urllib2.urlopen')
+    def test_useragent(self, mock_urlopen):
+        mock_urlopen.return_value.read.return_value = self.test_xml
+        self.cache.get.return_value = None
+
+        self.api.get('foo/Bar', {'a':[1,2,3]})
+        test_useragent = '%s %s' % (constants.USER_AGENT, self.custom_useragent)
+
+        self.assertEquals(mock_urlopen.call_args[0][0].headers['User-agent'], test_useragent)
 
     @mock.patch('urllib2.urlopen')
     def test_cached_get(self, mock_urlopen):

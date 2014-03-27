@@ -11,6 +11,8 @@ from urllib import urlencode
 import urllib2
 from xml.etree import ElementTree
 
+from evelink import constants
+
 _log = logging.getLogger('evelink.api')
 
 try:
@@ -193,8 +195,11 @@ APIResult = collections.namedtuple("APIResult", [
 class API(object):
     """A wrapper around the EVE API."""
 
-    def __init__(self, base_url="api.eveonline.com", cache=None, api_key=None):
-        self.base_url = base_url
+    def __init__(self, base_url="api.eveonline.com", cache=None, api_key=None, user_agent=None):
+        self.base_url   = base_url
+        self.user_agent = '%s' % constants.USER_AGENT
+        if user_agent is not None:
+            self.user_agent += ' %s' % user_agent
 
         cache = cache or APICache()
         if not isinstance(cache, APICache):
@@ -286,6 +291,8 @@ class API(object):
                 _log.debug("GETting request")
 
             req.add_header('Accept-Encoding', 'gzip')
+            req.add_header('User-agent', self.user_agent)
+
             r = urllib2.urlopen(req)
         except urllib2.HTTPError as r:
             # urllib2 handles non-2xx responses by raising an exception that
@@ -305,6 +312,7 @@ class API(object):
             r.close()
 
     def requests_request(self, full_path, params):
+        headers = {'User-Agent': self.user_agent}
         session = getattr(self, 'session', None)
         if not session:
             session = requests.Session()
@@ -314,11 +322,11 @@ class API(object):
             if params:
                 # POST request
                 _log.debug("POSTing request")
-                r = session.post(full_path, params=params)
+                r = session.post(full_path, params=params, headers=headers)
             else:
                 # GET request
                 _log.debug("GETting request")
-                r = session.get(full_path)
+                r = session.get(full_path, headers=headers)
             return r.content
         except requests.exceptions.RequestException as e:
             # TODO: Handle this better?
