@@ -322,9 +322,11 @@ class API(object):
             if params:
                 # POST request
                 _log.debug("POSTing request")
+                r = session.post(full_path, params=params)
             else:
                 # GET request
                 _log.debug("GETting request")
+                r = session.get(full_path)
             return r.content
         except requests.exceptions.RequestException as e:
             # TODO: Handle this better?
