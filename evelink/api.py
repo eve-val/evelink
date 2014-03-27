@@ -312,21 +312,19 @@ class API(object):
             r.close()
 
     def requests_request(self, full_path, params):
-        headers = {'User-Agent': self.user_agent}
         session = getattr(self, 'session', None)
         if not session:
             session = requests.Session()
+            session.headers.update({'User-Agent': self.user_agent})
             self.session = session
 
         try:
             if params:
                 # POST request
                 _log.debug("POSTing request")
-                r = session.post(full_path, params=params, headers=headers)
             else:
                 # GET request
                 _log.debug("GETting request")
-                r = session.get(full_path, headers=headers)
             return r.content
         except requests.exceptions.RequestException as e:
             # TODO: Handle this better?
