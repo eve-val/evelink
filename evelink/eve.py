@@ -141,7 +141,7 @@ class EVE(object):
 
     @api.auto_call('eve/CharacterAffiliation', map_params={'id_list': 'ids'})
     def affiliations_for_characters(self, id_list, api_result=None):
-        """Retrieve a dict of the designated characters.
+        """Retrieve the affiliations for a set of character IDs, returned as a dictionary.
 
         name_list:
             A list of names to retrieve IDs for.
