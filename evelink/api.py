@@ -15,6 +15,8 @@ from evelink import constants
 
 _log = logging.getLogger('evelink.api')
 
+_user_agent = None
+
 try:
     import requests
     _has_requests = True
@@ -197,7 +199,8 @@ class API(object):
 
     def __init__(self, base_url="api.eveonline.com", cache=None, api_key=None, user_agent=None):
         self.base_url = base_url
-        self.user_agent = str(constants.USER_AGENT)
+        self.user_agent = _user_agent
+
         if user_agent is not None:
             self.user_agent += ' %s' % user_agent
 

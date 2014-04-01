@@ -1,9 +1,6 @@
-import evelink
-
 ACCOUNT = 'account'
 CHARACTER = 'char'
 CORPORATION = 'corp'
-USER_AGENT = 'evelink v%s' % evelink.__version__
 
 BLUEPRINT_ORIGINAL = -1
 BLUEPRINT_COPY = -2

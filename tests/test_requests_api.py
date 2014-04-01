@@ -5,6 +5,7 @@ import mock
 
 import evelink.api as evelink_api
 
+from evelink import _user_agent
 
 class DummyResponse(object):
     def __init__(self, content):
@@ -15,8 +16,9 @@ class DummyResponse(object):
 class RequestsAPITestCase(unittest.TestCase):
 
     def setUp(self):
+        self.custom_useragent = 'test UA'
         self.cache = mock.MagicMock(spec=evelink_api.APICache)
-        self.api = evelink_api.API(cache=self.cache)
+        self.api = evelink_api.API(cache=self.cache, user_agent=self.custom_useragent)
 
         self.test_xml = r"""
                 <?xml version='1.0' encoding='UTF-8'?>
@@ -110,6 +112,16 @@ class RequestsAPITestCase(unittest.TestCase):
                     params='a=2%2C3%2C4&vCode=code&keyID=1',
                 ),
             ])
+
+    def test_useragent(self):
+        self.mock_sessions.post.return_value = DummyResponse(self.test_xml)
+        self.cache.get.return_value = None
+
+        self.api.get('foo', {'a':[2,3,4]})
+
+        test_useragent = '%s %s' % (_user_agent, self.custom_useragent)
+
+        self.assertEquals(self.mock_sessions.headers.update.call_args[0][0]['User-Agent'], test_useragent)
 
     def test_get_with_error(self):
         self.mock_sessions.get.return_value = DummyResponse(self.error_xml)
