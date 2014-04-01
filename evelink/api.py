@@ -196,7 +196,7 @@ class API(object):
     """A wrapper around the EVE API."""
 
     def __init__(self, base_url="api.eveonline.com", cache=None, api_key=None, user_agent=None):
-        self.base_url   = base_url
+        self.base_url = base_url
         self.user_agent = '%s' % constants.USER_AGENT
         if user_agent is not None:
             self.user_agent += ' %s' % user_agent
