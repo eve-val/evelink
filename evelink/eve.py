@@ -139,6 +139,61 @@ class EVE(object):
         api_result = self.character_ids_from_names([name])
         return api.APIResult(api_result.result.get(name), api_result.timestamp, api_result.expires)
 
+    @api.auto_call('eve/CharacterAffiliation', map_params={'id_list': 'ids'})
+    def affiliations_for_characters(self, id_list, api_result=None):
+        """Retrieve the affiliations for a set of character IDs, returned as a dictionary.
+
+        name_list:
+            A list of names to retrieve IDs for.
+
+        IDs for anything not a character will be returned with a name, but nothing else.
+        """
+
+        rowset = api_result.result.find('rowset')
+        rows = rowset.findall('row')
+
+        results = {}
+        for row in rows:
+            char_id = int(row.attrib['characterID'])
+            char_name = row.attrib['characterName']
+            corp_id = int(row.attrib['corporationID']) or None
+            corp_name = row.attrib['corporationName'] or None
+            faction_id = int(row.attrib['factionID']) or None
+            faction_name = row.attrib['factionName'] or None
+            alliance_id = int(row.attrib['allianceID']) or None
+            alliance_name = row.attrib['allianceName'] or None
+            results[char_id] = {
+                'id': char_id,
+                'name': char_name,
+                'corp': {
+                    'id': corp_id,
+                    'name': corp_name
+                }
+            }
+
+            if faction_id is not None:
+                results[char_id]['faction'] = {
+                    'id': faction_id,
+                    'name': faction_name
+                }
+
+            if alliance_id is not None:
+                results[char_id]['alliance'] = {
+                    'id': alliance_id,
+                    'name': alliance_name
+                }
+
+        return api.APIResult(results, api_result.timestamp, api_result.expires)
+
+    def affiliations_for_character(self, char_id):
+        """Retrieve the affiliations of a single character
+
+        Convenience wrapper around owner_ids_from_names().
+        """
+
+        api_result = self.affiliations_for_characters([char_id])
+        return api.APIResult(api_result.result[char_id], api_result.timestamp, api_result.expires)
+
     @api.auto_call('eve/CharacterInfo', map_params={'char_id': 'characterID'})
     def character_info_from_id(self, char_id, api_result=None):
         """Retrieve a dict of info about the designated character."""
