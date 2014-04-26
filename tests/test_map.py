@@ -1,9 +1,9 @@
-import unittest2 as unittest
-
 import mock
 
-from evelink import map as evelink_map
+from tests.compat import unittest
 from tests.utils import APITestCase
+
+from evelink import map as evelink_map
 
 class MapTestCase(APITestCase):
 

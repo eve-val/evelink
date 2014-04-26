@@ -1,5 +1,6 @@
 import mock
-import unittest2 as unittest
+
+from tests.compat import unittest
 
 import evelink.thirdparty.eve_who as evelink_evewho
 

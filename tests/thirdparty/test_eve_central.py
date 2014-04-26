@@ -1,9 +1,9 @@
 import datetime
 import os
 from xml.etree import ElementTree
-
 import mock
-import unittest2 as unittest
+
+from tests.compat import unittest
 
 import evelink.thirdparty.eve_central as evelink_evec
 

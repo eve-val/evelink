@@ -1,7 +1,6 @@
-from StringIO import StringIO
-import unittest2 as unittest
-
 import mock
+
+from tests.compat import unittest
 
 import evelink.api as evelink_api
 

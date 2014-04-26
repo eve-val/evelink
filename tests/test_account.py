@@ -1,9 +1,10 @@
 import mock
-import unittest2 as unittest
+
+from tests.compat import unittest
+from tests.utils import APITestCase
 
 import evelink.account as evelink_account
 from evelink import constants
-from tests.utils import APITestCase
 
 class AccountTestCase(APITestCase):
 

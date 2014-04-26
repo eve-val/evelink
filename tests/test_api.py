@@ -1,6 +1,6 @@
 import gzip
 from StringIO import StringIO
-import unittest2 as unittest
+from tests.compat import unittest
 
 import mock
 import urllib2
