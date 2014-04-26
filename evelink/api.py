@@ -1,11 +1,10 @@
 import calendar
 import collections
 import functools
-import gzip
+import zlib
 import inspect
 import logging
 import re
-from StringIO import StringIO
 import time
 from xml.etree import ElementTree
 
@@ -13,6 +12,10 @@ from evelink.thirdparty import six
 from evelink.thirdparty.six.moves import urllib
 
 _log = logging.getLogger('evelink.api')
+
+# Allows zlib.decompress to decompress gzip-compressed strings as well.
+# From zlib.h header file, not documented in Python.
+ZLIB_DECODE_AUTO = 32 + zlib.MAX_WBITS
 
 try:
     import requests
@@ -30,13 +33,7 @@ def _clean(v):
 
 def decompress(s):
     """Decode a gzip compressed string."""
-    buf = StringIO(s)
-    f = gzip.GzipFile(fileobj=buf)
-    try:
-        return f.read()
-    finally:
-        f.close()
-        buf.close()
+    return zlib.decompress(s, ZLIB_DECODE_AUTO)
 
 
 def parse_ts(v):
