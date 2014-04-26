@@ -214,7 +214,7 @@ class API(object):
         }
 
     def _cache_key(self, path, params):
-        sorted_params = sorted(params.iteritems())
+        sorted_params = sorted(params.items())
         # Paradoxically, Shelve doesn't like integer keys.
         return '%s-%s' % (self.CACHE_VERSION, hash((path, tuple(sorted_params))))
 
@@ -227,7 +227,7 @@ class API(object):
         """
 
         params = params or {}
-        params = dict((k, _clean(v)) for k,v in params.iteritems())
+        params = dict((k, _clean(v)) for k,v in params.items())
 
         _log.debug("Calling %s with params=%r", path, params)
         if self.api_key:
@@ -344,7 +344,7 @@ def auto_api(func):
 def translate_args(args, mapping=None):
     """Translate python name variable into API parameter name."""
     mapping = mapping if mapping else {}
-    return dict((mapping[k], v,) for k, v in args.iteritems())
+    return dict((mapping[k], v,) for k, v in args.items())
 
 # TODO: needs better name
 def get_args_and_defaults(func):
@@ -371,14 +371,14 @@ def map_func_args(args, kw, args_names, defaults):
         raise TypeError('Too many arguments.')
 
     map_ = dict(zip(args_names, args))
-    for k, v in kw.iteritems():
+    for k, v in kw.items():
         if k in map_:
             raise TypeError(
                 "got multiple values for keyword argument '%s'" % k
             )
         map_[k] = v
 
-    for k, v in defaults.iteritems():
+    for k, v in defaults.items():
         map_.setdefault(k, v)
 
     required_args = args_names[0:-len(defaults)]
@@ -456,7 +456,7 @@ class auto_call(object):
                 args_map[attr_name] = getattr(client, attr_name, None)
 
             params = translate_args(args_map, self.map_params)
-            params =  dict((k, v,) for k, v in params.iteritems() if v is not None)
+            params =  dict((k, v,) for k, v in params.items() if v is not None)
             
             kw['api_result'] = client.api.get(self.path, params=params)
             return self.method(client, *args, **kw)

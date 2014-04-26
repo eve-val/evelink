@@ -13,11 +13,11 @@ _role_type_bases = {
 }
 
 class Char(object):
-    corp_roles = dict((k, 'corporationRoles' + v) for k,v in _role_type_bases.iteritems())
+    corp_roles = dict((k, 'corporationRoles' + v) for k,v in _role_type_bases.items())
 
 class Corp(object):
-    role_types = dict((k, 'roles' + v) for k,v in _role_type_bases.iteritems())
-    grantable_types = dict((k, 'grantableRoles' + v) for k,v in _role_type_bases.iteritems())
+    role_types = dict((k, 'roles' + v) for k,v in _role_type_bases.items())
+    grantable_types = dict((k, 'grantableRoles' + v) for k,v in _role_type_bases.items())
 
     pos_states = ('unanchored', 'anchored', 'onlining', 'reinforced', 'online')
 
