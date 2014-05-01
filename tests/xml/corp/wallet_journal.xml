@@ -1,7 +1,7 @@
 <result>
     <rowset columns="date,refID,refTypeID,ownerName1,ownerID1,ownerName2,ownerID2,argName1,argID1,amount,balance,reason" key="refID" name="entries">
-      <row amount="6250.00" argID1="0" argName1="153219782" balance="119858095.12" date="2012-10-02 14:50:25" ownerID1="544497016" ownerID2="544497016" ownerName1="Valkyries of Night" ownerName2="Valkyries of Night" reason="" refID="6422968336" refTypeID="57" />
-      <row amount="97500.00" argID1="0" argName1="153187659" balance="119802845.12" date="2012-10-02 05:29:45" ownerID1="544497016" ownerID2="544497016" ownerName1="Valkyries of Night" ownerName2="Valkyries of Night" reason="" refID="6421966585" refTypeID="60" />
-      <row amount="3843.75" argID1="30003704" argName1="9-F0B2" balance="119691201.37" date="2012-10-02 03:40:40" ownerID1="1000125" ownerID2="92229838" ownerName1="CONCORD" ownerName2="Varax Artrald" reason="24156:1," refID="6421767712" refTypeID="85" />
+      <row amount="6250.00" argID1="0" argName1="153219782" balance="119858095.12" date="2012-10-02 14:50:25" ownerID1="544497016" ownerID2="544497016" ownerName1="Valkyries of Night" ownerName2="Valkyries of Night" reason="" refID="6422968336" refTypeID="57"  owner1TypeID="2" owner2TypeID="1378" />
+      <row amount="97500.00" argID1="0" argName1="153187659" balance="119802845.12" date="2012-10-02 05:29:45" ownerID1="544497016" ownerID2="544497016" ownerName1="Valkyries of Night" ownerName2="Valkyries of Night" reason="" refID="6421966585" refTypeID="60"  owner1TypeID="2" owner2TypeID="1378" />
+      <row amount="3843.75" argID1="30003704" argName1="9-F0B2" balance="119691201.37" date="2012-10-02 03:40:40" ownerID1="1000125" ownerID2="92229838" ownerName1="CONCORD" ownerName2="Varax Artrald" reason="24156:1," refID="6421767712" refTypeID="85"  owner1TypeID="2" owner2TypeID="1378" />
     </rowset>
   </result>
