@@ -4,27 +4,27 @@
           ownerName1="corpslave12" ownerID1="150337897"
           ownerName2="Secure Commerce Commission" ownerID2="1000132"
           argName1="35402980" argID1="0" amount="-10000.00"
-          balance="985580165.53" reason="" taxReceiverID="" taxAmount="" />
+          balance="985580165.53" reason="" taxReceiverID="" taxAmount="" owner1TypeID="2" owner2TypeID="1378" />
       <row date="2010-12-10 06:32:00" refID="3605305292" refTypeID="72"
           ownerName1="corpslave12" ownerID1="150337897" 
           ownerName2="Secure Commerce Commission" ownerID2="1000132"
           argName1="35402974" argID1="0" amount="-10000.00"
-          balance="985590165.53" reason="" taxReceiverID="" taxAmount="" />
+          balance="985590165.53" reason="" taxReceiverID="" taxAmount="" owner1TypeID="2" owner2TypeID="1378" />
       <row date="2010-12-10 06:31:00" refID="3605303380" refTypeID="72"
           ownerName1="corpslave12" ownerID1="150337897" 
           ownerName2="Secure Commerce Commission" ownerID2="1000132"
           argName1="35402956" argID1="0" amount="-10000.00"
-          balance="985600165.53" reason="" taxReceiverID="" taxAmount="" />
+          balance="985600165.53" reason="" taxReceiverID="" taxAmount="" owner1TypeID="2" owner2TypeID="1378" />
       <row date="2010-12-10 06:30:00" refID="3605302609" refTypeID="72"
           ownerName1="corpslave12" ownerID1="150337897" 
           ownerName2="Secure Commerce Commission" ownerID2="1000132"
           argName1="35402950" argID1="0" amount="-10000.00"
-          balance="985610165.53" reason="" taxReceiverID="" taxAmount="" />
+          balance="985610165.53" reason="" taxReceiverID="" taxAmount="" owner1TypeID="2" owner2TypeID="1378" />
       <row date="2010-12-10 06:30:00" refID="3605301231" refTypeID="72"
           ownerName1="corpslave12" ownerID1="150337897" 
           ownerName2="Secure Commerce Commission" ownerID2="1000132"
           argName1="35402941" argID1="0" amount="-10000.00"
-          balance="985620165.53" reason="" taxReceiverID="" taxAmount="" />
+          balance="985620165.53" reason="" taxReceiverID="" taxAmount="" owner1TypeID="2" owner2TypeID="1378" />
     </rowset>
   </result>
 
