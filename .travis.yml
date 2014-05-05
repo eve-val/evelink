@@ -4,7 +4,11 @@ python:
   - "2.7"
   - "3.2"
   - "3.3"
-install: pip install -r requirements.txt --use-mirrors
+install:
+  - if [[ $TRAVIS_PYTHON_VERSION == 2.6 ]]; then pip install -r requirements_py2.txt --use-mirrors; fi
+  - if [[ $TRAVIS_PYTHON_VERSION == 2.7 ]]; then pip install -r requirements_py2.txt --use-mirrors; fi
+  - if [[ $TRAVIS_PYTHON_VERSION == 3.2 ]]; then pip install -r requirements_py3.txt --use-mirrors; fi
+  - if [[ $TRAVIS_PYTHON_VERSION == 3.3 ]]; then pip install -r requirements_py3.txt --use-mirrors; fi
 before_script: ./.travis-pre-run.py ./vendors
 script: ./.travis-runner.py -l ./vendors/google_appengine ./tests
 notifications:
