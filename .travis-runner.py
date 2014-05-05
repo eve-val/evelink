@@ -2,11 +2,15 @@
 #
 # Test runner for Travis
 # 
+from __future__ import print_function
 
 import sys
 
 import argparse
-import unittest2
+if sys.version_info[0] < 3:
+    import unittest2 as unittest
+else:
+    import unittest
 
 
 def get_args_parser():
@@ -47,8 +51,8 @@ def setup_gae(gae_lib_root):
         sys.path.insert(0, gae_lib_root)
         import dev_appserver
     except ImportError:
-        print "Failed to load Google App Engine SDK."
-        print "Google App Engine related tests will be skipped."
+        print("Failed to load Google App Engine SDK.")
+        print("Google App Engine related tests will be skipped.")
     else:
         dev_appserver.fix_sys_path()
 
@@ -60,8 +64,8 @@ def main(gae_lib_root, start_dir):
 
     """
     setup_gae(gae_lib_root)
-    suite = unittest2.loader.TestLoader().discover(start_dir)
-    results = unittest2.TextTestRunner(verbosity=2, buffer=True).run(suite)
+    suite = unittest.loader.TestLoader().discover(start_dir)
+    results = unittest.TextTestRunner(verbosity=2, buffer=True).run(suite)
     if not results.wasSuccessful():
         sys.exit(1)
 
