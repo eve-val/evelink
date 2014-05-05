@@ -167,10 +167,11 @@ class APITestCase(unittest.TestCase):
             'https://api.eveonline.com/foo.xml.aspx',
             request.get_full_url()
         )
-        self.assertEqual(
-            'a=2%2C3%2C4&vCode=code&keyID=1',
-            request.data
-        )
+
+        request_dict = urllib.parse.parse_qs(request.data.decode())
+        expected_request_dict = urllib.parse.parse_qs("a=2%2C3%2C4&vCode=code&keyID=1")
+
+        self.assertEqual(request_dict, expected_request_dict)
 
     @mock.patch('evelink.thirdparty.six.moves.urllib.request.urlopen')
     def test_get_with_error(self, mock_urlopen):
