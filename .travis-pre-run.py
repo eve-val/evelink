@@ -16,7 +16,7 @@ from zipfile import ZipFile
 
 GAE_FEED_URL = 'https://code.google.com/feeds/p/googleappengine/downloads/basic'
 SDK_PATTERN = r'http://googleappengine.googlecode.com/files/google_appengine_(\d\.)+zip'
-DEFAULT_URL = 'http://googleappengine.googlecode.com/files/google_appengine_1.8.8.zip'
+DEFAULT_URL = 'http://googleappengine.googlecode.com/files/google_appengine_1.8.9.zip'
 
 _log = logging.getLogger('travis.prerun')
 logging.basicConfig(level=logging.INFO)
@@ -53,6 +53,7 @@ def get_sdk_url(feed, pattern):
         if re.match(SDK_PATTERN, url):
             _log.info("Found last release: %s", url)
             return url
+    raise ValueError("No download links found!")
 
 
 def download_sdk(url):
