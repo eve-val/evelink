@@ -1,6 +1,8 @@
 import mock
-import unittest2 as unittest
 
+from tests.compat import unittest
+
+from evelink.thirdparty.six.moves.urllib.parse import urlparse, parse_qs
 import evelink.thirdparty.eve_who as evelink_evewho
 
 
@@ -59,6 +61,8 @@ class EVEWhoTestCase(unittest.TestCase):
             }
         ])
 
-        self.assertEqual(mock_fetch.mock_calls, [
-            mock.call('%s?type=corplist&id=869043665&page=0' % evewho.api_base),
-            ])
+        fetch_query_dict = parse_qs(
+                urlparse(mock_fetch.mock_calls[0][1][0]).query)
+        expected_query_dict = parse_qs('type=corplist&id=869043665&page=0')
+
+        self.assertEqual(fetch_query_dict, expected_query_dict)

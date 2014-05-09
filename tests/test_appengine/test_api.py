@@ -1,6 +1,6 @@
 import mock
-import unittest2 as unittest
 
+from tests.compat import unittest
 from tests.test_appengine import GAETestCase
 
 try:

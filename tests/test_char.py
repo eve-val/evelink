@@ -1,9 +1,10 @@
 import mock
-import unittest2 as unittest
+
+from tests.compat import unittest
+from tests.utils import APITestCase
 
 import evelink.api as evelink_api
 import evelink.char as evelink_char
-from tests.utils import APITestCase
 
 
 API_RESULT_SENTINEL = evelink_api.APIResult(mock.sentinel.api_result, 12345, 67890)
@@ -348,7 +349,7 @@ class CharTestCase(APITestCase):
             374044083: {'shipTypeID': 606,
                         'id': 374044083,
                         'isHouseWarmingGift': 1},
-            374067406: {'dueDate': 1336342200L,
+            374067406: {'dueDate': 1336342200,
                         'amount': 25000000,
                         'id': 374067406},
             374106507: {'cost': None,
@@ -702,22 +703,22 @@ class CharTestCase(APITestCase):
     def test_locations(self):
         self.api.get.return_value = self.make_api_result("char/locations.xml")
 
-        result, current, expires = self.char.locations((1009661446486L, 1007448817800L))
+        result, current, expires = self.char.locations((1009661446486, 1007448817800))
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('char/Locations', params={'characterID': 1, 'IDs': (1009661446486L, 1007448817800L),}),
+                mock.call.get('char/Locations', params={'characterID': 1, 'IDs': (1009661446486, 1007448817800),}),
             ])
         self.assertEqual(result,
-            {1009661446486L:
+            {1009661446486:
                 {
-                    'id': 1009661446486L,
+                    'id': 1009661446486,
                     'x': None,
                     'z': None,
                     'name': "Superawesome test Impairor",
                     'y': None,
                 },
-            1007448817800L:
+            1007448817800:
                 {
-                    'id': 1007448817800L,
+                    'id': 1007448817800,
                     'x': -170714848271.291,
                     'z': 208419106396.3,
                     'name': "A Whale",

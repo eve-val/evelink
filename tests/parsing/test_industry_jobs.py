@@ -1,8 +1,9 @@
 import mock
-import unittest2 as unittest
+
+from tests.compat import unittest
+from tests.utils import make_api_result
 
 import evelink.parsing.industry_jobs as evelink_ij
-from tests.utils import make_api_result
 
 class IndustryJobsTestCase(unittest.TestCase):
 

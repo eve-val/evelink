@@ -26,7 +26,7 @@ class SqliteCache(api.APICache):
             self.connection.commit()
             return None
         cursor.close()
-        return pickle.loads(str(value))
+        return pickle.loads(value)
 
     def put(self, key, value, duration):
         expiration = time.time() + duration

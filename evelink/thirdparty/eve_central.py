@@ -1,10 +1,9 @@
 import datetime
 import json
-import urllib
 from xml.etree import ElementTree
 
 try:
-    import urllib2
+    from evelink.thirdparty.six.moves import urllib
 except ImportError:
     urllib2 = None
 
@@ -25,7 +24,7 @@ class EVECentral(object):
 
     def _default_fetch_func(self, url):
         """Fetches a given URL using GET and returns the response."""
-        return urllib2.urlopen(url).read()
+        return urllib.request.urlopen(url).read()
 
     def market_stats(self, type_ids, hours=24, regions=None, system=None,
         quantity_threshold=None):
@@ -46,7 +45,7 @@ class EVECentral(object):
         if quantity_threshold:
             params.append(('minQ', quantity_threshold))
 
-        query = urllib.urlencode(params, True)
+        query = urllib.parse.urlencode(params, True)
         url = '%s/marketstat?%s' % (self.api_base, query)
 
         response = self.url_fetch(url)
@@ -99,7 +98,7 @@ class EVECentral(object):
         if quantity_threshold:
             params.append(('setminQ', quantity_threshold))
 
-        query = urllib.urlencode(params, True)
+        query = urllib.parse.urlencode(params, True)
         url = '%s/quicklook?%s' % (self.api_base, query)
 
         response = self.url_fetch(url)
@@ -118,7 +117,7 @@ class EVECentral(object):
         if quantity_threshold:
             params.append(('setminQ', quantity_threshold))
 
-        query = urllib.urlencode(params, True)
+        query = urllib.parse.urlencode(params, True)
         url = '%s/quicklook/onpath/from/%s/to/%s/fortype/%s?%s' % (
             self.api_base, start, dest, type_id, query)
 

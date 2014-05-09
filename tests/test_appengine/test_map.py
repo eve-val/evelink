@@ -1,7 +1,6 @@
 import mock
 
-import unittest2 as unittest
-
+from tests.compat import unittest
 from tests.test_appengine import (
     GAEAsyncTestCase, auto_test_async_method
 )

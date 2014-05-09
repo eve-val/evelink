@@ -416,9 +416,9 @@ class EVE(object):
             results[group['id']] = group
 
         # Second pass to fill in required skill names
-        for group in results.itervalues():
-            for skill in group['skills'].itervalues():
-                for skill_id, skill_info in skill['required_skills'].iteritems():
+        for group in results.values():
+            for skill in group['skills'].values():
+                for skill_id, skill_info in skill['required_skills'].items():
                     skill_info['name'] = name_cache.get(skill_id)
 
         return api.APIResult(results, api_result.timestamp, api_result.expires)

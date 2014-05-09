@@ -168,7 +168,7 @@ class Char(object):
             'factions': 'factions',
         }
 
-        for key, rowset_name in _name_map.iteritems():
+        for key, rowset_name in _name_map.items():
             result[key] = {}
             for row in rowsets[rowset_name].findall('row'):
                 a = row.attrib
@@ -246,7 +246,7 @@ class Char(object):
             result['certificates'].add(int(cert.attrib['certificateID']))
 
         result['roles'] = {}
-        for our_role, ccp_role in constants.Char().corp_roles.iteritems():
+        for our_role, ccp_role in constants.Char().corp_roles.items():
             result['roles'][our_role] = {}
             for role in rowsets[ccp_role]:
                 a = role.attrib

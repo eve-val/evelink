@@ -1,8 +1,9 @@
 import mock
-import unittest2 as unittest
+
+from tests.compat import unittest
+from tests.utils import APITestCase
 
 import evelink.server as evelink_server
-from tests.utils import APITestCase
 
 class ServerTestCase(APITestCase):
 

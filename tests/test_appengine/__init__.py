@@ -1,8 +1,7 @@
 import sys
-import unittest2 as unittest
-
 import mock
 
+from tests.compat import unittest
 from tests.utils import make_api_result
 
 try:

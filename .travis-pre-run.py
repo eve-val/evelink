@@ -8,8 +8,7 @@ import logging
 import os
 import re
 import sys
-import urllib
-import urllib2
+from evelink.thirdparty.six.moves import urllib
 from xml.etree import ElementTree as ET
 from zipfile import ZipFile
 
@@ -42,7 +41,7 @@ def get_args_parser():
 def get_sdk_url(feed, pattern):
     try:
         _log.info("Fetching atom feed for GAE sdk releases...")
-        f = urllib2.urlopen(feed)
+        f = urllib.request.urlopen(feed)
         tree = ET.fromstring(f.read())
     finally:
         f.close()
@@ -58,7 +57,7 @@ def get_sdk_url(feed, pattern):
 
 def download_sdk(url):
     _log.info("downloading SDK from %s ...", url)
-    return urllib.urlretrieve(url)[0]
+    return urllib.request.urlretrieve(url)[0]
 
 
 def unzip(file, dst):

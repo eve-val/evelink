@@ -1,20 +1,16 @@
-import gzip
-from StringIO import StringIO
-import unittest2 as unittest
-
+import sys
+import zlib
 import mock
-import urllib2
 
+from tests.compat import unittest
+
+from evelink.thirdparty.six import BytesIO as StringIO
+from evelink.thirdparty.six.moves import urllib
 import evelink.api as evelink_api
 
 
 def compress(s):
-    out = StringIO()
-    f = gzip.GzipFile(fileobj=out, mode='w')
-    f.write(s)
-    f.close()
-    return out.getvalue()
-
+    return zlib.compress(s)
 
 class HelperTestCase(unittest.TestCase):
 
@@ -58,7 +54,7 @@ class APITestCase(unittest.TestCase):
                     </result>
                     <cachedUntil>2009-11-18 17:05:31</cachedUntil>
                 </eveapi>
-            """.strip()
+            """.strip().encode()
 
         self.error_xml = r"""
                 <?xml version='1.0' encoding='UTF-8'?>
@@ -69,7 +65,7 @@ class APITestCase(unittest.TestCase):
                     </error>
                     <cachedUntil>2009-11-18 19:05:31</cachedUntil>
                 </eveapi>
-            """.strip()
+            """.strip().encode()
 
     def tearDown(self):
         evelink_api._has_requests = self._has_requests
@@ -100,7 +96,7 @@ class APITestCase(unittest.TestCase):
             self.api._cache_key('foo/baz', {}),
         )
 
-    @mock.patch('urllib2.urlopen')
+    @mock.patch('evelink.thirdparty.six.moves.urllib.request.urlopen')
     def test_get(self, mock_urlopen):
         # mock up an urlopen compatible response object and pretend to have no
         # cached results; similar pattern for all test_get_* methods below.
@@ -123,7 +119,7 @@ class APITestCase(unittest.TestCase):
         self.assertEqual(current, 1255885531)
         self.assertEqual(expiry, 1258563931)
 
-    @mock.patch('urllib2.urlopen')
+    @mock.patch('evelink.thirdparty.six.moves.urllib.request.urlopen')
     def test_cached_get(self, mock_urlopen):
         """Make sure that we don't try to call the API if the result is cached."""
         # mock up a urlopen compatible error response, and pretend to have a
@@ -152,7 +148,7 @@ class APITestCase(unittest.TestCase):
         self.assertEqual(current, 1255885531)
         self.assertEqual(expiry, 1258563931)
 
-    @mock.patch('urllib2.urlopen')
+    @mock.patch('evelink.thirdparty.six.moves.urllib.request.urlopen')
     def test_get_with_apikey(self, mock_urlopen):
         mock_urlopen.return_value.read.return_value = self.test_xml
         self.cache.get.return_value = None
@@ -171,18 +167,19 @@ class APITestCase(unittest.TestCase):
             'https://api.eveonline.com/foo.xml.aspx',
             request.get_full_url()
         )
-        self.assertEqual(
-            'a=2%2C3%2C4&vCode=code&keyID=1',
-            request.get_data()
-        )
 
-    @mock.patch('urllib2.urlopen')
+        request_dict = urllib.parse.parse_qs(request.data.decode())
+        expected_request_dict = urllib.parse.parse_qs("a=2%2C3%2C4&vCode=code&keyID=1")
+
+        self.assertEqual(request_dict, expected_request_dict)
+
+    @mock.patch('evelink.thirdparty.six.moves.urllib.request.urlopen')
     def test_get_with_error(self, mock_urlopen):
         # I had to go digging in the source code for urllib2 to find out
         # how to manually instantiate HTTPError instances. :( The empty
         # dict is the headers object.
         def raise_http_error(*args, **kw):
-            raise urllib2.HTTPError(
+            raise urllib.error.HTTPError(
                 "http://api.eveonline.com/eve/Error",
                 404,
                 "Not found!",
@@ -199,13 +196,13 @@ class APITestCase(unittest.TestCase):
             'cached_until': 1258571131,
         })
 
-    @mock.patch('urllib2.urlopen')
+    @mock.patch('evelink.thirdparty.six.moves.urllib.request.urlopen')
     def test_get_with_compressed_error(self, mock_urlopen):
         # I had to go digging in the source code for urllib2 to find out
         # how to manually instantiate HTTPError instances. :( The empty
         # dict is the headers object.
         def raise_http_error(*args, **kw):
-            raise urllib2.HTTPError(
+            raise urllib.error.HTTPError(
                 "http://api.eveonline.com/eve/Error",
                 404,
                 "Not found!",
@@ -222,7 +219,7 @@ class APITestCase(unittest.TestCase):
             'cached_until': 1258571131,
         })
 
-    @mock.patch('urllib2.urlopen')
+    @mock.patch('evelink.thirdparty.six.moves.urllib.request.urlopen')
     def test_cached_get_with_error(self, mock_urlopen):
         """Make sure that we don't try to call the API if the result is cached."""
         # mocked response is good now, with the error response cached.
@@ -238,7 +235,7 @@ class APITestCase(unittest.TestCase):
             'cached_until': 1258571131,
         })
 
-    @mock.patch('urllib2.urlopen')
+    @mock.patch('evelink.thirdparty.six.moves.urllib.request.urlopen')
     def test_get_request_compress_response(self, mock_urlopen):
         mock_urlopen.return_value.read.return_value = compress(self.test_xml)
         mock_urlopen.return_value.info.return_value.get.return_value = 'gzip'

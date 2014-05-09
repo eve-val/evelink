@@ -1,5 +1,4 @@
 import json
-import urllib
 import re
 import logging
 from time import sleep
@@ -7,7 +6,7 @@ from time import sleep
 from evelink import api
 
 try:
-    import urllib2
+    from evelink.thirdparty.six.moves import urllib
 except ImportError:
     urllib2 = None
 
@@ -42,10 +41,10 @@ class EVEWho(object):
 
     def _default_fetch_func(self, url):
         """Fetches a given URL using GET and returns the response."""
-        return urllib2.urlopen(url).read()
+        return urllib.request.urlopen(url).read()
 
     def _cache_key(self, path, params):
-        sorted_params = sorted(params.iteritems())
+        sorted_params = sorted(params.items())
         # Paradoxically, Shelve doesn't like integer keys.
         return str(hash((path, tuple(sorted_params))))
 
@@ -67,7 +66,7 @@ class EVEWho(object):
             _log.debug("Cache hit, returning cached payload")
             return cached_result
 
-        query = urllib.urlencode(params, True)
+        query = urllib.parse.urlencode(params, True)
         url = '%s?%s' % (path, query)
         response = None
 

@@ -1,17 +1,21 @@
 import calendar
 import collections
 import functools
-import gzip
+import zlib
 import inspect
 import logging
 import re
-from StringIO import StringIO
 import time
-from urllib import urlencode
-import urllib2
 from xml.etree import ElementTree
 
+from evelink.thirdparty import six
+from evelink.thirdparty.six.moves import urllib
+
 _log = logging.getLogger('evelink.api')
+
+# Allows zlib.decompress to decompress gzip-compressed strings as well.
+# From zlib.h header file, not documented in Python.
+ZLIB_DECODE_AUTO = 32 + zlib.MAX_WBITS
 
 try:
     import requests
@@ -29,13 +33,7 @@ def _clean(v):
 
 def decompress(s):
     """Decode a gzip compressed string."""
-    buf = StringIO(s)
-    f = gzip.GzipFile(fileobj=buf)
-    try:
-        return f.read()
-    finally:
-        f.close()
-        buf.close()
+    return zlib.decompress(s, ZLIB_DECODE_AUTO)
 
 
 def parse_ts(v):
@@ -214,7 +212,7 @@ class API(object):
         }
 
     def _cache_key(self, path, params):
-        sorted_params = sorted(params.iteritems())
+        sorted_params = sorted(params.items())
         # Paradoxically, Shelve doesn't like integer keys.
         return '%s-%s' % (self.CACHE_VERSION, hash((path, tuple(sorted_params))))
 
@@ -227,7 +225,7 @@ class API(object):
         """
 
         params = params or {}
-        params = dict((k, _clean(v)) for k,v in params.iteritems())
+        params = dict((k, _clean(v)) for k,v in params.items())
 
         _log.debug("Calling %s with params=%r", path, params)
         if self.api_key:
@@ -241,7 +239,7 @@ class API(object):
 
         if not cached:
             # no cached response body found, call the API for one.
-            params = urlencode(params)
+            params = urllib.parse.urlencode(params)
             full_path = "https://%s/%s.xml.aspx" % (self.base_url, path)
             response = self.send_request(full_path, params)
         else:
@@ -275,24 +273,25 @@ class API(object):
             return self.urllib2_request(full_path, params)
 
     def urllib2_request(self, full_path, params):
+        r = None
         try:
             if params:
                 # POST request
                 _log.debug("POSTing request")
-                req = urllib2.Request(full_path, data=params)
+                req = urllib.request.Request(full_path, data=params.encode())
             else:
                 # GET request
-                req = urllib2.Request(full_path)
+                req = urllib.request.Request(full_path)
                 _log.debug("GETting request")
 
             req.add_header('Accept-Encoding', 'gzip')
-            r = urllib2.urlopen(req)
-        except urllib2.HTTPError as r:
+            r = urllib.request.urlopen(req)
+        except urllib.error.HTTPError as e:
             # urllib2 handles non-2xx responses by raising an exception that
             # can also behave as a file-like object. The EVE API will return
             # non-2xx HTTP codes on API errors (since Odyssey, apparently)
-            pass
-        except urllib2.URLError as e:
+            r = e
+        except urllib.error.URLError as e:
             # TODO: Handle this better?
             raise e
 
@@ -344,7 +343,7 @@ def auto_api(func):
 def translate_args(args, mapping=None):
     """Translate python name variable into API parameter name."""
     mapping = mapping if mapping else {}
-    return dict((mapping[k], v,) for k, v in args.iteritems())
+    return dict((mapping[k], v,) for k, v in args.items())
 
 # TODO: needs better name
 def get_args_and_defaults(func):
@@ -371,14 +370,14 @@ def map_func_args(args, kw, args_names, defaults):
         raise TypeError('Too many arguments.')
 
     map_ = dict(zip(args_names, args))
-    for k, v in kw.iteritems():
+    for k, v in kw.items():
         if k in map_:
             raise TypeError(
                 "got multiple values for keyword argument '%s'" % k
             )
         map_[k] = v
 
-    for k, v in defaults.iteritems():
+    for k, v in defaults.items():
         map_.setdefault(k, v)
 
     required_args = args_names[0:-len(defaults)]
@@ -456,7 +455,7 @@ class auto_call(object):
                 args_map[attr_name] = getattr(client, attr_name, None)
 
             params = translate_args(args_map, self.map_params)
-            params =  dict((k, v,) for k, v in params.iteritems() if v is not None)
+            params =  dict((k, v,) for k, v in params.items() if v is not None)
             
             kw['api_result'] = client.api.get(self.path, params=params)
             return self.method(client, *args, **kw)

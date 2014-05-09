@@ -1,9 +1,9 @@
-import unittest2 as unittest
-
 import mock
 
-import evelink.eve as evelink_eve
+from tests.compat import unittest
 from tests.utils import APITestCase
+
+import evelink.eve as evelink_eve
 
 class EVETestCase(APITestCase):
 

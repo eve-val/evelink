@@ -81,7 +81,7 @@ class Corp(object):
                 'wallets': 'walletDivisions',
             }
 
-            for key, rowset_name in division_types.iteritems():
+            for key, rowset_name in division_types.items():
                 divisions = {}
                 for row in rowsets[rowset_name].findall('row'):
                     a = row.attrib
@@ -119,7 +119,7 @@ class Corp(object):
             'factions': 'factions',
         }
 
-        for key, rowset_name in _standing_types.iteritems():
+        for key, rowset_name in _standing_types.items():
             for row in rowsets[rowset_name].findall('row'):
                 a = row.attrib
                 standing = {
@@ -308,11 +308,11 @@ class Corp(object):
                     roles[role['id']] = role
                 return roles
 
-            for key, rowset_name in constants.Corp.role_types.iteritems():
+            for key, rowset_name in constants.Corp.role_types.items():
                 roles = get_roles(rowset_name)
                 title['roles'][key] = roles
 
-            for key, rowset_name in constants.Corp.grantable_types.iteritems():
+            for key, rowset_name in constants.Corp.grantable_types.items():
                 roles = get_roles(rowset_name)
                 title['can_grant'][key] = roles
 
@@ -497,7 +497,7 @@ class Corp(object):
 
             def get_roleset(roles_dict):
                 roles_group = {}
-                for key, rowset_name in roles_dict.iteritems():
+                for key, rowset_name in roles_dict.items():
                     roles = {}
                     roles_rowset = rowsets[rowset_name]
                     for role_row in roles_rowset.findall('row'):
@@ -516,7 +516,7 @@ class Corp(object):
     @api.auto_call('corp/MemberSecurityLog')
     def permissions_log(self, api_result=None):
         """Returns information about changes to member permissions."""
-        inverse_role_types = dict((v,k) for k,v in constants.Corp.role_types.iteritems())
+        inverse_role_types = dict((v,k) for k,v in constants.Corp.role_types.items())
 
         results = []
         rowset = api_result.result.find('rowset')

@@ -1,8 +1,8 @@
-from StringIO import StringIO
-import unittest2 as unittest
-
 import mock
 
+from tests.compat import unittest
+
+from evelink.thirdparty.six.moves.urllib.parse import parse_qs
 import evelink.api as evelink_api
 
 
@@ -104,12 +104,15 @@ class RequestsAPITestCase(unittest.TestCase):
         api.get('foo', {'a':[2,3,4]})
 
         # Make sure the api key id and verification code were passed
-        self.assertEqual(self.mock_sessions.post.mock_calls, [
-                mock.call(
-                    'https://api.eveonline.com/foo.xml.aspx',
-                    params='a=2%2C3%2C4&vCode=code&keyID=1',
-                ),
-            ])
+        call_args, call_kwargs = self.mock_sessions.post.mock_calls[0][1:3]
+        called_url = call_args[0]
+        called_param_dict = parse_qs(call_kwargs["params"])
+
+        expected_url = 'https://api.eveonline.com/foo.xml.aspx'
+        expected_param_dict = parse_qs('a=2%2C3%2C4&vCode=code&keyID=1')
+
+        self.assertEqual(called_url, expected_url)
+        self.assertEqual(called_param_dict, expected_param_dict)
 
     def test_get_with_error(self):
         self.mock_sessions.get.return_value = DummyResponse(self.error_xml)

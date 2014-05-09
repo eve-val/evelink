@@ -1,5 +1,4 @@
-import unittest2 as unittest
-
+from tests.compat import unittest
 from tests.utils import make_api_result
 
 from evelink.parsing import contract_bids as evelink_c

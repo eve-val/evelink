@@ -49,7 +49,7 @@ required in order to run the tests:
  - `nose`
  - `unittest2`
 
-A `requirements.txt` is provided as part of the repository for developer convenience.
+A `requirements_{py2,py3}.txt` is provided as part of the repository for developer convenience.
 
 
 Design
@@ -86,7 +86,7 @@ $ git clone https://github.com/eve-val/evelink.git
 $ cd evelink
 $ virtualenv venv
 $ source venv/bin/activate
-$ pip install -r requirements.txt
+$ pip install -r requirements_{py2,py3}.txt
 ```
 
 To run the tests:

@@ -1,6 +1,7 @@
 import os
 import tempfile
-import unittest2 as unittest
+
+from tests.compat import unittest
 
 from evelink.cache.shelf import ShelveCache
 

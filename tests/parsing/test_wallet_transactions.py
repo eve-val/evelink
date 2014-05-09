@@ -1,6 +1,6 @@
 import mock
-import unittest2 as unittest
 
+from tests.compat import unittest
 from tests.utils import make_api_result
 
 from evelink.parsing import wallet_transactions as evelink_w
@@ -17,7 +17,7 @@ class TransactionsTestCase(unittest.TestCase):
             'id': 1309776438,
             'action': 'buy',
             'for': 'personal',
-            'journal_id': 6256809868L,
+            'journal_id': 6256809868,
             'price': 34101.06,
             'quantity': 1,
             'station': {'id': 60003760,
@@ -28,7 +28,7 @@ class TransactionsTestCase(unittest.TestCase):
             'id': 1307711508,
             'action': 'buy',
             'for': 'personal',
-            'journal_id': 6256808968L,
+            'journal_id': 6256808968,
             'price': 1169939.97,
             'quantity': 1,
             'station': {'id': 60015027,
@@ -40,7 +40,7 @@ class TransactionsTestCase(unittest.TestCase):
             'id': 1304203159,
             'action': 'buy',
             'for': 'personal',
-            'journal_id': 6256808878L,
+            'journal_id': 6256808878,
             'price': 13012.01,
             'quantity': 2,
             'station': {'id': 60003760,
@@ -52,7 +52,7 @@ class TransactionsTestCase(unittest.TestCase):
             'id': 1298649939,
             'action': 'buy',
             'for': 'personal',
-            'journal_id': 6256808869L,
+            'journal_id': 6256808869,
             'price': 556001.01,
             'quantity': 1,
             'station': {'id': 60004369,

@@ -1,5 +1,4 @@
-import unittest2 as unittest
-
+from tests.compat import unittest
 from tests.utils import make_api_result
 
 from evelink.parsing import wallet_journal as evelink_w
@@ -15,7 +14,7 @@ class WalletJournalTestCase(unittest.TestCase):
             'arg': {'id': 0, 'name': '35402941'},
             'balance': 985620165.53,
             'timestamp': 1291962600,
-            'id': 3605301231L,
+            'id': 3605301231,
             'party_1': {'id': 150337897, 'name': 'corpslave12', 'type': 2},
             'party_2': {'id': 1000132, 'name': 'Secure Commerce Commission', 'type': 1378},
             'reason': '',
@@ -26,7 +25,7 @@ class WalletJournalTestCase(unittest.TestCase):
             'arg': {'id': 0, 'name': '35402950'},
             'balance': 985610165.53,
             'timestamp': 1291962600,
-            'id': 3605302609L,
+            'id': 3605302609,
             'party_1': {'id': 150337897, 'name': 'corpslave12', 'type': 2},
             'party_2': {'id': 1000132, 'name': 'Secure Commerce Commission', 'type': 1378},
             'reason': '',
@@ -37,7 +36,7 @@ class WalletJournalTestCase(unittest.TestCase):
             'arg': {'id': 0, 'name': '35402956'},
             'balance': 985600165.53,
             'timestamp': 1291962660,
-            'id': 3605303380L,
+            'id': 3605303380,
             'party_1': {'id': 150337897, 'name': 'corpslave12', 'type': 2},
             'party_2': {'id': 1000132, 'name': 'Secure Commerce Commission', 'type': 1378},
             'reason': '',
@@ -48,7 +47,7 @@ class WalletJournalTestCase(unittest.TestCase):
             'arg': {'id': 0, 'name': '35402974'},
             'balance': 985590165.53,
             'timestamp': 1291962720,
-            'id': 3605305292L,
+            'id': 3605305292,
             'party_1': {'id': 150337897, 'name': 'corpslave12', 'type': 2},
             'party_2': {'id': 1000132, 'name': 'Secure Commerce Commission', 'type': 1378},
             'reason': '',
@@ -59,7 +58,7 @@ class WalletJournalTestCase(unittest.TestCase):
             'arg': {'id': 0, 'name': '35402980'},
             'balance': 985580165.53,
             'timestamp': 1291962720,
-            'id': 3605306236L,
+            'id': 3605306236,
             'party_1': {'id': 150337897, 'name': 'corpslave12', 'type': 2},
             'party_2': {'id': 1000132, 'name': 'Secure Commerce Commission', 'type': 1378},
             'reason': '',
