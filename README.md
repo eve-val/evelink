@@ -47,7 +47,7 @@ required in order to run the tests:
 
  - `mock`
  - `nose`
- - `unittest2`
+ - `unittest2` (Python 2.x only)
 
 A `requirements_{py2,py3}.txt` is provided as part of the repository for developer convenience.
 
