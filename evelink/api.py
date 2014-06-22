@@ -11,8 +11,6 @@ from urllib import urlencode
 import urllib2
 from xml.etree import ElementTree
 
-from evelink import constants
-
 _log = logging.getLogger('evelink.api')
 
 _user_agent = None

@@ -23,8 +23,7 @@ _log = logging.getLogger('evelink')
 _log.addHandler(NullHandler())
 
 # Update the version number used in the user-agent
-_user_agent = 'evelink v%s' % __version__
-api._user_agent = _user_agent
+api._user_agent = 'evelink v%s' % __version__
 
 __all__ = [
   "account",

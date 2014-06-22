@@ -5,7 +5,6 @@ import unittest2 as unittest
 import mock
 import urllib2
 
-from evelink import _user_agent
 import evelink.api as evelink_api
 
 def compress(s):
@@ -130,7 +129,7 @@ class APITestCase(unittest.TestCase):
         self.cache.get.return_value = None
 
         self.api.get('foo/Bar', {'a':[1,2,3]})
-        test_useragent = '%s %s' % (_user_agent, self.custom_useragent)
+        test_useragent = '%s %s' % (evelink_api._user_agent, self.custom_useragent)
 
         self.assertEquals(mock_urlopen.call_args[0][0].headers['User-agent'], test_useragent)
 

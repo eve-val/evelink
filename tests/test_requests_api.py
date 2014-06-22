@@ -5,8 +5,6 @@ import mock
 
 import evelink.api as evelink_api
 
-from evelink import _user_agent
-
 class DummyResponse(object):
     def __init__(self, content):
         self.content = content
@@ -119,7 +117,7 @@ class RequestsAPITestCase(unittest.TestCase):
 
         self.api.get('foo', {'a':[2,3,4]})
 
-        test_useragent = '%s %s' % (_user_agent, self.custom_useragent)
+        test_useragent = '%s %s' % (evelink_api._user_agent, self.custom_useragent)
 
         self.assertEquals(self.mock_sessions.headers.update.call_args[0][0]['User-Agent'], test_useragent)
 
