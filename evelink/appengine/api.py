@@ -23,7 +23,7 @@ class AppEngineAPI(api.API):
     @ndb.tasklet
     def get_async(self, path, params=None):
         """Asynchronous request a specific path from the EVE API.
-        
+
         TODO: refactor evelink.api.API.get
         """
 
@@ -76,19 +76,21 @@ class AppEngineAPI(api.API):
     @ndb.tasklet
     def send_request_async(self, url, params):
         ctx = ndb.get_context()
+        headers = {'User-agent': self.user_agent}
+        if params:
+            headers['Content-Type'] = 'application/x-www-form-urlencoded'
         result = yield ctx.urlfetch(
             url=url,
             payload=params,
             method=urlfetch.POST if params else urlfetch.GET,
-            headers={'Content-Type': 'application/x-www-form-urlencoded'}
-                    if params else {}
+            headers=headers,
         )
         raise ndb.Return(result.content)
 
 
 class AppEngineCache(api.APICache):
     """Memcache backed APICache implementation."""
-    
+
     def get(self, key):
         return memcache.get(key)
 
@@ -133,11 +135,11 @@ class AppEngineDatastoreCache(api.APICache):
 
         if not result:
             raise ndb.Return(None)
-        
+
         if result.expiration < time.time():
             yield db_key.delete_async()
             raise ndb.Return(None)
-        
+
         raise ndb.Return(result.value)
 
     def put(self, cache_key, value, duration):
@@ -178,7 +180,7 @@ def _make_async(method):
         # fix params name and remove params with None values
         params = api.translate_args(args_map, map_params)
         params =  dict((k, v,) for k, v in params.items() if v is not None)
-        
+
         kw['api_result'] = yield self.api.get_async(path, params=params)
         raise ndb.Return(method(self, *args, **kw))
     return ndb.tasklet(_async)
@@ -191,10 +193,10 @@ def auto_async(cls):
     for method_name, method in inspect.getmembers(cls, inspect.ismethod):
         if not hasattr(method, '_request_specs'):
             continue
-        
+
         async_method = _make_async(method)
         async_method.__doc__ = """Asynchronous version of %s.""" % method_name
         async_method.__name__ = '%s_async' % method_name
         setattr(cls, async_method.__name__, async_method)
-        
+
     return cls
