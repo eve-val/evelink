@@ -343,7 +343,9 @@ def auto_api(func):
 
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
-        if 'api' not in kwargs:
+        defaultargs, defaultkwargs = get_args_and_defaults(func)
+        mapped_args = map_func_args(args, kwargs, defaultargs, defaultkwargs)
+        if mapped_args.get('api') is None:
             kwargs['api'] = API()
         return func(*args, **kwargs)
     return wrapper

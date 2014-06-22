@@ -157,7 +157,9 @@ def auto_gae_api(func):
 
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
-        if 'api' not in kwargs:
+        defaultargs, defaultkwargs = api.get_args_and_defaults(func)
+        mapped_args = api.map_func_args(args, kwargs, defaultargs, defaultkwargs)
+        if mapped_args.get('api') is None:
             kwargs['api'] = AppEngineAPI()
         return func(*args, **kwargs)
     return wrapper
