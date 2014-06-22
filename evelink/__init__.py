@@ -22,6 +22,9 @@ class NullHandler(logging.Handler):
 _log = logging.getLogger('evelink')
 _log.addHandler(NullHandler())
 
+# Update the version number used in the user-agent
+api._user_agent = 'evelink v%s' % __version__
+
 __all__ = [
   "account",
   "api",

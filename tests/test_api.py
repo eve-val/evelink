@@ -8,7 +8,6 @@ from evelink.thirdparty.six import BytesIO as StringIO
 from evelink.thirdparty.six.moves import urllib
 import evelink.api as evelink_api
 
-
 def compress(s):
     return zlib.compress(s)
 
@@ -36,8 +35,9 @@ class CacheTestCase(unittest.TestCase):
 class APITestCase(unittest.TestCase):
 
     def setUp(self):
+        self.custom_useragent = 'test UA'
         self.cache = mock.MagicMock(spec=evelink_api.APICache)
-        self.api = evelink_api.API(cache=self.cache)
+        self.api = evelink_api.API(cache=self.cache, user_agent=self.custom_useragent)
         # force disable requests if enabled.
         self._has_requests = evelink_api._has_requests
         evelink_api._has_requests = False
@@ -118,6 +118,16 @@ class APITestCase(unittest.TestCase):
         })
         self.assertEqual(current, 1255885531)
         self.assertEqual(expiry, 1258563931)
+
+    @mock.patch('evelink.thirdparty.six.moves.urllib.request.urlopen')
+    def test_useragent(self, mock_urlopen):
+        mock_urlopen.return_value.read.return_value = self.test_xml
+        self.cache.get.return_value = None
+
+        self.api.get('foo/Bar', {'a':[1,2,3]})
+        test_useragent = '%s %s' % (evelink_api._user_agent, self.custom_useragent)
+
+        self.assertEquals(mock_urlopen.call_args[0][0].headers['User-agent'], test_useragent)
 
     @mock.patch('evelink.thirdparty.six.moves.urllib.request.urlopen')
     def test_cached_get(self, mock_urlopen):
@@ -245,7 +255,7 @@ class APITestCase(unittest.TestCase):
         self.assertTrue(mock_urlopen.called)
         self.assertTrue(len(mock_urlopen.call_args[0]) > 0)
         self.assertEqual(
-            'gzip', 
+            'gzip',
             mock_urlopen.call_args[0][0].get_header('Accept-encoding')
         )
 
@@ -279,7 +289,7 @@ class AutoCallTestCase(unittest.TestCase):
         args = {'foo': 'bar'}
         mapping = {'foo': 'baz'}
         self.assertEqual(
-            {'baz': 'bar'}, 
+            {'baz': 'bar'},
             evelink_api.translate_args(args, mapping)
         )
 
@@ -357,7 +367,7 @@ class AutoCallTestCase(unittest.TestCase):
         )
 
     def test_deco_add_request_specs(self):
-        
+
         @evelink_api.auto_call('foo/bar')
         def func(self, char_id, limit=None, before_kill=None, api_result=None):
             pass
@@ -380,7 +390,7 @@ class AutoCallTestCase(unittest.TestCase):
         client = mock.Mock(name='foo')
 
         @evelink_api.auto_call(
-            'foo/bar', 
+            'foo/bar',
             map_params={'char_id': 'id', 'limit': 'limit', 'before_kill': 'prev'}
         )
         def func(self, char_id, limit=None, before_kill=None, api_result=None):
@@ -440,7 +450,7 @@ class AutoCallTestCase(unittest.TestCase):
         )
         def func(self, limit=None, api_result=None):
             repeat(
-                self, 
+                self,
                 limit=limit, api_result=api_result
             )
 

@@ -5,7 +5,6 @@ from tests.compat import unittest
 from evelink.thirdparty.six.moves.urllib.parse import parse_qs
 import evelink.api as evelink_api
 
-
 class DummyResponse(object):
     def __init__(self, content):
         self.content = content
@@ -15,8 +14,9 @@ class DummyResponse(object):
 class RequestsAPITestCase(unittest.TestCase):
 
     def setUp(self):
+        self.custom_useragent = 'test UA'
         self.cache = mock.MagicMock(spec=evelink_api.APICache)
-        self.api = evelink_api.API(cache=self.cache)
+        self.api = evelink_api.API(cache=self.cache, user_agent=self.custom_useragent)
 
         self.test_xml = r"""
                 <?xml version='1.0' encoding='UTF-8'?>
@@ -113,6 +113,16 @@ class RequestsAPITestCase(unittest.TestCase):
 
         self.assertEqual(called_url, expected_url)
         self.assertEqual(called_param_dict, expected_param_dict)
+
+    def test_useragent(self):
+        self.mock_sessions.post.return_value = DummyResponse(self.test_xml)
+        self.cache.get.return_value = None
+
+        self.api.get('foo', {'a':[2,3,4]})
+
+        test_useragent = '%s %s' % (evelink_api._user_agent, self.custom_useragent)
+
+        self.assertEquals(self.mock_sessions.headers.update.call_args[0][0]['User-Agent'], test_useragent)
 
     def test_get_with_error(self):
         self.mock_sessions.get.return_value = DummyResponse(self.error_xml)

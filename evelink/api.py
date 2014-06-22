@@ -17,6 +17,9 @@ _log = logging.getLogger('evelink.api')
 # From zlib.h header file, not documented in Python.
 ZLIB_DECODE_AUTO = 32 + zlib.MAX_WBITS
 
+# Can be set to specify a custom user agent HTTP header on requests
+_user_agent = None
+
 try:
     import requests
     _has_requests = True
@@ -191,8 +194,12 @@ APIResult = collections.namedtuple("APIResult", [
 class API(object):
     """A wrapper around the EVE API."""
 
-    def __init__(self, base_url="api.eveonline.com", cache=None, api_key=None):
+    def __init__(self, base_url="api.eveonline.com", cache=None, api_key=None, user_agent=None):
         self.base_url = base_url
+        self.user_agent = _user_agent
+
+        if user_agent is not None:
+            self.user_agent += ' %s' % user_agent
 
         cache = cache or APICache()
         if not isinstance(cache, APICache):
@@ -285,6 +292,7 @@ class API(object):
                 _log.debug("GETting request")
 
             req.add_header('Accept-Encoding', 'gzip')
+            req.add_header('User-agent', self.user_agent)
             r = urllib.request.urlopen(req)
         except urllib.error.HTTPError as e:
             # urllib2 handles non-2xx responses by raising an exception that
@@ -307,6 +315,7 @@ class API(object):
         session = getattr(self, 'session', None)
         if not session:
             session = requests.Session()
+            session.headers.update({'User-Agent': self.user_agent})
             self.session = session
 
         try:
@@ -356,11 +365,11 @@ def get_args_and_defaults(func):
 
 
 def map_func_args(args, kw, args_names, defaults):
-    """Associate positional (*args) and key (**kw) arguments values 
+    """Associate positional (*args) and key (**kw) arguments values
     with their argument names.
 
-    'args_names' should be the list of argument names and 'default' 
-    should be a dict associating the keyword arguments to their 
+    'args_names' should be the list of argument names and 'default'
+    should be a dict associating the keyword arguments to their
     defaults.
 
     Similar to inspect.getcallargs() but compatible with python 2.6.
@@ -390,10 +399,10 @@ def map_func_args(args, kw, args_names, defaults):
 class auto_call(object):
     """A decorator to automatically provide an api response to a method.
 
-    The object the method will be bound to should have an api attribute 
+    The object the method will be bound to should have an api attribute
     and the method should have a keyword argument named 'api_result'.
 
-    The decorated method will have a '_request_specs' dict attribute 
+    The decorated method will have a '_request_specs' dict attribute
     holding:
 
     - 'path': path of the request needs to be queried.
@@ -402,15 +411,15 @@ class auto_call(object):
 
     - 'defaults': method keyword arguments and theirs default value.
 
-    - 'prop_to_param': properties of the instance the method is bound 
+    - 'prop_to_param': properties of the instance the method is bound
     to to add as parameter of api request.
 
-    - 'map_params': dictionary associating argument name to a 
-    paramater name. They will be added to 'evelink.api._args_map' to 
+    - 'map_params': dictionary associating argument name to a
+    paramater name. They will be added to 'evelink.api._args_map' to
     translate argument names to parameter names.
 
     """
-    
+
     def __init__(self, path, prop_to_param=tuple(), map_params=None):
         self.method = None
 
@@ -424,9 +433,9 @@ class auto_call(object):
         if self.method is not None:
             raise TypeError("This decorator method cannot be shared.")
         self.method = method
-        
+
         wrapper = self._wrapped_method()
-        
+
         args, self.defaults = get_args_and_defaults(self.method)
 
         self.args = args[1:]
@@ -444,23 +453,23 @@ class auto_call(object):
         return wrapper
 
     def _wrapped_method(self):
-        
+
         @functools.wraps(self.method)
         def wrapper(client, *args, **kw):
             if 'api_result' in kw:
                 return self.method(client, *args, **kw)
-                
+
             args_map = map_func_args(args, kw, self.args, self.defaults)
             for attr_name in self.prop_to_param:
                 args_map[attr_name] = getattr(client, attr_name, None)
 
             params = translate_args(args_map, self.map_params)
             params =  dict((k, v,) for k, v in params.items() if v is not None)
-            
+
             kw['api_result'] = client.api.get(self.path, params=params)
             return self.method(client, *args, **kw)
 
         return wrapper
-        
+
 
 # vim: set ts=4 sts=4 sw=4 et:
