@@ -6,6 +6,7 @@ import inspect
 import logging
 import re
 import time
+import hashlib 
 from xml.etree import ElementTree
 
 from evelink.thirdparty import six
@@ -159,7 +160,7 @@ class APICache(object):
         """Return the value referred to by 'key' if it is cached.
 
         key:
-            a result from the Python hash() function.
+            a string hash key
         """
         result = self.cache.get(key)
         if not result:
@@ -174,7 +175,7 @@ class APICache(object):
         """Cache the provided value, referenced by 'key', for the given duration.
 
         key:
-            a result from the Python hash() function.
+            a string hash key
         value:
             an xml.etree.ElementTree.Element object
         duration:
@@ -221,7 +222,7 @@ class API(object):
     def _cache_key(self, path, params):
         sorted_params = sorted(params.items())
         # Paradoxically, Shelve doesn't like integer keys.
-        return '%s-%s' % (self.CACHE_VERSION, hash((path, tuple(sorted_params))))
+        return '%s-%s' % (self.CACHE_VERSION, hashlib.sha1(str([path,sorted_params]).encode("utf-8")).hexdigest())
 
     def get(self, path, params=None):
         """Request a specific path from the EVE API.
