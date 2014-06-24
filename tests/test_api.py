@@ -98,7 +98,7 @@ class APITestCase(unittest.TestCase):
 
     def test_cache_key_value(self):        
         self.assertEqual(
-            "%s-ad63beb1981558158a5d40adfa80aca7" % self.api.CACHE_VERSION,
+            "%s-56cdb36bbb5ad30d7d50556509d657d05eae0250" % self.api.CACHE_VERSION,
             self.api._cache_key('foo/bar', {'a':1})
         )
 

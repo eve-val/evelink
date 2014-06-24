@@ -222,7 +222,7 @@ class API(object):
     def _cache_key(self, path, params):
         sorted_params = sorted(params.items())
         # Paradoxically, Shelve doesn't like integer keys.
-        return '%s-%s' % (self.CACHE_VERSION, hashlib.md5(str([path,sorted_params]).encode("utf-8")).hexdigest())
+        return '%s-%s' % (self.CACHE_VERSION, hashlib.sha1(str([path,sorted_params]).encode("utf-8")).hexdigest())
 
     def get(self, path, params=None):
         """Request a specific path from the EVE API.
