@@ -160,7 +160,7 @@ class APICache(object):
         """Return the value referred to by 'key' if it is cached.
 
         key:
-            a result from the _cache_key() function.
+            a string hash key
         """
         result = self.cache.get(key)
         if not result:
@@ -175,7 +175,7 @@ class APICache(object):
         """Cache the provided value, referenced by 'key', for the given duration.
 
         key:
-            a result from the _cache_key() function.
+            a string hash key
         value:
             an xml.etree.ElementTree.Element object
         duration:
