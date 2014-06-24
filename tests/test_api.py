@@ -96,6 +96,12 @@ class APITestCase(unittest.TestCase):
             self.api._cache_key('foo/baz', {}),
         )
 
+    def test_cache_key_value(self):        
+        self.assertEqual(
+            "%s-ad63beb1981558158a5d40adfa80aca7" % self.api.CACHE_VERSION,
+            self.api._cache_key('foo/bar', {'a':1})
+        )
+
     @mock.patch('evelink.thirdparty.six.moves.urllib.request.urlopen')
     def test_get(self, mock_urlopen):
         # mock up an urlopen compatible response object and pretend to have no
