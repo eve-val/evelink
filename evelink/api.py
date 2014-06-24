@@ -6,8 +6,8 @@ import inspect
 import logging
 import re
 import time
+import hashlib 
 from xml.etree import ElementTree
-from hashlib import md5
 
 from evelink.thirdparty import six
 from evelink.thirdparty.six.moves import urllib
@@ -222,7 +222,7 @@ class API(object):
     def _cache_key(self, path, params):
         sorted_params = sorted(params.items())
         # Paradoxically, Shelve doesn't like integer keys.
-        return '%s-%s' % (self.CACHE_VERSION, md5(str([path,sorted_params]).encode("utf-8")).hexdigest())
+        return '%s-%s' % (self.CACHE_VERSION, hashlib.md5(str([path,sorted_params]).encode("utf-8")).hexdigest())
 
     def get(self, path, params=None):
         """Request a specific path from the EVE API.
