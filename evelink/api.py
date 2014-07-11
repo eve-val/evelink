@@ -329,7 +329,6 @@ class API(object):
                 _log.debug("GETting request")
                 r = session.get(full_path)
             _log.debug("Response status code: %s" % r.status_code)
-            _log.debug("Response content: %s" % r.content)
             return r.content
         except requests.exceptions.RequestException as e:
             # TODO: Handle this better?
