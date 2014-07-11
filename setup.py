@@ -7,10 +7,6 @@ from evelink import __version__
 
 __readme_path = os.path.join(os.path.dirname(__file__), "README.md")
 __readme_contents = open(__readme_path).read()
-__docdir=""
-
-if os.path.exists("/usr/share/doc"):
-    __docdir="/usr/share/doc/evelink-" + __version__
 
 setup(
     name="EVELink",
@@ -32,7 +28,7 @@ setup(
         "evelink.thirdparty",
     ],
     data_files=[
-        (__docdir, ['README.md', 'LICENSE']),
+        ('', ['README.md', 'LICENSE']),
     ],
     scripts=["bin/evelink"],
     provides=["evelink"],
