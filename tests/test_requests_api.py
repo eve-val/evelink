@@ -7,6 +7,7 @@ import evelink.api as evelink_api
 
 class DummyResponse(object):
     def __init__(self, content):
+        self.status_code = 200
         self.content = content
 
 
@@ -106,7 +107,7 @@ class RequestsAPITestCase(unittest.TestCase):
         # Make sure the api key id and verification code were passed
         call_args, call_kwargs = self.mock_sessions.post.mock_calls[0][1:3]
         called_url = call_args[0]
-        called_param_dict = parse_qs(call_kwargs["params"])
+        called_param_dict = parse_qs(call_kwargs["data"])
 
         expected_url = 'https://api.eveonline.com/foo.xml.aspx'
         expected_param_dict = parse_qs('a=2%2C3%2C4&vCode=code&keyID=1')
