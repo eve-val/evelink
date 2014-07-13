@@ -247,7 +247,6 @@ class API(object):
 
         if not cached:
             # no cached response body found, call the API for one.
-            params = urllib.parse.urlencode(params)
             full_path = "https://%s/%s.xml.aspx" % (self.base_url, path)
             response = self.send_request(full_path, params)
         else:
@@ -286,6 +285,7 @@ class API(object):
             if params:
                 # POST request
                 _log.debug("POSTing request")
+                params = urllib.parse.urlencode(params)
                 req = urllib.request.Request(full_path, data=params.encode())
             else:
                 # GET request
