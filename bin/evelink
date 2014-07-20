@@ -60,7 +60,7 @@ def call_raw_api(api_obj, api_path, args, config):
     except evelink.api.APIError as e:
         print >> sys.stderr, e
         sys.exit(1)
-    print ElementTree.tostring(result)
+    print ElementTree.tostring(result[0])
 
 
 def call_evelink_api(api_obj, api_path, args, config, use_json=False):
@@ -147,6 +147,8 @@ def main():
         help="The API key to use for authenticated calls.")
     parser.add_option("-c", "--cache", dest="cache_path", metavar="PATH",
         help="A path at which to store API cache data. (Default: ~/.evelink_cache)")
+    parser.add_option("-b", "--base", dest="base_url", metavar="URL",
+        help="The base path to the API endpoint. (Default: api.eveonline.com)")
     parser.add_option("-r", "--rcfile", dest="rcfile", metavar="PATH",
         help="Load an additional configuration file (~/.evelinkrc is also loaded if it exists).")
     parser.add_option("-j", "--json", dest="json", default=False, action="store_true",
@@ -173,6 +175,9 @@ def main():
         print
         print """[char]"""
         print """id=<id of character to use for Char API calls>"""
+        print
+        print """[api]"""
+        print """base=<base url of the api endpoint, e.g. api.eveonline.com>"""
         print
         sys.exit(0)
 
@@ -218,12 +223,18 @@ def main():
         vcode = config.get("apikey", "vcode")
         api_obj_params['api_key'] = (key, vcode)
 
+    if options.base_url is not None:
+        api_obj_params['base_url'] = options.base_url
+    elif config.has_option("api", "base"):
+        api_obj_params['base_url'] = config.get("api", "base")
+
     # Initialize EVELink logging, if desired
     if options.loglevel is not None:
         log_level = getattr(logging, options.loglevel)
         evelink_log = logging.getLogger("evelink")
         log_handler = logging.StreamHandler()
         log_handler.setLevel(log_level)
+        evelink_log.setLevel(log_level)
         evelink_log.addHandler(log_handler)
 
     api_obj = evelink.api.API(**api_obj_params)
