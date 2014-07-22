@@ -191,6 +191,23 @@ class CharTestCase(APITestCase):
                 mock.call(mock.sentinel.api_result),
             ])
 
+    @mock.patch('evelink.char.parse_industry_jobs')
+    def test_industry_jobs_history(self, mock_parse):
+        self.api.get.return_value = API_RESULT_SENTINEL
+        mock_parse.return_value = mock.sentinel.industry_jobs
+
+        result, current, expires = self.char.industry_jobs_history()
+        self.assertEqual(current, 12345)
+        self.assertEqual(expires, 67890)
+
+        self.assertEqual(result, mock.sentinel.industry_jobs)
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('char/IndustryJobsHistory', params={'characterID': 1}),
+            ])
+        self.assertEqual(mock_parse.mock_calls, [
+                mock.call(mock.sentinel.api_result),
+            ])
+
     @mock.patch('evelink.char.parse_kills')
     def test_kills(self, mock_parse):
         self.api.get.return_value = API_RESULT_SENTINEL

@@ -93,7 +93,12 @@ class Corp(object):
 
     @api.auto_call('corp/IndustryJobs')
     def industry_jobs(self, api_result=None):
-        """Get a list of jobs for a corporation."""
+        """Get a list of jobs for a corporation (active only)."""
+        return api.APIResult(parse_industry_jobs(api_result.result), api_result.timestamp, api_result.expires)
+
+    @api.auto_call('corp/IndustryJobsHistory')
+    def industry_jobs_history(self, api_result=None):
+        """Get the industry job history for a corporation (active and past)."""
         return api.APIResult(parse_industry_jobs(api_result.result), api_result.timestamp, api_result.expires)
 
     @api.auto_call('corp/Standings')

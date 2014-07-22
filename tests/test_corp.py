@@ -107,6 +107,23 @@ class CorpTestCase(APITestCase):
         self.assertEqual(current, 12345)
         self.assertEqual(expires, 67890)
 
+    @mock.patch('evelink.corp.parse_industry_jobs')
+    def test_industry_jobs_history(self, mock_parse):
+        self.api.get.return_value = API_RESULT_SENTINEL
+        mock_parse.return_value = mock.sentinel.industry_jobs
+
+        result, current, expires = self.corp.industry_jobs_history()
+
+        self.assertEqual(result, mock.sentinel.industry_jobs)
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('corp/IndustryJobsHistory', params={}),
+            ])
+        self.assertEqual(mock_parse.mock_calls, [
+                mock.call(mock.sentinel.api_result),
+            ])
+        self.assertEqual(current, 12345)
+        self.assertEqual(expires, 67890)
+
     def test_npc_standings(self):
         self.api.get.return_value = self.make_api_result("corp/npc_standings.xml")
 

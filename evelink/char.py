@@ -12,7 +12,7 @@ from evelink.parsing.wallet_transactions import parse_wallet_transactions
 
 
 class auto_call(api.auto_call):
-    """Extends 'evelink.api.auto_call' to add 'Char.char_id' as an api 
+    """Extends 'evelink.api.auto_call' to add 'Char.char_id' as an api
     request argument.
     """
 
@@ -105,7 +105,12 @@ class Char(object):
 
     @auto_call('char/IndustryJobs')
     def industry_jobs(self, api_result=None):
-        """Get a list of jobs for a character"""
+        """Get a list of jobs for a character (active only)."""
+        return api.APIResult(parse_industry_jobs(api_result.result), api_result.timestamp, api_result.expires)
+
+    @auto_call('char/IndustryJobsHistory')
+    def industry_jobs_history(self, api_result=None):
+        """Get a historical list of industry jobs for a character (active and past)."""
         return api.APIResult(parse_industry_jobs(api_result.result), api_result.timestamp, api_result.expires)
 
     @auto_call('char/KillLog', map_params={'before_kill': 'beforeKillID'})
