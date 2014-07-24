@@ -3,7 +3,7 @@ EVELink - Python Bindings for the EVE API
 
 EVELink provides a means to access the [EVE API](http://wiki.eveonline.com/en/wiki/EVE_API_Functions) from Python.
 
-[![PyPI](http://img.shields.io/pypi/v/EVELink.svg)](https://pypi.python.org/pypi/EVELink) [![Downloads](http://img.shields.io/pypi/dm/EVELink.svg)](https://pypi.python.org/pypi/EVELink)
+[![PyPI](http://img.shields.io/pypi/v/EVELink.svg)](https://pypi.python.org/pypi/EVELink)
 
 
 Example Usage
