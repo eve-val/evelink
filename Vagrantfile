@@ -1,6 +1,13 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
+#
+# this Vagrantfile creates a simple ubuntu 14.04 box and installs python 2&3 
+# and the evelink requirements for both versions.
+#
+# you can run the tests with the commands nosetests-2.7 and nosetests-3.4
+#
+
 $script = <<SCRIPT
 echo I am provisioning...
 apt-get update -y
