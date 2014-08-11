@@ -46,6 +46,7 @@ class AccountTestCase(APITestCase):
                             'id': 1000009,
                             'name': "Caldari Provisions",
                         },
+                        'alliance': None,
                     },
                 },
             })
@@ -74,6 +75,7 @@ class AccountTestCase(APITestCase):
                         'id': 238510404,
                         'name': 'Puppies To the Rescue',
                     },
+                    'alliance': None,
                     'id': 1365215823,
                     'name': 'Alexis Prey',
                 },
