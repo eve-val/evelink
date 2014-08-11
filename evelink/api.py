@@ -267,7 +267,7 @@ class API(object):
             code = error.attrib['code']
             message = error.text.strip()
             exc = APIError(code, message, current_time, expires_time)
-            _log.error("Raising API error: %r" % exc)
+            _log.debug("Raising API error: %r" % exc)
             raise exc
 
         result = tree.find('result')
