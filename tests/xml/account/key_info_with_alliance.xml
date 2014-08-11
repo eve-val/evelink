@@ -1,0 +1,7 @@
+<result>
+  <key accessMask="59645960" type="Character" expires="">
+    <rowset name="characters" key="characterID" columns="characterID,characterName,corporationID,corporationName,allianceID,allianceName,factionID,factionName">
+      <row characterID="93698525" characterName="Arnath Othorem" corporationID="544497016" corporationName="Valkyries of Night" allianceID="99000739" allianceName="Of Sound Mind" factionID="0" factionName="" />
+    </rowset>
+  </key>
+</result>

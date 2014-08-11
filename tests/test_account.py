@@ -46,6 +46,7 @@ class AccountTestCase(APITestCase):
                             'id': 1000009,
                             'name': "Caldari Provisions",
                         },
+                        'alliance': None,
                     },
                 },
             })
@@ -54,6 +55,14 @@ class AccountTestCase(APITestCase):
             ])
         self.assertEqual(current, 12345)
         self.assertEqual(expires, 67890)
+
+        self.api.get.return_value = self.make_api_result("account/key_info_with_alliance.xml")
+
+        result, current, expires = self.account.key_info()
+        self.assertEqual(result['characters'][93698525]['alliance'], {
+                'id': 99000739,
+                'name': "Of Sound Mind",
+            })
 
     def test_characters(self):
         self.api.get.return_value = self.make_api_result("account/characters.xml")
@@ -66,6 +75,7 @@ class AccountTestCase(APITestCase):
                         'id': 238510404,
                         'name': 'Puppies To the Rescue',
                     },
+                    'alliance': None,
                     'id': 1365215823,
                     'name': 'Alexis Prey',
                 },
@@ -75,6 +85,15 @@ class AccountTestCase(APITestCase):
             ])
         self.assertEqual(current, 12345)
         self.assertEqual(expires, 67890)
+
+        self.api.get.return_value = self.make_api_result("account/characters_with_alliance.xml")
+
+        result, current, expires = self.account.characters()
+
+        self.assertEqual(result[93698525]['alliance'], {
+                'id': 99000739,
+                'name': "Of Sound Mind",
+            })
 
 
 if __name__ == "__main__":
