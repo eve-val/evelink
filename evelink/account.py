@@ -44,6 +44,7 @@ class Account(object):
                     'id': int(row.attrib['corporationID']),
                     'name': row.attrib['corporationName'],
                 },
+                'alliance': None,  # default if character has no alliance
             }
             if 'allianceID' in row.attrib:
                 character['alliance'] = {
@@ -67,6 +68,7 @@ class Account(object):
                     'id': int(row.attrib['corporationID']),
                     'name': row.attrib['corporationName'],
                 },
+                'alliance': None,  # default if character has no alliance
             }
             if 'allianceID' in row.attrib:
                 character['alliance'] = {
