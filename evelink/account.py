@@ -44,13 +44,14 @@ class Account(object):
                     'id': int(row.attrib['corporationID']),
                     'name': row.attrib['corporationName'],
                 },
-                'alliance': None,  # default if character has no alliance
             }
             if 'allianceID' in row.attrib:
                 character['alliance'] = {
                     'id': int(row.attrib['allianceID']),
                     'name': row.attrib['allianceName'],
                 }
+            else:
+                character['alliance'] = None
             result['characters'][character['id']] = character
 
         return api.APIResult(result, api_result.timestamp, api_result.expires)
@@ -68,13 +69,14 @@ class Account(object):
                     'id': int(row.attrib['corporationID']),
                     'name': row.attrib['corporationName'],
                 },
-                'alliance': None,  # default if character has no alliance
             }
             if 'allianceID' in row.attrib:
                 character['alliance'] = {
                     'id': int(row.attrib['allianceID']),
                     'name': row.attrib['allianceName'],
                 }
+            else:
+                character['alliance'] = None
             result[character['id']] = character
 
         return api.APIResult(result, api_result.timestamp, api_result.expires)
