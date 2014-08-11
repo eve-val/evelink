@@ -55,6 +55,14 @@ class AccountTestCase(APITestCase):
         self.assertEqual(current, 12345)
         self.assertEqual(expires, 67890)
 
+        self.api.get.return_value = self.make_api_result("account/key_info_with_alliance.xml")
+
+        result, current, expires = self.account.key_info()
+        self.assertEqual(result['characters'][93698525]['alliance'], {
+                'id': 99000739,
+                'name': "Of Sound Mind",
+            })
+
     def test_characters(self):
         self.api.get.return_value = self.make_api_result("account/characters.xml")
 
@@ -75,6 +83,15 @@ class AccountTestCase(APITestCase):
             ])
         self.assertEqual(current, 12345)
         self.assertEqual(expires, 67890)
+
+        self.api.get.return_value = self.make_api_result("account/characters_with_alliance.xml")
+
+        result, current, expires = self.account.characters()
+
+        self.assertEqual(result[93698525]['alliance'], {
+                'id': 99000739,
+                'name': "Of Sound Mind",
+            })
 
 
 if __name__ == "__main__":
