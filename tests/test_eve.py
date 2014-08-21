@@ -176,8 +176,8 @@ class EVETestCase(APITestCase):
             'bloodline': 'Civire',
             'corp': {'id': 2345, 'name': 'Test Corporation', 'timestamp': 1338689400},
             'history': [
-                {'corp_id': 1, 'start_ts': 1338603000},
-                {'corp_id': 2, 'start_ts': 1318422896}
+                {'corp_id': 1, 'corp_name': 'test_one', 'start_ts': 1338603000},
+                {'corp_id': 2, 'corp_name': 'test_two', 'start_ts': 1318422896}
             ],
             'id': 1234,
             'isk': None,

@@ -8,7 +8,7 @@
     <corporationDate>2012-06-03 02:10:00</corporationDate>
     <securityStatus>2.50000000000000</securityStatus>
     <rowset name="employmentHistory">
-        <row corporationID="1" startDate="2012-06-02 02:10:00" />
-        <row corporationID="2" startDate="2011-10-12 12:34:56" />
+        <row corporationID="1" corporationName="test_one" startDate="2012-06-02 02:10:00" />
+        <row corporationID="2" corporationName="test_two" startDate="2011-10-12 12:34:56" />
     </rowset>
 </result>
