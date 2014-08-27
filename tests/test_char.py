@@ -754,25 +754,25 @@ class CharTestCase(APITestCase):
         self.assertEqual(self.api.mock_calls, [mock.call.get('char/Blueprints', params={'characterID': 1}),])
 
         self.assertEqual(result, {
-                '1000000029372': {
+                1000000029372: {
                     'location_id': 60014929,
                     'type_id': 11568,
                     'type_name': 'Avatar Blueprint',
-                    'flag_id': 4,
+                    'location_flag': 4,
                     'quantity': 497,
                     'time_efficiency': 0,
                     'material_efficiency': 0,
                     'runs': -1,
                 },
-                '1000000029377': {
+                1000000029377: {
                     'location_id': 60014929,
                     'type_id': 33876,
                     'type_name': 'Prophecy Blood Raiders Edition Blueprint',
-                    'flag_id': 4,
+                    'location_flag': 4,
                     'quantity': -2,
                     'time_efficiency': 0,
                     'material_efficiency': 0,
-                    'runs': 2000,
+                    'runs': 20000,
                 },
             })
 

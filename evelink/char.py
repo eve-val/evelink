@@ -565,5 +565,25 @@ class Char(object):
             }
         return api.APIResult(results, api_result.timestamp, api_result.expires)
 
+    @auto_call('char/Blueprints')
+    def blueprints(self, api_result=None):
+        rowset = api_result.result.find('rowset')
+        rows = rowset.findall('row')
+
+        results = {}
+        for row in rows:
+            results[int(row.attrib['itemID'])] = {
+                'location_id': int(row.attrib['locationID']),
+                'type_id': int(row.attrib['typeID']),
+                'type_name': row.attrib['typeName'],
+                'location_flag': int(row.attrib['flagID']),
+                'quantity': int(row.attrib['quantity']),
+                'time_efficiency': int(row.attrib['timeEfficiency']),
+                'material_efficiency': int(row.attrib['materialEfficiency']),
+                'runs': int(row.attrib['runs']),
+            }
+
+        return api.APIResult(results, api_result.timestamp, api_result.expires)
+
 
 # vim: set ts=4 sts=4 sw=4 et:
