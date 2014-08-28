@@ -848,5 +848,38 @@ class CorpTestCase(APITestCase):
         self.assertEqual(current, 12345)
         self.assertEqual(expires, 67890)
 
+    def test_blueprints(self):
+        self.api.get.return_value = self.make_api_result("corp/blueprints.xml")
+
+        result, current, expires = self.corp.blueprints()
+
+        self.assertEqual(self.api.mock_calls, [mock.call.get('corp/Blueprints', params={}),])
+
+        self.assertEqual(result, {
+                1000000029372: {
+                    'location_id': 60014929,
+                    'type_id': 11568,
+                    'type_name': 'Avatar Blueprint',
+                    'location_flag': 4,
+                    'quantity': 497,
+                    'time_efficiency': 0,
+                    'material_efficiency': 0,
+                    'runs': -1,
+                },
+                1000000029377: {
+                    'location_id': 60014929,
+                    'type_id': 33876,
+                    'type_name': 'Prophecy Blood Raiders Edition Blueprint',
+                    'location_flag': 4,
+                    'quantity': -2,
+                    'time_efficiency': 0,
+                    'material_efficiency': 0,
+                    'runs': 20000,
+                },
+            })
+
+        self.assertEqual(current, 12345)
+        self.assertEqual(expires, 67890)
+
 if __name__ == "__main__":
     unittest.main()
