@@ -9,6 +9,13 @@ from evelink.thirdparty.six import BytesIO as StringIO
 from evelink.thirdparty.six.moves import urllib
 import evelink.api as evelink_api
 
+# Python 2.6's ElementTree raises xml.parsers.expat.ExpatError instead
+# of ElementTree.ParseError
+_xml_error = getattr(ElementTree, 'ParseError', None)
+if _xml_error is None:
+    import xml.parsers.expat
+    _xml_error = xml.parsers.expat.ExpatError
+
 def compress(s):
     return zlib.compress(s)
 
@@ -234,7 +241,7 @@ class APITestCase(unittest.TestCase):
         mock_urlopen.return_value.read.return_value = "Not good xml"
         self.cache.get.return_value = None
 
-        self.assertRaises(ElementTree.ParseError, self.api.get, 'foo/Bar')
+        self.assertRaises(_xml_error, self.api.get, 'foo/Bar')
 
     @mock.patch('evelink.thirdparty.six.moves.urllib.request.urlopen')
     def test_get_with_compressed_error(self, mock_urlopen):

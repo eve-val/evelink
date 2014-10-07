@@ -6,6 +6,13 @@ from tests.compat import unittest
 from evelink.thirdparty.six.moves.urllib.parse import parse_qs
 import evelink.api as evelink_api
 
+# Python 2.6's ElementTree raises xml.parsers.expat.ExpatError instead
+# of ElementTree.ParseError
+_xml_error = getattr(ElementTree, 'ParseError', None)
+if _xml_error is None:
+    import xml.parsers.expat
+    _xml_error = xml.parsers.expat.ExpatError
+
 class DummyException(Exception): pass
 
 class DummyResponse(object):
@@ -156,7 +163,7 @@ class RequestsAPITestCase(unittest.TestCase):
         self.mock_sessions.get.return_value.status_code = 200
         self.cache.get.return_value = None
 
-        self.assertRaises(ElementTree.ParseError,
+        self.assertRaises(_xml_error,
             self.api.get, 'eve/Error')
 
     def test_cached_get_with_error(self):

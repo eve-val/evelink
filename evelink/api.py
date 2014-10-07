@@ -14,6 +14,13 @@ from evelink.thirdparty.six.moves import urllib
 
 _log = logging.getLogger('evelink.api')
 
+# Python 2.6's ElementTree raises xml.parsers.expat.ExpatError instead
+# of ElementTree.ParseError
+_xml_error = getattr(ElementTree, 'ParseError', None)
+if _xml_error is None:
+    import xml.parsers.expat
+    _xml_error = xml.parsers.expat.ExpatError
+
 # Allows zlib.decompress to decompress gzip-compressed strings as well.
 # From zlib.h header file, not documented in Python.
 ZLIB_DECODE_AUTO = 32 + zlib.MAX_WBITS
@@ -254,7 +261,7 @@ class API(object):
 
         try:
             tree = ElementTree.fromstring(response)
-        except ElementTree.ParseError as e:
+        except _xml_error as e:
             # If this is due to an HTTP error, raise the HTTP error
             self.maybe_raise_http_error(robj)
             # otherwise, raise the parse error
@@ -281,7 +288,7 @@ class API(object):
         return APIResult(result, current_time, expires_time)
 
     def maybe_raise_http_error(self, response):
-        """Called if a ParseError is raised for the response.
+        """Called if a XML parse error is raised for the response.
 
         Raises an error if the response itself was an error - we try
         to parse it as XML first to see if it's an API error, but if
