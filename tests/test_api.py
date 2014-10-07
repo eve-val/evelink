@@ -221,7 +221,7 @@ class APITestCase(unittest.TestCase):
                 404,
                 "Not found!",
                 {},
-                StringIO("This was not a nice XML api error.")
+                StringIO("This was not a nice XML api error.".encode())
             )
         mock_urlopen.side_effect = raise_http_error
         self.cache.get.return_value = None
