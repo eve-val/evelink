@@ -22,7 +22,7 @@ class DummyResponse(object):
 
     def raise_for_status(self):
         if self.status_code != 200:
-          raise DummyException("HTTP {}".format(self.status_code))
+          raise DummyException("HTTP {0}".format(self.status_code))
 
 
 @unittest.skipIf(not evelink_api._has_requests, '`requests` not available')

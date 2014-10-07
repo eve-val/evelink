@@ -72,7 +72,7 @@ class AppEngineAPI(api.API):
     def maybe_raise_http_error(self, robj):
         if robj.status_code != 200:
             raise UrlFetchError(
-                "HTTP error {}".format(robj.status_code),
+                "HTTP error {0}".format(robj.status_code),
                 robj.status_code)
 
     def send_request(self, url, params):
