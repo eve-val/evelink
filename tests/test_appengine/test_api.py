@@ -1,4 +1,5 @@
 import mock
+from xml.etree import ElementTree
 
 from tests.compat import unittest
 from tests.test_appengine import GAETestCase
@@ -23,7 +24,7 @@ class URLFetchServiceMock(apiproxy_stub.APIProxyStub):
     http://blog.rebeiro.net/2012/03/mocking-appengines-urlfetch-service-in.html
 
     """
-    
+
     def __init__(self, service_name='urlfetch'):
         super(URLFetchServiceMock, self).__init__(service_name)
 
@@ -81,7 +82,7 @@ class DatastoreCacheTestCase(GAETestCase):
         )
         self.assertEqual(cache.get_async('foo').get_result(), 'bar')
         self.assertEqual(cache.get_async('bar').get_result(), 1)
-        self.assertEqual(cache.get_async('baz').get_result(), True) 
+        self.assertEqual(cache.get_async('baz').get_result(), True)
 
 
 class MemcacheCacheTestCase(GAETestCase):
@@ -119,7 +120,7 @@ class MemcacheCacheTestCase(GAETestCase):
         )
         self.assertEqual(cache.get_async('foo').get_result(), 'bar')
         self.assertEqual(cache.get_async('bar').get_result(), 1)
-        self.assertEqual(cache.get_async('baz').get_result(), True)        
+        self.assertEqual(cache.get_async('baz').get_result(), True)
 
 
 class AppEngineAPITestCase(GAETestCase):
@@ -130,7 +131,7 @@ class AppEngineAPITestCase(GAETestCase):
         self.testbed.init_memcache_stub()
         self.urlfetch_mock = URLFetchServiceMock()
         apiproxy_stub_map.apiproxy.ReplaceStub(
-            'urlfetch', 
+            'urlfetch',
             self.urlfetch_mock
         )
 
@@ -193,6 +194,26 @@ class AppEngineAPITestCase(GAETestCase):
             'current_time': 1255885531,
             'cached_until': 1258571131,
         })
+
+    def test_get_raise_parse_error(self):
+        self.urlfetch_mock.set_return_values(
+            content="Not nice XML",
+            status_code=200
+        )
+
+        api = appengine.AppEngineAPI()
+
+        self.assertRaises(ElementTree.ParseError, api.get, 'eve/Error')
+
+    def test_get_raise_urlfetch_error(self):
+        self.urlfetch_mock.set_return_values(
+            content="This is not a pretty XML error.",
+            status_code=400
+        )
+
+        api = appengine.AppEngineAPI()
+
+        self.assertRaises(appengine.api.UrlFetchError, api.get, 'eve/Error')
 
     def test_get_async(self):
         self.urlfetch_mock.set_return_values(

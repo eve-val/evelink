@@ -1,6 +1,7 @@
 import sys
 import zlib
 import mock
+from xml.etree import ElementTree
 
 from tests.compat import unittest
 
@@ -96,7 +97,7 @@ class APITestCase(unittest.TestCase):
             self.api._cache_key('foo/baz', {}),
         )
 
-    def test_cache_key_value(self):        
+    def test_cache_key_value(self):
         self.assertEqual(
             "%s-56cdb36bbb5ad30d7d50556509d657d05eae0250" % self.api.CACHE_VERSION,
             self.api._cache_key('foo/bar', {'a':1})
@@ -211,6 +212,29 @@ class APITestCase(unittest.TestCase):
             'current_time': 1255885531,
             'cached_until': 1258571131,
         })
+
+    @mock.patch('evelink.thirdparty.six.moves.urllib.request.urlopen')
+    def test_get_with_http_error(self, mock_urlopen):
+        def raise_http_error(*args, **kw):
+            raise urllib.error.HTTPError(
+                "http://api.eveonline.com/eve/Error",
+                404,
+                "Not found!",
+                {},
+                StringIO("This was not a nice XML api error.")
+            )
+        mock_urlopen.side_effect = raise_http_error
+        self.cache.get.return_value = None
+
+        self.assertRaises(urllib.error.HTTPError,
+            self.api.get, 'eve/Error')
+
+    @mock.patch('evelink.thirdparty.six.moves.urllib.request.urlopen')
+    def test_get_with_parse_error(self, mock_urlopen):
+        mock_urlopen.return_value.read.return_value = "Not good xml"
+        self.cache.get.return_value = None
+
+        self.assertRaises(ElementTree.ParseError, self.api.get, 'foo/Bar')
 
     @mock.patch('evelink.thirdparty.six.moves.urllib.request.urlopen')
     def test_get_with_compressed_error(self, mock_urlopen):
