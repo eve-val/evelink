@@ -14,6 +14,13 @@ from evelink.thirdparty.six.moves import urllib
 
 _log = logging.getLogger('evelink.api')
 
+# Python 2.6's ElementTree raises xml.parsers.expat.ExpatError instead
+# of ElementTree.ParseError
+_xml_error = getattr(ElementTree, 'ParseError', None)
+if _xml_error is None:
+    import xml.parsers.expat
+    _xml_error = xml.parsers.expat.ExpatError
+
 # Allows zlib.decompress to decompress gzip-compressed strings as well.
 # From zlib.h header file, not documented in Python.
 ZLIB_DECODE_AUTO = 32 + zlib.MAX_WBITS
@@ -248,11 +255,18 @@ class API(object):
         if not cached:
             # no cached response body found, call the API for one.
             full_path = "https://%s/%s.xml.aspx" % (self.base_url, path)
-            response = self.send_request(full_path, params)
+            response, robj = self.send_request(full_path, params)
         else:
             _log.debug("Cache hit, returning cached payload")
 
-        tree = ElementTree.fromstring(response)
+        try:
+            tree = ElementTree.fromstring(response)
+        except _xml_error as e:
+            # If this is due to an HTTP error, raise the HTTP error
+            self.maybe_raise_http_error(robj)
+            # otherwise, raise the parse error
+            raise e
+
         current_time = get_ts_value(tree, 'currentTime')
         expires_time = get_ts_value(tree, 'cachedUntil')
         self._set_last_timestamps(current_time, expires_time)
@@ -272,6 +286,22 @@ class API(object):
 
         result = tree.find('result')
         return APIResult(result, current_time, expires_time)
+
+    def maybe_raise_http_error(self, response):
+        """Called if a XML parse error is raised for the response.
+
+        Raises an error if the response itself was an error - we try
+        to parse it as XML first to see if it's an API error, but if
+        it's not, this method gets called.
+        """
+        if _has_requests:
+            # Requests has a built-in method for this functionality
+            response.raise_for_status()
+        else:
+            # urllib2 uses exceptions by default for this, which we've
+            # potentially previously caught and stored as the response
+            if isinstance(response, Exception):
+                raise response
 
     def send_request(self, full_path, params):
         if _has_requests:
@@ -306,9 +336,9 @@ class API(object):
 
         try:
             if r.info().get('Content-Encoding') == 'gzip':
-                return decompress(r.read())
+                return decompress(r.read()), r
             else:
-                return r.read()
+                return r.read(), r
         finally:
             r.close()
 
@@ -329,7 +359,7 @@ class API(object):
                 _log.debug("GETting request")
                 r = session.get(full_path)
             _log.debug("Response status code: %s" % r.status_code)
-            return r.content
+            return r.content, r
         except requests.exceptions.RequestException as e:
             # TODO: Handle this better?
             raise e

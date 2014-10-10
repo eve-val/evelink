@@ -1,14 +1,28 @@
 import mock
+from xml.etree import ElementTree
 
 from tests.compat import unittest
 
 from evelink.thirdparty.six.moves.urllib.parse import parse_qs
 import evelink.api as evelink_api
 
+# Python 2.6's ElementTree raises xml.parsers.expat.ExpatError instead
+# of ElementTree.ParseError
+_xml_error = getattr(ElementTree, 'ParseError', None)
+if _xml_error is None:
+    import xml.parsers.expat
+    _xml_error = xml.parsers.expat.ExpatError
+
+class DummyException(Exception): pass
+
 class DummyResponse(object):
     def __init__(self, content):
         self.status_code = 200
         self.content = content
+
+    def raise_for_status(self):
+        if self.status_code != 200:
+          raise DummyException("HTTP {0}".format(self.status_code))
 
 
 @unittest.skipIf(not evelink_api._has_requests, '`requests` not available')
@@ -135,6 +149,22 @@ class RequestsAPITestCase(unittest.TestCase):
             'current_time': 1255885531,
             'cached_until': 1258571131,
         })
+
+    def test_get_with_http_error(self):
+        self.mock_sessions.get.return_value = DummyResponse("This was not a nice XML api error.")
+        self.mock_sessions.get.return_value.status_code = 404
+        self.cache.get.return_value = None
+
+        self.assertRaises(DummyException,
+            self.api.get, 'eve/Error')
+
+    def test_get_with_parse_error(self):
+        self.mock_sessions.get.return_value = DummyResponse("Not nice XML")
+        self.mock_sessions.get.return_value.status_code = 200
+        self.cache.get.return_value = None
+
+        self.assertRaises(_xml_error,
+            self.api.get, 'eve/Error')
 
     def test_cached_get_with_error(self):
         """Make sure that we don't try to call the API if the result is cached."""

@@ -11,6 +11,8 @@ from google.appengine.ext import ndb
 from evelink import api
 
 
+class UrlFetchError(Exception): pass
+
 
 class AppEngineAPI(api.API):
     """Subclass of api.API that is compatible with Google Appengine."""
@@ -42,9 +44,14 @@ class AppEngineAPI(api.API):
             # no cached response body found, call the API for one.
             params = urlencode(params)
             full_path = "https://%s/%s.xml.aspx" % (self.base_url, path)
-            response = yield self.send_request_async(full_path, params)
+            response, robj = yield self.send_request_async(full_path, params)
 
-        tree = ElementTree.fromstring(response)
+        try:
+            tree = ElementTree.fromstring(response)
+        except ElementTree.ParseError as e:
+            self.maybe_raise_http_error(robj)
+            raise e
+
         current_time = api.get_ts_value(tree, 'currentTime')
         expires_time = api.get_ts_value(tree, 'cachedUntil')
         self._set_last_timestamps(current_time, expires_time)
@@ -61,6 +68,12 @@ class AppEngineAPI(api.API):
 
         result = tree.find('result')
         raise ndb.Return(api.APIResult(result, current_time, expires_time))
+
+    def maybe_raise_http_error(self, robj):
+        if robj.status_code != 200:
+            raise UrlFetchError(
+                "HTTP error {0}".format(robj.status_code),
+                robj.status_code)
 
     def send_request(self, url, params):
         """Send a request via the urlfetch API.
@@ -85,7 +98,7 @@ class AppEngineAPI(api.API):
             method=urlfetch.POST if params else urlfetch.GET,
             headers=headers,
         )
-        raise ndb.Return(result.content)
+        raise ndb.Return((result.content, result))
 
 
 class AppEngineCache(api.APICache):
