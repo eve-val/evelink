@@ -1,7 +1,9 @@
 #!/usr/bin/python
 """Command-line utility for EVELink"""
 
-from ConfigParser import RawConfigParser
+from __future__ import print_function
+
+from six.moves.configparser import RawConfigParser
 import json
 import logging
 import optparse
@@ -58,9 +60,9 @@ def call_raw_api(api_obj, api_path, args, config):
     try:
         result = api_obj.get(api_path, kwargs)
     except evelink.api.APIError as e:
-        print >> sys.stderr, e
+        print(e, file=sys.stderr)
         sys.exit(1)
-    print ElementTree.tostring(result[0])
+    print(ElementTree.tostring(result[0]))
 
 
 def call_evelink_api(api_obj, api_path, args, config, use_json=False):
@@ -69,13 +71,13 @@ def call_evelink_api(api_obj, api_path, args, config, use_json=False):
     try:
         module, cls, method = api_path.rsplit('.', 2)
     except ValueError:
-        print >> sys.stderr, "EVELink method must be of form: module.Class.method_name"
+        print("EVELink method must be of form: module.Class.method_name", file=sys.stderr)
         sys.exit(1)
 
     try:
         _temp_module = __import__('evelink.%s' % module, globals(), locals(), [cls], 0)
     except ImportError:
-        print >> sys.stderr, "Couldn't load module evelink.%s" % module
+        print("Couldn't load module evelink.%s" % module, file=sys.stderr)
         sys.exit(1)
 
     cls_args = []
@@ -91,14 +93,14 @@ def call_evelink_api(api_obj, api_path, args, config, use_json=False):
     try:
         cls_obj = getattr(_temp_module, cls)(*cls_args, api=api_obj)
     except AttributeError:
-        print >> sys.stderr, "Couldn't find class '%s' in evelink.%s" % (cls, module)
+        print("Couldn't find class '%s' in evelink.%s" % (cls, module), file=sys.stderr)
         sys.exit(1)
 
     # Then grab the method from that object...
     try:
         method_obj = getattr(cls_obj, method)
     except AttributeError:
-        print >> sys.stderr, "Couldn't find method '%s' in evelink.%s.%s" % (method, module, cls)
+        print("Couldn't find method '%s' in evelink.%s.%s" % (method, module, cls), file=sys.stderr)
         sys.exit(1)
 
     # And call it.
@@ -109,7 +111,7 @@ def call_evelink_api(api_obj, api_path, args, config, use_json=False):
         sys.exit(1)
 
     if use_json:
-        print json.dumps(result, sort_keys=True, indent=2)
+        print(json.dumps(result, sort_keys=True, indent=2))
     else:
         pprint.pprint(result)
 
@@ -121,7 +123,7 @@ def call_api(api_obj, args, config, use_json=False):
     elif '.' in api_path:
         call_evelink_api(api_obj, api_path, args[1:], config, use_json)
     else:
-        print >> sys.stderr, "API to call must be either a URL path or EVELink method."
+        print("API to call must be either a URL path or EVELink method.", file=sys.stderr)
 
 
 def main():
@@ -158,27 +160,27 @@ def main():
     options, args = parser.parse_args()
 
     if options.helpconfig:
-        print
-        print """By default, this tool attempts to read from ~/.evelinkrc for"""
-        print """configuration data. Any path specified via the -r flag will be"""
-        print """read *in addition* to this. Options set in the additional config"""
-        print """will override values in the default config. If this file exists"""
-        print """and has the proper INI format, the following items can be loaded"""
-        print """from it (every section is optional):"""
-        print
-        print """[cache]"""
-        print """path=<path to file in which to store cached api results>"""
-        print
-        print """[apikey]"""
-        print """id=<id of API key to use>"""
-        print """vcode=<verification code of API key to use>"""
-        print
-        print """[char]"""
-        print """id=<id of character to use for Char API calls>"""
-        print
-        print """[api]"""
-        print """base=<base url of the api endpoint, e.g. api.eveonline.com>"""
-        print
+        print()
+        print("""By default, this tool attempts to read from ~/.evelinkrc for""")
+        print("""configuration data. Any path specified via the -r flag will be""")
+        print("""read *in addition* to this. Options set in the additional config""")
+        print("""will override values in the default config. If this file exists""")
+        print("""and has the proper INI format, the following items can be loaded""")
+        print("""from it (every section is optional):""")
+        print()
+        print("""[cache]""")
+        print("""path=<path to file in which to store cached api results>""")
+        print()
+        print("""[apikey]""")
+        print("""id=<id of API key to use>""")
+        print("""vcode=<verification code of API key to use>""")
+        print()
+        print("""[char]""")
+        print("""id=<id of character to use for Char API calls>""")
+        print()
+        print("""[api]""")
+        print("""base=<base url of the api endpoint, e.g. api.eveonline.com>""")
+        print()
         sys.exit(0)
 
     if not args:
@@ -196,7 +198,7 @@ def main():
             if config.has_option("cache", "path"):
                 cache_path = config.get("cache", "path")
             else:
-                print >> sys.stderr, "[cache] section must include path value."
+                print("[cache] section must include path value.", file=sys.stderr)
                 sys.exit(1)
         else:
             cache_path = "~/.evelink_cache"
@@ -217,7 +219,7 @@ def main():
 
     elif config.has_section("apikey"):
         if not config.has_option("apikey", "id") or not config.has_option("apikey", "vcode"):
-            print >> sys.stderr, "[apikey] section must include id and vcode values."
+            print("[apikey] section must include id and vcode values.", file=sys.stderr)
             sys.exit(1)
         key = config.getint("apikey", "id")
         vcode = config.get("apikey", "vcode")
