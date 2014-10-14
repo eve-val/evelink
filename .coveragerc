@@ -1,2 +1,3 @@
 [run]
 include = evelink/*
+omit = evelink/thirdparty/*

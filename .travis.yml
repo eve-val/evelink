@@ -10,7 +10,11 @@ install:
   - if [[ $TRAVIS_PYTHON_VERSION == 3.2 ]]; then pip install -r requirements_py3.txt --use-mirrors; fi
   - if [[ $TRAVIS_PYTHON_VERSION == 3.3 ]]; then pip install -r requirements_py3.txt --use-mirrors; fi
 before_script: ./.travis-pre-run.py ./vendors
-script: ./.travis-runner.py -l ./vendors/google_appengine ./tests
+script:
+  - if [[ $TRAVIS_PYTHON_VERSION == 2.7 ]]; then coverage run ./.travis-runner.py -l ./vendors/google_appengine ./tests; fi
+  - if [[ $TRAVIS_PYTHON_VERSION != 2.7 ]]; then ./.travis-runner.py -l ./vendors/google_appengine ./tests; fi
+after_success:
+  - if [[ $TRAVIS_PYTHON_VERSION == 2.7 ]]; then coveralls; fi
 notifications:
   email:
     - d-eve-lopment@googlegroups.com
