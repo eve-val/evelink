@@ -7,3 +7,4 @@ MANIFEST
 .*.swp
 google_appengine_*.zip
 vendors/*
+*.egg-info

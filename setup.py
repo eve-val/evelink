@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 import os
-from distutils.core import setup
+from setuptools import setup
 
 from evelink import __version__
 
