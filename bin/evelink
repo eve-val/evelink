@@ -3,10 +3,7 @@
 
 from __future__ import print_function
 
-try:
-  from configparser import RawConfigParser
-except:
-  from ConfigParser import RawConfigParser
+from six.moves.configparser import RawConfigParser
 import json
 import logging
 import optparse
