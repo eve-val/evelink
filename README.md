@@ -79,7 +79,7 @@ Object access is the highest layer of access and the most encapsulated. Though i
 Development
 -----------
 
-[![Build Status](https://travis-ci.org/eve-val/evelink.png?branch=master)](https://travis-ci.org/eve-val/evelink)
+[![Build Status](https://travis-ci.org/eve-val/evelink.png?branch=master)](https://travis-ci.org/eve-val/evelink) [![Coverage Status](https://img.shields.io/coveralls/eve-val/evelink.svg)](https://coveralls.io/r/eve-val/evelink?branch=master)
 
 To acquire a development copy of the library and set up the requirements for testing:
 
