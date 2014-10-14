@@ -137,7 +137,7 @@ class RequestsAPITestCase(unittest.TestCase):
 
         test_useragent = '%s %s' % (evelink_api._user_agent, self.custom_useragent)
 
-        self.assertEquals(self.mock_sessions.headers.update.call_args[0][0]['User-Agent'], test_useragent)
+        self.assertEqual(self.mock_sessions.headers.update.call_args[0][0]['User-Agent'], test_useragent)
 
     def test_get_with_error(self):
         self.mock_sessions.get.return_value = DummyResponse(self.error_xml)

@@ -141,7 +141,7 @@ class APITestCase(unittest.TestCase):
         self.api.get('foo/Bar', {'a':[1,2,3]})
         test_useragent = '%s %s' % (evelink_api._user_agent, self.custom_useragent)
 
-        self.assertEquals(mock_urlopen.call_args[0][0].headers['User-agent'], test_useragent)
+        self.assertEqual(mock_urlopen.call_args[0][0].headers['User-agent'], test_useragent)
 
     @mock.patch('evelink.thirdparty.six.moves.urllib.request.urlopen')
     def test_cached_get(self, mock_urlopen):
