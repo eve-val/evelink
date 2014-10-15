@@ -288,7 +288,6 @@ class CharTestCase(APITestCase):
                    {'level': 3, 'published': True, 'skillpoints': 8000, 'id': 3416},
                    {'level': 5, 'published': False, 'skillpoints': 512000, 'id': 3445}],
         'skillpoints': 536500,
-        'certificates': set([1, 5, 19, 239, 282, 32, 258]),
         'roles': {'global': {1 : {'id': 1, 'name': 'roleDirector'}},
                   'at_base': {1: {'id': 1, 'name': 'roleDirector'}},
                   'at_hq': {1: {'id': 1, 'name': 'roleDirector'}},

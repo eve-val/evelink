@@ -246,10 +246,6 @@ class Char(object):
             })
             result['skillpoints'] += sp
 
-        result['certificates'] = set()
-        for cert in rowsets['certificates']:
-            result['certificates'].add(int(cert.attrib['certificateID']))
-
         result['roles'] = {}
         for our_role, ccp_role in constants.Char().corp_roles.items():
             result['roles'][our_role] = {}

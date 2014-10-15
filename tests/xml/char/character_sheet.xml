@@ -49,15 +49,7 @@
     <row typeID="3416" skillpoints="8000" level="3" published="1"/>
     <row typeID="3445" skillpoints="512000" level="5" published="0"/>
   </rowset>
-  <rowset name="certificates" key="certificateID" columns="certificateID">
-    <row certificateID="1"/>
-    <row certificateID="5"/>
-    <row certificateID="19"/>
-    <row certificateID="239"/>
-    <row certificateID="282"/>
-    <row certificateID="32"/>
-    <row certificateID="258"/>
-  </rowset>
+  <rowset name="certificates" key="certificateID" columns="certificateID" />
   <rowset name="corporationRoles" key="roleID" columns="roleID,roleName">
     <row roleID="1" roleName="roleDirector" />
   </rowset>
