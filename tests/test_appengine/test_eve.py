@@ -13,7 +13,6 @@ except ImportError:
 
 
 _specs = (
-    'certificate_tree', 
     'alliances', 
     'errors', 
     'faction_warfare_stats', 
