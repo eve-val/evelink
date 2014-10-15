@@ -28,6 +28,9 @@ ZLIB_DECODE_AUTO = 32 + zlib.MAX_WBITS
 # Can be set to specify a custom user agent HTTP header on requests
 _user_agent = None
 
+# Can be set to an ApiCache instance that is used as default Cache
+_default_cache = None
+
 try:
     import requests
     _has_requests = True
@@ -209,7 +212,7 @@ class API(object):
         if user_agent is not None:
             self.user_agent += ' %s' % user_agent
 
-        cache = cache or APICache()
+        cache = cache or _default_cache or APICache()
         if not isinstance(cache, APICache):
             raise ValueError("The provided cache must subclass from APICache.")
         self.cache = cache
