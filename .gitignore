@@ -8,3 +8,4 @@ MANIFEST
 google_appengine_*.zip
 vendors/*
 *.egg-info
+.idea/
