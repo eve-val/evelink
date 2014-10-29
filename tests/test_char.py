@@ -299,6 +299,9 @@ class CharTestCase(APITestCase):
                 'at_other': {1: {'id': 1, 'name': 'roleDirector'}}
             },
             'titles': {1: {'id': 1, 'name': 'Member'}},
+            'jumpActivationExpire': 1414517621,
+            'jumpFatigueExpire': 1414517615,
+            'jumpLastUpdate': 1414507621,
         })
         self.assertEqual(self.api.mock_calls, [
                 mock.call.get('char/CharacterSheet', params={'characterID': 1}),
