@@ -215,6 +215,7 @@ class Char(object):
             'jumpActivationExpire': _ts('jumpActivation'),
             'jumpFatigueExpire': _ts('jumpFatigue'),
             'jumpLastUpdate': _ts('jumpLastUpdate'),
+            'remoteStationDate': _ts('remoteStationDate'),
         }
 
         for attr in ('intelligence', 'memory', 'charisma', 'perception', 'willpower'):
