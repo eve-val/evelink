@@ -281,19 +281,24 @@ class CharTestCase(APITestCase):
                 'willpower': {
                     'base': 10,
                     'total': 13,
-                    'bonus': {'name': 'Neural Boost - Basic', 'value': 3}}},
-        'skills': [{'level': 3, 'published': True, 'skillpoints': 8000, 'id': 3431},
-                   {'level': 3, 'published': True, 'skillpoints': 8000, 'id': 3413},
-                   {'level': 1, 'published': True, 'skillpoints': 500, 'id': 21059},
-                   {'level': 3, 'published': True, 'skillpoints': 8000, 'id': 3416},
-                   {'level': 5, 'published': False, 'skillpoints': 512000, 'id': 3445}],
-        'skillpoints': 536500,
-        'certificates': set([1, 5, 19, 239, 282, 32, 258]),
-        'roles': {'global': {1 : {'id': 1, 'name': 'roleDirector'}},
-                  'at_base': {1: {'id': 1, 'name': 'roleDirector'}},
-                  'at_hq': {1: {'id': 1, 'name': 'roleDirector'}},
-                  'at_other': {1: {'id': 1, 'name': 'roleDirector'}}},
-        'titles': {1: {'id': 1, 'name': 'Member'}},
+                    'bonus': {'name': 'Neural Boost - Basic', 'value': 3}}
+            },
+            'skills': [
+                {'level': 3, 'published': True, 'skillpoints': 8000, 'id': 3431},
+                {'level': 3, 'published': True, 'skillpoints': 8000, 'id': 3413},
+                {'level': 1, 'published': True, 'skillpoints': 500, 'id': 21059},
+                {'level': 3, 'published': True, 'skillpoints': 8000, 'id': 3416},
+                {'level': 5, 'published': False, 'skillpoints': 512000, 'id': 3445}
+            ],
+            'skillpoints': 536500,
+            'certificates': set([1, 5, 19, 239, 282, 32, 258]),
+            'roles': {
+                'global': {1 : {'id': 1, 'name': 'roleDirector'}},
+                'at_base': {1: {'id': 1, 'name': 'roleDirector'}},
+                'at_hq': {1: {'id': 1, 'name': 'roleDirector'}},
+                'at_other': {1: {'id': 1, 'name': 'roleDirector'}}
+            },
+            'titles': {1: {'id': 1, 'name': 'Member'}},
         })
         self.assertEqual(self.api.mock_calls, [
                 mock.call.get('char/CharacterSheet', params={'characterID': 1}),
