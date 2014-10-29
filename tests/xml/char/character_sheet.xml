@@ -20,6 +20,8 @@
   <lastRespecDate>2014-06-11 14:15:16</lastRespecDate>
   <lastTimedRespec>2014-05-10 15:12:37</lastTimedRespec>
   <freeRespecs>2</freeRespecs>
+  <freeSkillPoints>50000</freeSkillPoints>
+  <homeStationID>60011566</homeStationID>
   <attributeEnhancers>
     <memoryBonus>
       <augmentatorName>Memory Augmentation - Basic</augmentatorName>

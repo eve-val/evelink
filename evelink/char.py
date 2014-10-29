@@ -219,6 +219,8 @@ class Char(object):
             'lastRespecDate': _ts('lastRespecDate'),
             'lastTimedRespec': _ts('lastTimedRespec'),
             'freeRespecs': _int('freeRespecs'),
+            'freeSkillPoints': _int('freeSkillPoints'),
+            'homeStationID': _int('homeStationID'),
         }
 
         for attr in ('intelligence', 'memory', 'charisma', 'perception', 'willpower'):
