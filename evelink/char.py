@@ -212,6 +212,9 @@ class Char(object):
             },
             'balance': _float('balance'),
             'attributes': {},
+            'jumpActivationExpire': _ts('jumpActivation'),
+            'jumpFatigueExpire': _ts('jumpFatigue'),
+            'jumpLastUpdate': _ts('jumpLastUpdate'),
         }
 
         for attr in ('intelligence', 'memory', 'charisma', 'perception', 'willpower'):
