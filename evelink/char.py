@@ -216,6 +216,9 @@ class Char(object):
             'jumpFatigueExpire': _ts('jumpFatigue'),
             'jumpLastUpdate': _ts('jumpLastUpdate'),
             'remoteStationDate': _ts('remoteStationDate'),
+            'lastRespecDate': _ts('lastRespecDate'),
+            'lastTimedRespec': _ts('lastTimedRespec'),
+            'freeRespecs': _int('freeRespecs'),
         }
 
         for attr in ('intelligence', 'memory', 'charisma', 'perception', 'willpower'):

@@ -303,6 +303,9 @@ class CharTestCase(APITestCase):
             'jumpFatigueExpire': 1414517615,
             'jumpLastUpdate': 1414507621,
             'remoteStationDate': 1414507856,
+            'lastRespecDate': 1402496116,
+            'lastTimedRespec': 1399734757,
+            'freeRespecs': 2,
         })
         self.assertEqual(self.api.mock_calls, [
                 mock.call.get('char/CharacterSheet', params={'characterID': 1}),

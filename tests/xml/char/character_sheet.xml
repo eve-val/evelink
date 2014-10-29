@@ -17,6 +17,9 @@
   <jumpFatigue>2014-10-28 17:33:35</jumpFatigue>
   <jumpLastUpdate>2014-10-28 14:47:01</jumpLastUpdate>
   <remoteStationDate>2014-10-28 14:50:56</remoteStationDate>
+  <lastRespecDate>2014-06-11 14:15:16</lastRespecDate>
+  <lastTimedRespec>2014-05-10 15:12:37</lastTimedRespec>
+  <freeRespecs>2</freeRespecs>
   <attributeEnhancers>
     <memoryBonus>
       <augmentatorName>Memory Augmentation - Basic</augmentatorName>
