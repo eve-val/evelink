@@ -2,10 +2,8 @@ import datetime
 import json
 from xml.etree import ElementTree
 
-try:
-    from evelink.thirdparty.six.moves import urllib
-except ImportError:
-    urllib2 = None
+from evelink.thirdparty.six.moves import urllib
+
 
 class EVECentral(object):
 
@@ -17,10 +15,8 @@ class EVECentral(object):
 
         if url_fetch_func is not None:
             self.url_fetch = url_fetch_func
-        elif urllib2 is not None:
-            self.url_fetch = self._default_fetch_func
         else:
-            raise ValueError("urllib2 not available - specify url_fetch_func")
+            self.url_fetch = self._default_fetch_func
 
     def _default_fetch_func(self, url):
         """Fetches a given URL using GET and returns the response."""

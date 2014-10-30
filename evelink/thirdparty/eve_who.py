@@ -5,10 +5,7 @@ from time import sleep
 
 from evelink import api
 
-try:
-    from evelink.thirdparty.six.moves import urllib
-except ImportError:
-    urllib2 = None
+from evelink.thirdparty.six.moves import urllib
 
 _log = logging.getLogger('evelink.thirdparty.eve_who')
 
@@ -28,10 +25,8 @@ class EVEWho(object):
 
         if url_fetch_func is not None:
             self.url_fetch = url_fetch_func
-        elif urllib2 is not None:
-            self.url_fetch = self._default_fetch_func
         else:
-            raise ValueError("urllib2 not available - specify url_fetch_func")
+            self.url_fetch = self._default_fetch_func
 
         cache = cache or api.APICache()
         if not isinstance(cache, api.APICache):
