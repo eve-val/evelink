@@ -7,6 +7,11 @@ import evelink.thirdparty.eve_who as evelink_evewho
 
 
 class EVEWhoTestCase(unittest.TestCase):
+
+    def test_init(self):
+        evewho = evelink_evewho.EVEWho()
+        self.assertTrue(isinstance(evewho, evelink_evewho.EVEWho))
+
     def test_member_list(self):
         mock_fetch = mock.MagicMock()
         mock_fetch.return_value = """

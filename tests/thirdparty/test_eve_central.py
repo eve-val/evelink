@@ -9,6 +9,10 @@ import evelink.thirdparty.eve_central as evelink_evec
 
 class EVECentralTestCase(unittest.TestCase):
 
+    def test_init(self):
+        evec = evelink_evec.EVECentral()
+        self.assertTrue(isinstance(evec, evelink_evec.EVECentral))
+
     @mock.patch('evelink.thirdparty.eve_central.EVECentral._parse_item_orders')
     def test_item_orders(self, mock_parse):
         url_fetch = mock.MagicMock()
