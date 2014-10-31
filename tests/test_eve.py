@@ -11,44 +11,6 @@ class EVETestCase(APITestCase):
         super(EVETestCase, self).setUp()
         self.eve = evelink_eve.EVE(api=self.api)
 
-    def test_certificate_tree(self):
-        self.api.get.return_value = self.make_api_result("eve/certificate_tree.xml")
-
-        result, current, expires = self.eve.certificate_tree()
-
-        self.assertEqual(result, {
-            'Core': {
-                'classes': {
-                    'Core Fitting': {
-                        'certificates': {
-                            5: {'corp_id': 1000125,
-                                'description': 'This certificate represents a basic...',
-                                'grade': 1,
-                                'id': 5,
-                                'required_certs': {},
-                                'required_skills': {3413: 3, 3424: 2, 3426: 3, 3432: 1,}},
-                            6: {'corp_id': 1000125,
-                                'description': 'This certificate represents a standard...',
-                                'grade': 2,
-                                'id': 6,
-                                'required_certs': {5: 1},
-                                'required_skills': {3318: 4, 3413: 5, 3418: 4, 3426: 5, 3432: 4}},
-                            292: {'corp_id': 1000125,
-                                'description': 'This certificate represents an elite...',
-                                'grade': 5,
-                                'id': 292,
-                                'required_certs': {291: 1},
-                                'required_skills': {18580: 5, 16594: 5, 16597: 5, 16595: 5}}},
-                        'id': 2,
-                        'name': 'Core Fitting'}},
-                'id': 3,
-                'name': 'Core'}})
-        self.assertEqual(self.api.mock_calls, [
-                mock.call.get('eve/CertificateTree', params={}),
-            ])
-        self.assertEqual(current, 12345)
-        self.assertEqual(expires, 67890)
-
     def test_character_names_from_ids(self):
         self.api.get.return_value = self.make_api_result("eve/character_name.xml")
 
