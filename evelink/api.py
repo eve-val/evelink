@@ -25,7 +25,10 @@ if _xml_error is None:
 # From zlib.h header file, not documented in Python.
 ZLIB_DECODE_AUTO = 32 + zlib.MAX_WBITS
 
-# Can be set to specify a custom user agent HTTP header on requests
+# Set by evelink/__init__.py to the evelink version. Use the user_agent
+# parameter when constructing an API object if you want to add additional
+# information to the user agent string. (Technically, you *can* override
+# this, but it's not the intended method.)
 _user_agent = None
 
 try:
