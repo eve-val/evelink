@@ -31,7 +31,7 @@ ZLIB_DECODE_AUTO = 32 + zlib.MAX_WBITS
 # this, but it's not the intended method.)
 _user_agent = None
 
-# Can be set to an ApiCache instance that is used as a shared default
+# Can be set to an APICache instance that is used as a shared default
 # cache instance for all API instances. Note: instance, not class.
 default_cache = None
 
