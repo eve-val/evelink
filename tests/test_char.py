@@ -281,18 +281,36 @@ class CharTestCase(APITestCase):
                 'willpower': {
                     'base': 10,
                     'total': 13,
-                    'bonus': {'name': 'Neural Boost - Basic', 'value': 3}}},
-        'skills': [{'level': 3, 'published': True, 'skillpoints': 8000, 'id': 3431},
-                   {'level': 3, 'published': True, 'skillpoints': 8000, 'id': 3413},
-                   {'level': 1, 'published': True, 'skillpoints': 500, 'id': 21059},
-                   {'level': 3, 'published': True, 'skillpoints': 8000, 'id': 3416},
-                   {'level': 5, 'published': False, 'skillpoints': 512000, 'id': 3445}],
-        'skillpoints': 536500,
-        'roles': {'global': {1 : {'id': 1, 'name': 'roleDirector'}},
-                  'at_base': {1: {'id': 1, 'name': 'roleDirector'}},
-                  'at_hq': {1: {'id': 1, 'name': 'roleDirector'}},
-                  'at_other': {1: {'id': 1, 'name': 'roleDirector'}}},
-        'titles': {1: {'id': 1, 'name': 'Member'}},
+                    'bonus': {'name': 'Neural Boost - Basic', 'value': 3}}
+            },
+            'skills': [
+                {'level': 3, 'published': True, 'skillpoints': 8000, 'id': 3431},
+                {'level': 3, 'published': True, 'skillpoints': 8000, 'id': 3413},
+                {'level': 1, 'published': True, 'skillpoints': 500, 'id': 21059},
+                {'level': 3, 'published': True, 'skillpoints': 8000, 'id': 3416},
+                {'level': 5, 'published': False, 'skillpoints': 512000, 'id': 3445}
+            ],
+            'skillpoints': 536500,
+            'roles': {
+                'global': {1 : {'id': 1, 'name': 'roleDirector'}},
+                'at_base': {1: {'id': 1, 'name': 'roleDirector'}},
+                'at_hq': {1: {'id': 1, 'name': 'roleDirector'}},
+                'at_other': {1: {'id': 1, 'name': 'roleDirector'}}
+            },
+            'titles': {1: {'id': 1, 'name': 'Member'}},
+            'jumpActivationExpire': 1414517621,
+            'jumpFatigueExpire': 1414517615,
+            'jumpLastUpdate': 1414507621,
+            'remoteStationDate': 1414507856,
+            'lastRespecDate': 1402496116,
+            'lastTimedRespec': 1399734757,
+            'freeRespecs': 2,
+            'freeSkillPoints': 50000,
+            'homeStationID': 60011566,
+            'multipleCharacterTraining': [
+                {'trainingEnd': 1418307316},
+                {'trainingEnd': 1418329220},
+            ],
         })
         self.assertEqual(self.api.mock_calls, [
                 mock.call.get('char/CharacterSheet', params={'characterID': 1}),

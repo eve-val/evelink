@@ -212,6 +212,15 @@ class Char(object):
             },
             'balance': _float('balance'),
             'attributes': {},
+            'jumpActivationExpire': _ts('jumpActivation'),
+            'jumpFatigueExpire': _ts('jumpFatigue'),
+            'jumpLastUpdate': _ts('jumpLastUpdate'),
+            'remoteStationDate': _ts('remoteStationDate'),
+            'lastRespecDate': _ts('lastRespecDate'),
+            'lastTimedRespec': _ts('lastTimedRespec'),
+            'freeRespecs': _int('freeRespecs'),
+            'freeSkillPoints': _int('freeSkillPoints'),
+            'homeStationID': _int('homeStationID'),
         }
 
         for attr in ('intelligence', 'memory', 'charisma', 'perception', 'willpower'):
@@ -265,6 +274,12 @@ class Char(object):
                 'id': title_id,
                 'name': a['titleName'],
             }
+
+        result['multipleCharacterTraining'] = []
+        for mtc in rowsets['multiCharacterTraining']:
+            result['multipleCharacterTraining'].append({
+                'trainingEnd': api.parse_ts(mtc.attrib['trainingEnd'])
+            })
 
         return api.APIResult(result, api_result.timestamp, api_result.expires)
 

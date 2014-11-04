@@ -13,6 +13,15 @@
   <cloneName>Clone Grade Pi</cloneName>
   <cloneSkillPoints>54600000</cloneSkillPoints>
   <balance>190210393.87</balance>
+  <jumpActivation>2014-10-28 17:33:41</jumpActivation>
+  <jumpFatigue>2014-10-28 17:33:35</jumpFatigue>
+  <jumpLastUpdate>2014-10-28 14:47:01</jumpLastUpdate>
+  <remoteStationDate>2014-10-28 14:50:56</remoteStationDate>
+  <lastRespecDate>2014-06-11 14:15:16</lastRespecDate>
+  <lastTimedRespec>2014-05-10 15:12:37</lastTimedRespec>
+  <freeRespecs>2</freeRespecs>
+  <freeSkillPoints>50000</freeSkillPoints>
+  <homeStationID>60011566</homeStationID>
   <attributeEnhancers>
     <memoryBonus>
       <augmentatorName>Memory Augmentation - Basic</augmentatorName>
@@ -64,5 +73,9 @@
   </rowset>
   <rowset name="corporationTitles" key="titleID" columns="titleID,titleName">
     <row titleID="1" titleName="Member" />
+  </rowset>
+  <rowset name="multiCharacterTraining" key="trainingEnd" columns="trainingEnd">
+    <row trainingEnd="2014-12-11 14:15:16" />
+    <row trainingEnd="2014-12-11 20:20:20" />
   </rowset>
 </result>
