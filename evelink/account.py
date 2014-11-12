@@ -22,6 +22,17 @@ class Account(object):
             'minutes_played': _int('logonMinutes'),
         }
 
+        rowsets = {}
+        for rowset in api_result.result.findall('rowset'):
+            key = rowset.attrib['name']
+            rowsets[key] = rowset
+
+        result['multipleCharacterTraining'] = []
+        for mtc in rowsets['multiCharacterTraining']:
+            result['multipleCharacterTraining'].append({
+                'trainingEnd': api.parse_ts(mtc.attrib['trainingEnd'])
+            })
+
         return api.APIResult(result, api_result.timestamp, api_result.expires)
 
     @api.auto_call('account/APIKeyInfo')

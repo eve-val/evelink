@@ -307,10 +307,6 @@ class CharTestCase(APITestCase):
             'freeRespecs': 2,
             'freeSkillPoints': 50000,
             'homeStationID': 60011566,
-            'multipleCharacterTraining': [
-                {'trainingEnd': 1418307316},
-                {'trainingEnd': 1418329220},
-            ],
         })
         self.assertEqual(self.api.mock_calls, [
                 mock.call.get('char/CharacterSheet', params={'characterID': 1}),
