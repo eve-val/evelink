@@ -74,8 +74,4 @@
   <rowset name="corporationTitles" key="titleID" columns="titleID,titleName">
     <row titleID="1" titleName="Member" />
   </rowset>
-  <rowset name="multiCharacterTraining" key="trainingEnd" columns="trainingEnd">
-    <row trainingEnd="2014-12-11 14:15:16" />
-    <row trainingEnd="2014-12-11 20:20:20" />
-  </rowset>
 </result>
