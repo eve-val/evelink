@@ -22,16 +22,11 @@ class Account(object):
             'minutes_played': _int('logonMinutes'),
         }
 
-        rowsets = {}
-        for rowset in api_result.result.findall('rowset'):
-            key = rowset.attrib['name']
-            rowsets[key] = rowset
+        rowsets = dict((r.attrib['name'], r) for r in api_result.result.findall('rowset'))
 
-        result['multipleCharacterTraining'] = []
-        for mtc in rowsets['multiCharacterTraining']:
-            result['multipleCharacterTraining'].append({
-                'trainingEnd': api.parse_ts(mtc.attrib['trainingEnd'])
-            })
+        result['multi_training_ends'] = [
+            api.parse_ts(m.attrib['trainingEnd'])
+            for m in rowsets['multiCharacterTraining']]
 
         return api.APIResult(result, api_result.timestamp, api_result.expires)
 

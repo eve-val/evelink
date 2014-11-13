@@ -22,10 +22,7 @@ class AccountTestCase(APITestCase):
                 'logins': 1234,
                 'minutes_played': 9999,
                 'paid_ts': 1293840000,
-                'multipleCharacterTraining': [
-                    {'trainingEnd': 1418307316},
-                    {'trainingEnd': 1418329220},
-                ],
+                'multi_training_ends': [1418307316, 1418329220],
             })
         self.assertEqual(self.api.mock_calls, [
                 mock.call.get('account/AccountStatus', params={}),
