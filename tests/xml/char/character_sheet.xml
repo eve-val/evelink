@@ -22,27 +22,9 @@
   <freeRespecs>2</freeRespecs>
   <freeSkillPoints>50000</freeSkillPoints>
   <homeStationID>60011566</homeStationID>
+  <cloneJumpDate>2014-10-08 20:54:50</cloneJumpDate>
   <attributeEnhancers>
-    <memoryBonus>
-      <augmentatorName>Memory Augmentation - Basic</augmentatorName>
-      <augmentatorValue>3</augmentatorValue>
-    </memoryBonus>
-    <perceptionBonus>
-      <augmentatorName>Ocular Filter - Basic</augmentatorName>
-      <augmentatorValue>3</augmentatorValue>
-    </perceptionBonus>
-    <willpowerBonus>
-      <augmentatorName>Neural Boost - Basic</augmentatorName>
-      <augmentatorValue>3</augmentatorValue>
-    </willpowerBonus>
-    <intelligenceBonus>
-      <augmentatorName>Snake Delta</augmentatorName>
-      <augmentatorValue>3</augmentatorValue>
-    </intelligenceBonus>
-    <charismaBonus>
-      <augmentatorName>Limited Social Adaptation Chip</augmentatorName>
-      <augmentatorValue>1</augmentatorValue>
-    </charismaBonus>
+    <deprecated explanation="foo" />
   </attributeEnhancers>
   <attributes>
     <intelligence>6</intelligence>
@@ -73,5 +55,32 @@
   </rowset>
   <rowset name="corporationTitles" key="titleID" columns="titleID,titleName">
     <row titleID="1" titleName="Member" />
+  </rowset>
+  <rowset name="jumpClones" key="jumpCloneID" columns="jumpCloneID,typeID,locationID,cloneName">
+    <row jumpCloneID="2" typeID="164" locationID="60014930" cloneName="" />
+    <row jumpCloneID="4" typeID="164" locationID="60014848" cloneName="some random name" />
+    <row jumpCloneID="5" typeID="164" locationID="60014842" cloneName="" />
+  </rowset>
+  <rowset name="jumpCloneImplants" key="jumpCloneID" columns="jumpCloneID,typeID,typeName">
+    <row jumpCloneID="4" typeID="20499" typeName="High-grade Slave Alpha" />
+    <row jumpCloneID="4" typeID="20501" typeName="High-grade Slave Beta" />
+    <row jumpCloneID="4" typeID="20503" typeName="High-grade Slave Delta" />
+    <row jumpCloneID="4" typeID="20505" typeName="High-grade Slave Epsilon" />
+    <row jumpCloneID="4" typeID="20507" typeName="High-grade Slave Gamma" />
+    <row jumpCloneID="4" typeID="20509" typeName="High-grade Slave Omega" />
+    <row jumpCloneID="4" typeID="33068" typeName="QA SpaceAnchor Implant" />
+    <row jumpCloneID="5" typeID="22119" typeName="Mid-grade Slave Alpha" />
+    <row jumpCloneID="5" typeID="22120" typeName="Mid-grade Slave Beta" />
+    <row jumpCloneID="5" typeID="22121" typeName="Mid-grade Slave Delta" />
+    <row jumpCloneID="5" typeID="22122" typeName="Mid-grade Slave Epsilon" />
+    <row jumpCloneID="5" typeID="22123" typeName="Mid-grade Slave Gamma" />
+    <row jumpCloneID="5" typeID="22124" typeName="Mid-grade Slave Omega" />
+  </rowset>
+  <rowset name="implants" key="typeID" columns="typeID,typeName">
+    <row typeID="33516" typeName="High-grade Ascendancy Alpha" />
+    <row typeID="33525" typeName="High-grade Ascendancy Beta" />
+    <row typeID="33528" typeName="High-grade Ascendancy Gamma" />
+    <row typeID="33526" typeName="High-grade Ascendancy Delta" />
+    <row typeID="33527" typeName="High-grade Ascendancy Epsilon" />
   </rowset>
 </result>

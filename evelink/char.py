@@ -212,35 +212,76 @@ class Char(object):
             },
             'balance': _float('balance'),
             'attributes': {},
-            'jumpActivationExpire': _ts('jumpActivation'),
-            'jumpFatigueExpire': _ts('jumpFatigue'),
-            'jumpLastUpdate': _ts('jumpLastUpdate'),
-            'remoteStationDate': _ts('remoteStationDate'),
-            'lastRespecDate': _ts('lastRespecDate'),
-            'lastTimedRespec': _ts('lastTimedRespec'),
-            'freeRespecs': _int('freeRespecs'),
-            'freeSkillPoints': _int('freeSkillPoints'),
-            'homeStationID': _int('homeStationID'),
+            'implants': {},
+            'jump': {
+                'activation_ts': _ts('jumpActivation'),
+                'fatigue_ts': _ts('jumpFatigue'),
+                'last_update_ts': _ts('jumpLastUpdate'),
+            },
+            'remote_station_ts': _ts('remoteStationDate'),
+            'last_respec_ts': _ts('lastRespecDate'),
+            'last_timed_respec_ts': _ts('lastTimedRespec'),
+            'free_respecs': _int('freeRespecs'),
+            'free_skillpoints': _int('freeSkillPoints'),
+            'home_station_id': _int('homeStationID'),
+            'jumpclone': {
+                'jump_ts': _ts('cloneJumpDate'),
+            },
         }
 
         for attr in ('intelligence', 'memory', 'charisma', 'perception', 'willpower'):
             result['attributes'][attr] = {}
             base = int(api_result.result.findtext('attributes/%s' % attr))
             result['attributes'][attr]['base'] = base
-            result['attributes'][attr]['total'] = base
-            bonus = api_result.result.find('attributeEnhancers/%sBonus' % attr)
-            if bonus is not None:
-                mod = int(bonus.findtext('augmentatorValue'))
-                result['attributes'][attr]['total'] += mod
-                result['attributes'][attr]['bonus'] = {
-                    'name': bonus.findtext('augmentatorName'),
-                    'value': mod,
-                }
+
+            # NOTE: Removed due to the deprecation of the attribute enhancers section.
+            # Better to break things which rely on this field than return the base.
+            #
+            #result['attributes'][attr]['total'] = base
+
+            # NOTE: CCP has deprecated this in favor of listing the implant typeIDs
+            #       as seen below in the 'implants' section.
+            #
+            #bonus = api_result.result.find('attributeEnhancers/%sBonus' % attr)
+            #if bonus is not None:
+            #    mod = int(bonus.findtext('augmentatorValue'))
+            #    result['attributes'][attr]['total'] += mod
+            #    result['attributes'][attr]['bonus'] = {
+            #        'name': bonus.findtext('augmentatorName'),
+            #        'value': mod,
+            #    }
 
         rowsets = {}
         for rowset in api_result.result.findall('rowset'):
             key = rowset.attrib['name']
             rowsets[key] = rowset
+
+        for implant in rowsets['implants']:
+            a = implant.attrib
+            result['implants'][int(a['typeID'])] = a['typeName']
+
+        jumpclone_implants = {}
+        for implant in rowsets['jumpCloneImplants']:
+            a = implant.attrib
+            jumpclone_id = int(a['jumpCloneID'])
+            implants = jumpclone_implants.setdefault(jumpclone_id, {})
+            implants[int(a['typeID'])] = a['typeName']
+
+        result['jumpclone']['clones'] = {}
+        for jumpclone in rowsets['jumpClones']:
+            a = jumpclone.attrib
+            jumpclone_id = int(a['jumpCloneID'])
+            location_id = int(a['locationID'])
+            # This is keyed off location_id because it simplifies a
+            # common lookup ("what systems do I have jumpclones in")
+            result['jumpclone']['clones'][location_id] = {
+                'id': jumpclone_id,
+                'name': a['cloneName'],
+                'type_id': int(a['typeID']),
+                'location_id': location_id,
+                'implants': jumpclone_implants.get(jumpclone_id, {})
+            }
+
 
         result['skills'] = []
         result['skillpoints'] = 0
