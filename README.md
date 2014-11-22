@@ -35,9 +35,10 @@ print balance_response.result
 
 Dependencies
 ------------
-**EVELink does not require any extra dependencies for normal operation.**
+EVELink uses the `six` library to maintain compatibility with both Python 2 and 3.
+This is the only required dependency.
 
-However, EVELink will make use of the `requests` library if it is available in your Python environment,
+However, EVELink will also make use of the `requests` library if it is available in your Python environment,
 as it enables the use of a single persistent HTTP connection for a sequence of EVE API calls for a
 given API instance. This eliminates the overhead of establishing a new TCP/IP connection for every
 EVE API call, which in turn results in an overall performance increase. For this reason it is highly
