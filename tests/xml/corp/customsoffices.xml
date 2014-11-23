@@ -1,0 +1,5 @@
+<result>
+    <rowset columns="itemID,solarSystemID,solarSystemName,reinforceHour,allowAlliance,allowStandings,standingLevel,taxRateAlliance,taxRateCorp,taxRateStandingHigh,taxRateStandingGood,taxRateStandingNeutral,taxRateStandingBad,taxRateStandingHorrible" key="itemID" name="pocos">
+      <row allowAlliance="True" allowStandings="True" itemID="1014625297736" reinforceHour="11" solarSystemID="30001428" solarSystemName="Ibura" standingLevel="-10" taxRateAlliance="0.05" taxRateCorp="0.05" taxRateStandingBad="0.1" taxRateStandingGood="0.05" taxRateStandingHigh="0.05" taxRateStandingHorrible="0.1" taxRateStandingNeutral="0.1" />
+    </rowset>
+  </result>

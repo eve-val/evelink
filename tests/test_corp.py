@@ -881,5 +881,69 @@ class CorpTestCase(APITestCase):
         self.assertEqual(current, 12345)
         self.assertEqual(expires, 67890)
 
+    def test_facilities(self):
+        self.api.get.return_value = self.make_api_result("corp/facilities.xml")
+
+        result, current, expires = self.corp.facilities()
+
+        self.assertEqual(self.api.mock_calls, [mock.call.get('corp/Facilities', params={}),])
+
+        self.assertEqual(result, {
+                61000936: {
+                    'region': {
+                        'id': 10000014,
+                        'name': 'Catch',
+                    },
+                    'starbase_modifier': 0.0,
+                    'system': {
+                        'id': 30001255,
+                        'name': 'Y-PNRL',
+                    },
+                    'tax': 0.0,
+                    'type_id': 21644,
+                    'type_name': 'Amarr Factory Outpost',
+                },
+            })
+
+        self.assertEqual(current, 12345)
+        self.assertEqual(expires, 67890)
+
+    def test_customs_offices(self):
+        self.api.get.return_value = self.make_api_result("corp/customsoffices.xml")
+
+        result, current, expires = self.corp.customs_offices()
+
+        self.assertEqual(self.api.mock_calls, [mock.call.get('corp/CustomsOffices', params={}),])
+
+        self.assertEqual(result, {
+                1014625297736: {
+                    'permissions': {
+                        'alliance': True,
+                        'standings': True,
+                        'minimum_standing': -10.0,
+                    },
+                    'reinforce_hour': 11,
+                    'system': {
+                        'id': 30001428,
+                        'name': 'Ibura',
+                    },
+                    'tax_rate': {
+                        'alliance': 0.05,
+                        'corp': 0.05,
+                        'standings': {
+                            'high': 0.05,
+                            'good': 0.05,
+                            'neutral': 0.1,
+                            'bad': 0.1,
+                            'horrible': 0.1,
+                        },
+                    },
+                },
+            })
+
+        self.assertEqual(current, 12345)
+        self.assertEqual(expires, 67890)
+
+
 if __name__ == "__main__":
     unittest.main()
