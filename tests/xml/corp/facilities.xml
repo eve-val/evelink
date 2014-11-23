@@ -1,0 +1,5 @@
+<result>
+    <rowset columns="facilityID,typeID,typeName,solarSystemID,solarSystemName,regionID,regionName,starbaseModifier,tax" key="facilityID" name="facilities">
+      <row facilityID="61000936" regionID="10000014" regionName="Catch" solarSystemID="30001255" solarSystemName="Y-PNRL" starbaseModifier="0" tax="0" typeID="21644" typeName="Amarr Factory Outpost" />
+    </rowset>
+  </result>
