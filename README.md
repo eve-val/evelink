@@ -27,7 +27,7 @@ print response.result
 # Using authenticated calls
 api = evelink.api.API(api_key=(12345, 'longvcodestring'))
 id_response = eve.character_id_from_name("Character Name")
-char = evelink.char.Char(char_id = id_response.result, api=api)
+char = evelink.char.Char(char_id=id_response.result, api=api)
 balance_response = char.wallet_balance()
 print balance_response.result
 ```
