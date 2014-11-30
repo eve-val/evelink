@@ -35,6 +35,7 @@ setup(
     ],
     scripts=["bin/evelink"],
     provides=["evelink"],
+    requires=["six"],
     classifiers=[
         "Development Status :: 4 - Beta",
         "License :: OSI Approved :: MIT License",
