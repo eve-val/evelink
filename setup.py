@@ -5,8 +5,11 @@ from setuptools import setup
 
 from evelink import __version__
 
-__readme_path = os.path.join(os.path.dirname(__file__), "README.md")
-__readme_contents = open(__readme_path).read()
+try:
+    __readme_path = os.path.join(os.path.dirname(__file__), "README.md")
+    __readme_contents = open(__readme_path).read()
+except IOError:
+    __readme_contents = ""
 
 setup(
     name="EVELink",
