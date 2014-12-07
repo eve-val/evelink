@@ -256,10 +256,6 @@ class CharTestCase(APITestCase):
                 'id': None,
                 'name': None
             },
-            'clone': {
-                'name': 'Clone Grade Pi',
-                'skillpoints': 54600000,
-            },
             'balance': 190210393.87,
             'attributes': {
                 'charisma': {'base': 7},

@@ -206,10 +206,6 @@ class Char(object):
                 'id': _int('allianceID') or None,
                 'name': _str('allianceName'),
             },
-            'clone': {
-                'name': _str('cloneName'),
-                'skillpoints': _int('cloneSkillPoints'),
-            },
             'balance': _float('balance'),
             'attributes': {},
             'implants': {},
