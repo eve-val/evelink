@@ -32,6 +32,10 @@ class URLFetchServiceMock(apiproxy_stub.APIProxyStub):
         self.return_values = kwargs
 
     def _Dynamic_Fetch(self, request, response):
+        if type(request.payload()) not in (str,unicode):
+            raise TypeError(
+                "request.payload() has type %s but expected one of: str, unicode",
+                type(request.payload()))
         return_values = self.return_values
         response.set_content(return_values.get('content', ''))
         response.set_statuscode(return_values.get('status_code', 200))

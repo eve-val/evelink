@@ -84,6 +84,7 @@ class AppEngineAPI(api.API):
             URL encoded parameters to send. If set, will use a form POST,
             otherwise a GET.
         """
+        params = urlencode(params)
         return self.send_request_async(url, params).get_result()
 
     @ndb.tasklet
