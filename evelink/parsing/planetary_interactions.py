@@ -76,7 +76,7 @@ def parse_planetary_pins(api_results):
                 'content': {
                     'type': int(a['contentTypeID']),
                     'name': a['contentTypeName'],
-                    'qty': int(a['contentQuantity']),
+                    'quantity': int(a['contentQuantity']),
                 },
                 'loc': {'long': float(a['longitude']),
                         'lat': float(a['latitude'])},
@@ -102,7 +102,7 @@ def parse_planetary_routes(api_results):
                     'type': int(a['contentTypeID']),
                     'name': a['contentTypeName'],
                 },
-                'qty': int(a['quantity']),
+                'quantity': int(a['quantity']),
                 'path': (int(a['waypoint1']), int(a['waypoint2']),
                          int(a['waypoint3']), int(a['waypoint4']),
                          int(a['waypoint5'])),
