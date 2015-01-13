@@ -208,6 +208,80 @@ class CharTestCase(APITestCase):
                 mock.call(mock.sentinel.api_result),
             ])
 
+    @mock.patch('evelink.char.parse_planetary_colonies')
+    def test_planetary_colonies(self, mock_parse):
+        self.api.get.return_value = API_RESULT_SENTINEL
+        mock_parse.return_value = mock.sentinel.planetary_colonies
+
+        result, current, expires = self.char.planetary_colonies()
+        self.assertEqual(current, 12345)
+        self.assertEqual(expires, 67890)
+
+        self.assertEqual(result, mock.sentinel.planetary_colonies)
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('char/PlanetaryColonies', params={'characterID': 1}),
+            ])
+        self.assertEqual(mock_parse.mock_calls, [
+                mock.call(mock.sentinel.api_result),
+            ])
+
+    @mock.patch('evelink.char.parse_planetary_links')
+    def test_planetary_links(self, mock_parse):
+        self.api.get.return_value = API_RESULT_SENTINEL
+        mock_parse.return_value = mock.sentinel.planetary_links
+
+        result, current, expires = self.char.planetary_links(101)
+        self.assertEqual(current, 12345)
+        self.assertEqual(expires, 67890)
+
+        self.assertEqual(result, mock.sentinel.planetary_links)
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('char/PlanetaryLinks',
+                              params={'characterID': 1,
+                                      'planetID': 101}),
+            ])
+        self.assertEqual(mock_parse.mock_calls, [
+                mock.call(mock.sentinel.api_result),
+            ])
+
+    @mock.patch('evelink.char.parse_planetary_pins')
+    def test_planetary_pins(self, mock_parse):
+        self.api.get.return_value = API_RESULT_SENTINEL
+        mock_parse.return_value = mock.sentinel.planetary_pins
+
+        result, current, expires = self.char.planetary_pins(101)
+        self.assertEqual(current, 12345)
+        self.assertEqual(expires, 67890)
+
+        self.assertEqual(result, mock.sentinel.planetary_pins)
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('char/PlanetaryPins',
+                              params={'characterID': 1,
+                                      'planetID': 101}),
+            ])
+        self.assertEqual(mock_parse.mock_calls, [
+                mock.call(mock.sentinel.api_result),
+            ])
+
+    @mock.patch('evelink.char.parse_planetary_routes')
+    def test_planetary_routes(self, mock_parse):
+        self.api.get.return_value = API_RESULT_SENTINEL
+        mock_parse.return_value = mock.sentinel.planetary_routes
+
+        result, current, expires = self.char.planetary_routes(101)
+        self.assertEqual(current, 12345)
+        self.assertEqual(expires, 67890)
+
+        self.assertEqual(result, mock.sentinel.planetary_routes)
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('char/PlanetaryRoutes',
+                              params={'characterID': 1,
+                                      'planetID': 101}),
+            ])
+        self.assertEqual(mock_parse.mock_calls, [
+                mock.call(mock.sentinel.api_result),
+            ])
+
     @mock.patch('evelink.char.parse_kills')
     def test_kills(self, mock_parse):
         self.api.get.return_value = API_RESULT_SENTINEL

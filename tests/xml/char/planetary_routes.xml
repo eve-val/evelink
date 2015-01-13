@@ -1,0 +1,6 @@
+<result>
+    <rowset name="routes" key="routeID" columns="routeID,sourcePinID,destinationPinID,contentTypeID,contentTypeName,quantity,waypoint1,waypoint2,waypoint3,waypoint4,waypoint5">
+        <row routeID="605707989" sourcePinID="1014990361652" destinationPinID="1014990361649" contentTypeID="2310" contentTypeName="Noble Gas" quantity="3000" waypoint1="1014990361647" waypoint2="1014990361650" waypoint3="0" waypoint4="0" waypoint5="0" />
+        <row routeID="605707990" sourcePinID="1014990361652" destinationPinID="1014990361647" contentTypeID="2311" contentTypeName="Reactive Gas" quantity="3000" waypoint1="0" waypoint2="0" waypoint3="0" waypoint4="0" waypoint5="0" />
+    </rowset>
+</result>

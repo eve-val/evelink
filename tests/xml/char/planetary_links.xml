@@ -1,0 +1,7 @@
+<result>
+    <rowset name="links" key="sourcePinID" columns="sourcePinID,destinationPinID,linkLevel">
+        <row sourcePinID="1014990361645" destinationPinID="1014990361652" linkLevel="0" />
+        <row sourcePinID="1014990361646" destinationPinID="1014990361652" linkLevel="0" />
+    </rowset>
+</result>
+
