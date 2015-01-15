@@ -5,7 +5,10 @@ from evelink.parsing.contract_bids import parse_contract_bids
 from evelink.parsing.contract_items import parse_contract_items
 from evelink.parsing.contracts import parse_contracts
 from evelink.parsing.industry_jobs import parse_industry_jobs
-from evelink.parsing.planetary_interactions import parse_planetary_colonies, parse_planetary_links, parse_planetary_pins, parse_planetary_routes
+from evelink.parsing.planetary_interactions import parse_planetary_colonies
+from evelink.parsing.planetary_interactions import parse_planetary_links
+from evelink.parsing.planetary_interactions import parse_planetary_pins
+from evelink.parsing.planetary_interactions import parse_planetary_routes
 from evelink.parsing.kills import parse_kills
 from evelink.parsing.orders import parse_market_orders
 from evelink.parsing.wallet_journal import parse_wallet_journal
