@@ -5,6 +5,10 @@ from evelink.parsing.contract_bids import parse_contract_bids
 from evelink.parsing.contract_items import parse_contract_items
 from evelink.parsing.contracts import parse_contracts
 from evelink.parsing.industry_jobs import parse_industry_jobs
+from evelink.parsing.planetary_interactions import parse_planetary_colonies
+from evelink.parsing.planetary_interactions import parse_planetary_links
+from evelink.parsing.planetary_interactions import parse_planetary_pins
+from evelink.parsing.planetary_interactions import parse_planetary_routes
 from evelink.parsing.kills import parse_kills
 from evelink.parsing.orders import parse_market_orders
 from evelink.parsing.wallet_journal import parse_wallet_journal
@@ -112,6 +116,26 @@ class Char(object):
     def industry_jobs_history(self, api_result=None):
         """Get a historical list of industry jobs for a character (active and past)."""
         return api.APIResult(parse_industry_jobs(api_result.result), api_result.timestamp, api_result.expires)
+
+    @auto_call('char/PlanetaryColonies')
+    def planetary_colonies(self, api_result=None):
+        """Get a list of PI planets for a character."""
+        return api.APIResult(parse_planetary_colonies(api_result.result), api_result.timestamp, api_result.expires)
+
+    @auto_call('char/PlanetaryLinks', map_params={'planet_id': 'planetID'})
+    def planetary_links(self, planet_id, api_result=None):
+        """Get a list of PI links for a character's planet."""
+        return api.APIResult(parse_planetary_links(api_result.result), api_result.timestamp, api_result.expires)
+
+    @auto_call('char/PlanetaryPins', map_params={'planet_id': 'planetID'})
+    def planetary_pins(self, planet_id, api_result=None):
+        """Get a list of PI facilities for a character's planet."""
+        return api.APIResult(parse_planetary_pins(api_result.result), api_result.timestamp, api_result.expires)
+
+    @auto_call('char/PlanetaryRoutes', map_params={'planet_id': 'planetID'})
+    def planetary_routes(self, planet_id, api_result=None):
+        """Get a list of PI routing entries for a character's planet."""
+        return api.APIResult(parse_planetary_routes(api_result.result), api_result.timestamp, api_result.expires)
 
     @auto_call('char/KillLog', map_params={'before_kill': 'beforeKillID'})
     def kills(self, before_kill=None, api_result=None):

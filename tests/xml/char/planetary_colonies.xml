@@ -1,0 +1,5 @@
+<result>
+    <rowset name="colonies" key="planetID" columns="solarSystemID,solarSystemName,planetID,planetName,planetTypeID,planetTypeName,ownerID,ownerName,lastUpdate,upgradeLevel,numberOfPins">
+        <row solarSystemID="30003522" solarSystemName="Sarum Prime" planetID="40223494" planetName="Sarum Prime IV" planetTypeID="13" planetTypeName="Planet (Gas)" ownerID="1133950739" ownerName="BarbersHuZ" lastUpdate="2014-06-09 09:23:55" upgradeLevel="2" numberOfPins="8" />
+    </rowset>
+</result>
