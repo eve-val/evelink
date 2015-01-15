@@ -3,7 +3,7 @@ from evelink import api
 def parse_planetary_colonies(api_results):
     result = {}
     rowset = api_results.find('rowset')
-    for row in rowset:
+    for row in rowset.findall('row'):
         # shortcut to make the following block less painful
         a = row.attrib
         planetID = int(a['planetID'])
@@ -33,7 +33,7 @@ def parse_planetary_colonies(api_results):
 def parse_planetary_links(api_results):
     result = {}
     rowset = api_results.find('rowset')
-    for row in rowset:
+    for row in rowset.findall('row'):
         # shortcut to make the following block less painful
         a = row.attrib
         sourceID = int(a['sourcePinID'])
@@ -48,7 +48,7 @@ def parse_planetary_links(api_results):
 def parse_planetary_pins(api_results):
     result = {}
     rowset = api_results.find('rowset')
-    for row in rowset:
+    for row in rowset.findall('row'):
         # shortcut to make the following block less painful
         a = row.attrib
         pinID = int(a['pinID'])
@@ -71,7 +71,7 @@ def parse_planetary_pins(api_results):
             },
             'loc': {
                 'long': float(a['longitude']),
-                'lat': float(a['latitude'])
+                'lat': float(a['latitude']),
             },
         }
 
@@ -80,7 +80,7 @@ def parse_planetary_pins(api_results):
 def parse_planetary_routes(api_results):
     result = {}
     rowset = api_results.find('rowset')
-    for row in rowset:
+    for row in rowset.findall('row'):
         # shortcut to make the following block less painful
         a = row.attrib
         routeID = int(a['routeID'])
