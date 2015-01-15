@@ -3,9 +3,6 @@ from evelink import api
 def parse_planetary_colonies(api_results):
     result = {}
     for rowset in api_results.findall('rowset'):
-        if rowset is None:
-            return
-
         for row in rowset.findall('row'):
             # shortcut to make the following block less painful
             a = row.attrib
@@ -14,16 +11,16 @@ def parse_planetary_colonies(api_results):
                 'id': planetID,
                 'system': {
                     'id': int(a['solarSystemID']),
-                    'name': a['solarSystemName']
+                    'name': a['solarSystemName'],
                 },
                 'planet': {
                     'name': a['planetName'],
                     'type': int(a['planetTypeID']),
-                    'type_name': a['planetTypeName']
+                    'type_name': a['planetTypeName'],
                 },
                 'owner': {
                     'id': int(a['ownerID']),
-                    'name': a['ownerName']
+                    'name': a['ownerName'],
                 },
                 'last_update': api.parse_ts(a['lastUpdate']),
                 'upgrade_level': int(a['upgradeLevel']),
@@ -36,9 +33,6 @@ def parse_planetary_colonies(api_results):
 def parse_planetary_links(api_results):
     result = {}
     for rowset in api_results.findall('rowset'):
-        if rowset is None:
-            return
-
         for row in rowset.findall('row'):
             # shortcut to make the following block less painful
             a = row.attrib
@@ -54,9 +48,6 @@ def parse_planetary_links(api_results):
 def parse_planetary_pins(api_results):
     result = {}
     for rowset in api_results.findall('rowset'):
-        if rowset is None:
-            return
-
         for row in rowset.findall('row'):
             # shortcut to make the following block less painful
             a = row.attrib
@@ -65,7 +56,7 @@ def parse_planetary_pins(api_results):
                 'id': pinID,
                 'type': {
                     'id': int(a['typeID']),
-                    'name': a['typeName']
+                    'name': a['typeName'],
                 },
                 'schematic': int(a['schematicID']),
                 'last_launch_ts': api.parse_ts(a['lastLaunchTime']),
@@ -78,8 +69,10 @@ def parse_planetary_pins(api_results):
                     'name': a['contentTypeName'],
                     'quantity': int(a['contentQuantity']),
                 },
-                'loc': {'long': float(a['longitude']),
-                        'lat': float(a['latitude'])},
+                'loc': {
+                    'long': float(a['longitude']),
+                    'lat': float(a['latitude'])
+                },
             }
 
     return result
@@ -87,9 +80,6 @@ def parse_planetary_pins(api_results):
 def parse_planetary_routes(api_results):
     result = {}
     for rowset in api_results.findall('rowset'):
-        if rowset is None:
-            return
-
         for row in rowset.findall('row'):
             # shortcut to make the following block less painful
             a = row.attrib
@@ -103,9 +93,7 @@ def parse_planetary_routes(api_results):
                     'name': a['contentTypeName'],
                 },
                 'quantity': int(a['quantity']),
-                'path': (int(a['waypoint1']), int(a['waypoint2']),
-                         int(a['waypoint3']), int(a['waypoint4']),
-                         int(a['waypoint5'])),
+                'path': tuple(int(a['waypoint%d' % n]) for n in range(1,6)),
             }
 
     return result
