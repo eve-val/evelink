@@ -70,7 +70,7 @@ class EVE(object):
         Convenience wrapper around character_ids_from_names().
         """
         api_result = self.character_ids_from_names([name])
-        return api.APIResult(api_result.result.values()[0], api_result.timestamp, api_result.expires)
+        return api.APIResult(list(api_result.result.values())[0], api_result.timestamp, api_result.expires)
 
     @api.auto_call('eve/CharacterAffiliation', map_params={'id_list': 'ids'})
     def affiliations_for_characters(self, id_list, api_result=None):
