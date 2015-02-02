@@ -4,7 +4,7 @@ venv
 MANIFEST
 .coverage
 *.py[co]
-.*.swp
+.*.sw[op]
 google_appengine_*.zip
 vendors/*
 *.egg-info
