@@ -167,6 +167,23 @@ class CorpTestCase(APITestCase):
 
         self.assertEqual(result, mock.sentinel.kills)
         self.assertEqual(self.api.mock_calls, [
+                mock.call.get('corp/KillMails', params={}),
+            ])
+        self.assertEqual(mock_parse.mock_calls, [
+                mock.call(mock.sentinel.api_result),
+            ])
+        self.assertEqual(current, 12345)
+        self.assertEqual(expires, 67890)
+
+    @mock.patch('evelink.corp.parse_kills')
+    def test_kill_log(self, mock_parse):
+        self.api.get.return_value = API_RESULT_SENTINEL
+        mock_parse.return_value = mock.sentinel.kills
+
+        result, current, expires = self.corp.kill_log()
+
+        self.assertEqual(result, mock.sentinel.kills)
+        self.assertEqual(self.api.mock_calls, [
                 mock.call.get('corp/KillLog', params={}),
             ])
         self.assertEqual(mock_parse.mock_calls, [
