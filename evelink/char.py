@@ -137,9 +137,22 @@ class Char(object):
         """Get a list of PI routing entries for a character's planet."""
         return api.APIResult(parse_planetary_routes(api_result.result), api_result.timestamp, api_result.expires)
 
-    @auto_call('char/KillLog', map_params={'before_kill': 'beforeKillID'})
+    @auto_call('char/KillMails', map_params={'before_kill': 'beforeKillID'})
     def kills(self, before_kill=None, api_result=None):
         """Look up recent kills for a character.
+
+        before_kill:
+            Optional. Only show kills before this kill id. (Used for paging.)
+        """
+
+        return api.APIResult(parse_kills(api_result.result), api_result.timestamp, api_result.expires)
+
+    @auto_call('char/KillLog', map_params={'before_kill': 'beforeKillID'})
+    def kill_log(self, before_kill=None, api_result=None):
+        """Look up recent kills for a character.
+
+        Note: this method uses the long cache version of the endpoint. If you
+              want to use the short cache version (recommended), use kills().
 
         before_kill:
             Optional. Only show kills before this kill id. (Used for paging.)

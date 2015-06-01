@@ -136,9 +136,22 @@ class Corp(object):
 
         return api.APIResult(results, api_result.timestamp, api_result.expires)
 
-    @api.auto_call('corp/KillLog', map_params={'before_kill': 'beforeKillID'})
+    @api.auto_call('corp/KillMails', map_params={'before_kill': 'beforeKillID'})
     def kills(self, before_kill=None, api_result=None):
         """Look up recent kills for a corporation.
+
+        before_kill:
+            Optional. Only show kills before this kill id. (Used for paging.)
+        """
+
+        return api.APIResult(parse_kills(api_result.result), api_result.timestamp, api_result.expires)
+
+    @api.auto_call('corp/KillLog', map_params={'before_kill': 'beforeKillID'})
+    def kill_log(self, before_kill=None, api_result=None):
+        """Look up recent kills for a corporation.
+
+        Note: this method uses the long cache version of the endpoint. If you
+              want to use the short cache version (recommended), use kills().
 
         before_kill:
             Optional. Only show kills before this kill id. (Used for paging.)

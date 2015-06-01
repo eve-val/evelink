@@ -293,6 +293,23 @@ class CharTestCase(APITestCase):
 
         self.assertEqual(result, mock.sentinel.kills)
         self.assertEqual(self.api.mock_calls, [
+                mock.call.get('char/KillMails', params={'characterID': 1}),
+            ])
+        self.assertEqual(mock_parse.mock_calls, [
+                mock.call(mock.sentinel.api_result),
+            ])
+
+    @mock.patch('evelink.char.parse_kills')
+    def test_kill_log(self, mock_parse):
+        self.api.get.return_value = API_RESULT_SENTINEL
+        mock_parse.return_value = mock.sentinel.kills
+
+        result, current, expires = self.char.kill_log()
+        self.assertEqual(current, 12345)
+        self.assertEqual(expires, 67890)
+
+        self.assertEqual(result, mock.sentinel.kills)
+        self.assertEqual(self.api.mock_calls, [
                 mock.call.get('char/KillLog', params={'characterID': 1}),
             ])
         self.assertEqual(mock_parse.mock_calls, [
@@ -304,7 +321,7 @@ class CharTestCase(APITestCase):
 
         self.char.kills(before_kill=12345)
         self.assertEqual(self.api.mock_calls, [
-                mock.call.get('char/KillLog', params={'characterID': 1, 'beforeKillID': 12345}),
+                mock.call.get('char/KillMails', params={'characterID': 1, 'beforeKillID': 12345}),
             ])
 
     def test_character_sheet(self):
