@@ -41,7 +41,7 @@ class EVE(object):
         Convenience wrapper around character_names_from_ids().
         """
         api_result = self.character_names_from_ids([char_id])
-        return api.APIResult(api_result.result.get(char_id), api_result.timestamp, api_result.expires)
+        return api.APIResult(api_result.result.get(int(char_id)), api_result.timestamp, api_result.expires)
 
     @api.auto_call('eve/CharacterID', map_params={'name_list': 'names'})
     def character_ids_from_names(self, name_list, api_result=None):

@@ -72,6 +72,18 @@ class EVETestCase(APITestCase):
         self.assertEqual(current, 12345)
         self.assertEqual(expires, 67890)
 
+    def test_character_name_from_string_id(self):
+        self.api.get.return_value = self.make_api_result("eve/character_name_single.xml")
+
+        result, current, expires = self.eve.character_name_from_id("1")
+
+        self.assertEqual(result, "EVE System")
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('eve/CharacterName', params={'IDs': ["1"]}),
+            ])
+        self.assertEqual(current, 12345)
+        self.assertEqual(expires, 67890)
+
     def test_character_ids_from_names(self):
         self.api.get.return_value = self.make_api_result("eve/character_id.xml")
 
