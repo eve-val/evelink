@@ -316,17 +316,18 @@ class Char(object):
             }
 
 
-        result['skills'] = []
+        result['skills'] = {}
         result['skillpoints'] = 0
         for skill in rowsets['skills']:
             a = skill.attrib
+            skill_id = int(a['typeID'])
             sp = int(a['skillpoints'])
-            result['skills'].append({
-                'id': int(a['typeID']),
+            result['skills'][skill_id] = {
+                'id': skill_id,
                 'skillpoints': sp,
                 'level': int(a['level']),
                 'published': a['published'] == '1',
-            })
+            }
             result['skillpoints'] += sp
 
         result['roles'] = {}
