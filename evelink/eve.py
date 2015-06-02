@@ -371,6 +371,25 @@ class EVE(object):
 
         return api.APIResult(results, api_result.timestamp, api_result.expires)
 
+    @api.auto_call('eve/TypeName', map_params={'id_list': 'IDs'})
+    def type_names_from_ids(self, id_list, api_result=None):
+        """Return a dict containing id -> name mappings for the supplied type ids."""
+        rowset = api_result.result.find('rowset')
+        results = {}
+        for row in rowset.findall('row'):
+            a= row.attrib
+            results[int(a['typeID'])] = a['typeName']
+
+        return api.APIResult(results, api_result.timestamp, api_result.expires)
+
+    def type_name_from_id(self, type_id):
+        """Retrieve a type name based on ID.
+
+        Convenience wrapper around type_names_from_ids().
+        """
+        api_result = self.type_names_from_ids([type_id])
+        return api.APIResult(api_result.result.get(int(type_id)), api_result.timestamp, api_result.expires)
+
     @api.auto_call('eve/FacWarTopStats')
     def faction_warfare_leaderboard(self, api_result=None):
         """Return top-100 lists from Faction Warfare."""
