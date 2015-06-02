@@ -11,6 +11,43 @@ class EVETestCase(APITestCase):
         super(EVETestCase, self).setUp()
         self.eve = evelink_eve.EVE(api=self.api)
 
+    def test_type_names_from_ids(self):
+        self.api.get.return_value = self.make_api_result("eve/typename.xml")
+
+        result, current, expires = self.eve.type_names_from_ids(set([12345,23456]))
+
+        self.assertEqual(result, {12345:"200mm Railgun I Blueprint",
+                                  23456:"Gara Kort's Raven"})
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('eve/TypeName', params={'IDs': set([12345,23456])}),
+            ])
+        self.assertEqual(current, 12345)
+        self.assertEqual(expires, 67890)
+
+    def test_type_name_from_id(self):
+        self.api.get.return_value = self.make_api_result("eve/typename_single.xml")
+
+        result, current, expires = self.eve.type_name_from_id(12345)
+
+        self.assertEqual(result, "200mm Railgun I Blueprint")
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('eve/TypeName', params={'IDs': [12345]}),
+            ])
+        self.assertEqual(current, 12345)
+        self.assertEqual(expires, 67890)
+
+    def test_type_name_from_string_id(self):
+        self.api.get.return_value = self.make_api_result("eve/typename_single.xml")
+
+        result, current, expires = self.eve.type_name_from_id("12345")
+
+        self.assertEqual(result, "200mm Railgun I Blueprint")
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('eve/TypeName', params={'IDs': ["12345"]}),
+            ])
+        self.assertEqual(current, 12345)
+        self.assertEqual(expires, 67890)
+
     def test_character_names_from_ids(self):
         self.api.get.return_value = self.make_api_result("eve/character_name.xml")
 
@@ -31,6 +68,18 @@ class EVETestCase(APITestCase):
         self.assertEqual(result, "EVE System")
         self.assertEqual(self.api.mock_calls, [
                 mock.call.get('eve/CharacterName', params={'IDs': [1]}),
+            ])
+        self.assertEqual(current, 12345)
+        self.assertEqual(expires, 67890)
+
+    def test_character_name_from_string_id(self):
+        self.api.get.return_value = self.make_api_result("eve/character_name_single.xml")
+
+        result, current, expires = self.eve.character_name_from_id("1")
+
+        self.assertEqual(result, "EVE System")
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('eve/CharacterName', params={'IDs': ["1"]}),
             ])
         self.assertEqual(current, 12345)
         self.assertEqual(expires, 67890)

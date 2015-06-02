@@ -1,0 +1,5 @@
+<result>
+  <rowset name="types" key="typeID" columns="typeID,typeName">
+    <row typeID="12345" typeName="200mm Railgun I Blueprint"/>
+  </rowset>
+</result>
