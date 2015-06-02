@@ -362,13 +362,13 @@ class CharTestCase(APITestCase):
                 33527: 'High-grade Ascendancy Epsilon',
                 33528: 'High-grade Ascendancy Gamma',
             },
-            'skills': [
-                {'level': 3, 'published': True, 'skillpoints': 8000, 'id': 3431},
-                {'level': 3, 'published': True, 'skillpoints': 8000, 'id': 3413},
-                {'level': 1, 'published': True, 'skillpoints': 500, 'id': 21059},
-                {'level': 3, 'published': True, 'skillpoints': 8000, 'id': 3416},
-                {'level': 5, 'published': False, 'skillpoints': 512000, 'id': 3445}
-            ],
+            'skills': {
+                3431: {'level': 3, 'published': True, 'skillpoints': 8000, 'id': 3431},
+                3413: {'level': 3, 'published': True, 'skillpoints': 8000, 'id': 3413},
+                21059: {'level': 1, 'published': True, 'skillpoints': 500, 'id': 21059},
+                3416: {'level': 3, 'published': True, 'skillpoints': 8000, 'id': 3416},
+                3445: {'level': 5, 'published': False, 'skillpoints': 512000, 'id': 3445}
+            },
             'skillpoints': 536500,
             'roles': {
                 'global': {1 : {'id': 1, 'name': 'roleDirector'}},
