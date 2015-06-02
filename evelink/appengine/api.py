@@ -98,6 +98,7 @@ class AppEngineAPI(api.API):
             payload=params,
             method=urlfetch.POST if params else urlfetch.GET,
             headers=headers,
+            deadline=api.http_request_timeout,
         )
         raise ndb.Return((result.content, result))
 

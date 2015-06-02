@@ -35,6 +35,9 @@ _user_agent = None
 # cache instance for all API instances. Note: instance, not class.
 default_cache = None
 
+# The timeout to use for API HTTP requests, in seconds (default 1 minute).
+http_request_timeout = 60
+
 try:
     import requests
     _has_requests = True
@@ -331,7 +334,7 @@ class API(object):
 
             req.add_header('Accept-Encoding', 'gzip')
             req.add_header('User-agent', self.user_agent)
-            r = urllib.request.urlopen(req)
+            r = urllib.request.urlopen(req, timeout=http_request_timeout)
         except urllib.error.HTTPError as e:
             # urllib2 handles non-2xx responses by raising an exception that
             # can also behave as a file-like object. The EVE API will return
@@ -360,11 +363,11 @@ class API(object):
             if params:
                 # POST request
                 _log.debug("POSTing request")
-                r = session.post(full_path, data=params)
+                r = session.post(full_path, data=params, timeout=http_request_timeout)
             else:
                 # GET request
                 _log.debug("GETting request")
-                r = session.get(full_path)
+                r = session.get(full_path, timeout=http_request_timeout)
             _log.debug("Response status code: %s" % r.status_code)
             return r.content, r
         except requests.exceptions.RequestException as e:
