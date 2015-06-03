@@ -142,7 +142,7 @@ class Char(object):
     def planetary_route_map(self, routes, unused_ts=None, unused_exp=None):
         """Given the result of planetary_routes, build a map planetid: [linkid1, linkid2, ...]"""
         result = collections.defaultdict(set)
-        for route_id, route in routes.iteritems():
+        for route_id, route in routes.items():
             result[route['source_id']].add(route_id)
             result[route['destination_id']].add(route_id)
 
