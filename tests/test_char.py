@@ -301,9 +301,9 @@ class CharTestCase(APITestCase):
         }
 
         self.assertEqual(self.char.planetary_route_map(routes), {
-            1014990361652L: set([605707989, 605707990]),
-            1014990361647L: set([605707990]),
-            1014990361649L: set([605707989])}
+            1014990361652: set([605707989, 605707990]),
+            1014990361647: set([605707990]),
+            1014990361649: set([605707989])}
         )
 
     @mock.patch('evelink.char.parse_kills')
