@@ -52,28 +52,40 @@ def parse_planetary_pins(api_results):
         # shortcut to make the following block less painful
         a = row.attrib
         pinID = int(a['pinID'])
-        result[pinID] = {
-            'id': pinID,
-            'type': {
-                'id': int(a['typeID']),
-                'name': a['typeName'],
-            },
-            'schematic': int(a['schematicID']),
-            'last_launch_ts': api.parse_ts(a['lastLaunchTime']),
-            'cycle_time': int(a['cycleTime']),
-            'quantity_per_cycle': int(a['quantityPerCycle']),
-            'install_ts': api.parse_ts(a['installTime']),
-            'expiry_ts': api.parse_ts(a['expiryTime']),
-            'content': {
-                'type': int(a['contentTypeID']),
+        if pinID not in result:
+            result[pinID] = {
+                'id': pinID,
+                'type': {
+                    'id': int(a['typeID']),
+                    'name': a['typeName'],
+                },
+                'schematic': int(a['schematicID']),
+                'last_launch_ts': api.parse_ts(a['lastLaunchTime']),
+                'cycle_time': int(a['cycleTime']),
+                'quantity_per_cycle': int(a['quantityPerCycle']),
+                'install_ts': api.parse_ts(a['installTime']),
+                'expiry_ts': api.parse_ts(a['expiryTime']),
+                'content': {
+                    'type': int(a['contentTypeID']),
+                    'name': a['contentTypeName'],
+                    'quantity': int(a['contentQuantity']),
+                    'deprecated': 'Use the "contents" field instead',
+                },
+                'contents': {},
+                'loc': {
+                    'long': float(a['longitude']),
+                    'lat': float(a['latitude']),
+                },
+            }
+
+        if a['contentTypeID'] != '0':
+            contentID = int(a['contentTypeID'])
+            result[pinID]['contents'][contentID] = {
+                'type': contentID,
                 'name': a['contentTypeName'],
                 'quantity': int(a['contentQuantity']),
-            },
-            'loc': {
-                'long': float(a['longitude']),
-                'lat': float(a['latitude']),
-            },
-        }
+            }
+
 
     return result
 
