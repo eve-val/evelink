@@ -282,6 +282,30 @@ class CharTestCase(APITestCase):
                 mock.call(mock.sentinel.api_result),
             ])
 
+    def test_planetary_routes_map(self):
+        routes = {
+            605707989: {'id': 605707989,
+                        'source_id': 1014990361652,
+                        'destination_id': 1014990361649,
+                        'content': {'type': 2310, 'name': 'Noble Gas'},
+                        'quantity': 3000,
+                        'path': (1014990361647, 1014990361650, 0, 0, 0),
+            },
+            605707990: {'id': 605707990,
+                        'source_id': 1014990361652,
+                        'destination_id': 1014990361647,
+                        'content': {'type': 2311, 'name': 'Reactive Gas'},
+                        'quantity': 3000,
+                        'path': (0, 0, 0, 0, 0),
+            },
+        }
+
+        self.assertEqual(self.char.planetary_route_map(routes), {
+            1014990361652L: set([605707989, 605707990]),
+            1014990361647L: set([605707990]),
+            1014990361649L: set([605707989])}
+        )
+
     @mock.patch('evelink.char.parse_kills')
     def test_kills(self, mock_parse):
         self.api.get.return_value = API_RESULT_SENTINEL

@@ -1,3 +1,5 @@
+import collections
+
 from evelink import api, constants
 from evelink.parsing.assets import parse_assets
 from evelink.parsing.contact_list import parse_contact_list
@@ -136,6 +138,15 @@ class Char(object):
     def planetary_routes(self, planet_id, api_result=None):
         """Get a list of PI routing entries for a character's planet."""
         return api.APIResult(parse_planetary_routes(api_result.result), api_result.timestamp, api_result.expires)
+
+    def planetary_route_map(self, routes, unused_ts=None, unused_exp=None):
+        """Given the result of planetary_routes, build a map planetid: [linkid1, linkid2, ...]"""
+        result = collections.defaultdict(set)
+        for route_id, route in routes.iteritems():
+            result[route['source_id']].add(route_id)
+            result[route['destination_id']].add(route_id)
+
+        return dict(result)
 
     @auto_call('char/KillMails', map_params={'before_kill': 'beforeKillID'})
     def kills(self, before_kill=None, api_result=None):
