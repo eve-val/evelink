@@ -593,6 +593,9 @@ class Corp(object):
                     'cut': float(a['reprocessingStationTake']),
                 },
                 'standing_owner_id': int(a['standingOwnerID']),
+                'x': float(a['x']),
+                'y': float(a['y']),
+                'z': float(a['z']),
             }
             results[station['id']] = station
 

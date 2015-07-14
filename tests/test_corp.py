@@ -701,6 +701,9 @@ class CorpTestCase(APITestCase):
                     'standing_owner_id': 673381830,
                     'system_id': 30004181,
                     'type_id': 21645,
+                    'x': 61066567680,
+                    'y': 2632949760,
+                    'z': 285129646080,
                 },
             })
         self.assertEqual(self.api.mock_calls, [

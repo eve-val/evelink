@@ -1,8 +1,10 @@
 <result>
     <rowset name="ConquerableStationlist">
         <row stationID="1" stationName="Station station station" stationTypeID="123"
-         solarSystemID="512" corporationID="444" corporationName="Valkyries of Night"/>            
+         solarSystemID="512" corporationID="444" corporationName="Valkyries of Night"
+          x="61066567680" y="2632949760.0" z="285129646080"/>
          <row stationID="2" stationName="Station the station" stationTypeID="42"
-         solarSystemID="503" corporationID="400" corporationName="Deus Fides Empire"/>            
+         solarSystemID="503" corporationID="400" corporationName="Deus Fides Empire"
+          x="11066567680" y="2632949760" z="385129646080"/>            
     </rowset>
 </result>
