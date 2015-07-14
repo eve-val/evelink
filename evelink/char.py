@@ -2,6 +2,7 @@ import collections
 
 from evelink import api, constants
 from evelink.parsing.assets import parse_assets
+from evelink.parsing.bookmarks import parse_bookmarks
 from evelink.parsing.contact_list import parse_contact_list
 from evelink.parsing.contract_bids import parse_contract_bids
 from evelink.parsing.contract_items import parse_contract_items
@@ -66,6 +67,11 @@ class Char(object):
         """
 
         return api.APIResult(parse_assets(api_result.result), api_result.timestamp, api_result.expires)
+
+    @auto_call('char/Bookmarks')
+    def bookmarks(self, api_result=None):
+        """Retrieves this character's bookmarks."""
+        return api.APIResult(parse_bookmarks(api_result.result), api_result.timestamp, api_result.expires)
 
     @auto_call('char/ContractBids')
     def contract_bids(self, api_result=None):

@@ -32,6 +32,22 @@ class CharTestCase(APITestCase):
         self.assertEqual(current, 12345)
         self.assertEqual(expires, 67890)
 
+    @mock.patch('evelink.char.parse_bookmarks')
+    def test_bookmarks(self, mock_parse):
+        self.api.get.return_value = API_RESULT_SENTINEL
+        mock_parse.return_value = mock.sentinel.parsed_bookmarks
+
+        result, current, expires = self.char.bookmarks()
+        self.assertEqual(result, mock.sentinel.parsed_bookmarks)
+        self.assertEqual(mock_parse.mock_calls, [
+                mock.call(mock.sentinel.api_result),
+            ])
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('char/Bookmarks', params={'characterID': 1}),
+            ])
+        self.assertEqual(current, 12345)
+        self.assertEqual(expires, 67890)
+
     @mock.patch('evelink.char.parse_contract_bids')
     def test_contract_bids(self, mock_parse):
         self.api.get.return_value = API_RESULT_SENTINEL

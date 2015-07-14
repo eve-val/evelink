@@ -1,0 +1,18 @@
+<result>
+  <rowset name="folders" key="folderID" columns="folderName,creatorID">
+    <row folderID="0" folderName="" creatorID="0">
+      <rowset name="bookmarks" key="bookmarkID" columns="creatorID,created,itemID,typeID,locationID,x,y,z,memo,note">
+        <row bookmarkID="12" creatorID="90000001" created="2015-07-08 21:34:14" itemID="60014689" typeID="57" locationID="30004971" x="0" y="0" z="0" memo="Home Station" note="Our base of residence" />
+        <row bookmarkID="13" creatorID="90000001" created="2015-07-08 21:35:07" itemID="40314792" typeID="8" locationID="30004971" x="0" y="0" z="0" memo="Sun" note="" />
+      </rowset>
+    </row>
+    <row folderID="1" folderName="A lovely empty folder" creatorID="90000001">
+      <rowset name="bookmarks" key="bookmarkID" columns="creatorID,created,itemID,typeID,locationID,x,y,z,memo,note" />
+    </row>
+    <row folderID="4" folderName="Random crap" creatorID="90000001">
+      <rowset name="bookmarks" key="bookmarkID" columns="creatorID,created,itemID,typeID,locationID,x,y,z,memo,note">
+        <row bookmarkID="14" creatorID="90000001" created="2015-07-08 21:36:08" itemID="0" typeID="5" locationID="30004971" x="-373405654941.733" y="42718621667.0746" z="-1415023302173.46" memo="spot in Duripant solar system" note="" />
+      </rowset>
+    </row>
+  </rowset>
+</result>

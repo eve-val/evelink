@@ -448,7 +448,10 @@ class EVE(object):
                 'system_id': int(row.attrib['solarSystemID']),
                 'corp': {
                     'id': int(row.attrib['corporationID']),
-                    'name': row.attrib['corporationName'] }
+                    'name': row.attrib['corporationName'] },
+                'x': float(row.attrib['x']),
+                'y': float(row.attrib['y']),
+                'z': float(row.attrib['z']),
                 }
             results[station['id']] = station
 

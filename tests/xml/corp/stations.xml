@@ -9,6 +9,10 @@
     stationTypeID="21645" 
     reprocessingEfficiency="0.5" 
     reprocessingStationTake="0.025" 
-    standingOwnerID="673381830" /> 
+    standingOwnerID="673381830"
+    x="61066567680"
+    y="2632949760.0"
+    z="285129646080"
+    />
   </rowset>
 </result>

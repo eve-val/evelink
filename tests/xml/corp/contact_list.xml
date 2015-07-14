@@ -1,13 +1,20 @@
 <result>
     <rowset columns="contactID,contactName,standing" key="contactID" name="corporateContactList">
       <row contactID="1082138174" contactName="Nomad LLP" standing="10" />
-      <row contactID="1086308227" contactName="Rebel Alliance of New Eden" standing="0" />
+      <row contactID="1086308227" contactName="Rebel Alliance of New Eden" standing="0" labelMask="1" />
       <row contactID="1113838907" contactName="Significant other" standing="-10" />
+    </rowset>
+    <rowset name="corporateContactLabels" key="labelID" columns="name">
+      <row labelID="1" name="Corp Spies!" />
     </rowset>
     <rowset columns="contactID,contactName,standing" key="contactID" name="allianceContactList">
       <row contactID="2049763943" contactName="EntroPraetorian Aegis" standing="-10" />
-      <row contactID="2067199408" contactName="Vera Cruz Alliance" standing="-10" />
+      <row contactID="2067199408" contactName="Vera Cruz Alliance" standing="-10" labelMask="2" />
       <row contactID="2081065875" contactName="TheRedMaple" standing="-10" />
+    </rowset>
+    <rowset name="allianceContactLabels" key="labelID" columns="name">
+      <row labelID="1" name="Alliance Friend" />
+      <row labelID="2" name="Stupid" />
     </rowset>
   </result>
   

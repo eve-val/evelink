@@ -388,7 +388,10 @@ class EVETestCase(APITestCase):
                 'system_id':512,
                 'corp':{
                         'id':444,
-                        'name':"Valkyries of Night" }
+                        'name':"Valkyries of Night" },
+                'x': 61066567680,
+                'y': 2632949760,
+                'z': 285129646080,
                 },
             2:{ 'id':2,
                 'name':"Station the station",
@@ -396,7 +399,10 @@ class EVETestCase(APITestCase):
                 'system_id':503,
                 'corp':{
                         'id':400,
-                        'name':"Deus Fides Empire"}
+                        'name':"Deus Fides Empire"},
+                'x': 11066567680,
+                'y': 2632949760,
+                'z': 385129646080,
                 }
            })
         self.assertEqual(self.api.mock_calls, [
