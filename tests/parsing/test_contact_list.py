@@ -17,33 +17,57 @@ class ContactsTestCase(unittest.TestCase):
             'corp': {
                 1082138174: {'standing': 10.0, 'id': 1082138174,
                              'name': 'Nomad LLP',
-                             'in_watchlist': None},
+                             'in_watchlist': None,
+                             'labels': {}},
                 1086308227: {'standing': 0.0, 'id': 1086308227,
                              'name': 'Rebel Alliance of New Eden',
-                             'in_watchlist': None},
+                             'in_watchlist': None,
+                             'labels': {
+                                1: {'id': 1, 'name': 'Corp Spies!'}}},
                 1113838907: {'standing': -10.0, 'id': 1113838907,
                              'name': 'Significant other',
-                             'in_watchlist': None}
+                             'in_watchlist': None,
+                             'labels': {}}
             },
             'alliance': {
                 2049763943: {'standing': -10.0, 'id': 2049763943,
                              'name': 'EntroPraetorian Aegis',
-                             'in_watchlist': None},
+                             'in_watchlist': None,
+                             'labels': {}},
                 2067199408: {'standing': -10.0, 'id': 2067199408,
                              'name': 'Vera Cruz Alliance',
-                             'in_watchlist': None},
+                             'in_watchlist': None,
+                             'labels': {
+                                2: {'id': 2, 'name': 'Stupid'}}},
                 2081065875: {'standing': -7.5, 'id': 2081065875,
                              'name': 'TheRedMaple',
-                             'in_watchlist': None}
+                             'in_watchlist': None,
+                             'labels': {}}
             },
             'personal': {
                 3009988: {'standing': 0.0, 'id': 3009988,
                           'name': 'Navittus Sildbena',
-                          'in_watchlist': True},
+                          'in_watchlist': True,
+                          'labels': {}},
                 544497016: {'standing': 10.0, 'id': 544497016,
                             'name': 'Valkyries of Night',
-                            'in_watchlist': False}
-            }
+                            'in_watchlist': False,
+                            'labels': {
+                                1: {'id': 1, 'name': 'Alts'},
+                                2: {'id': 2, 'name': 'Evil Twins'}}},
+
+            },
+            'labels': {
+                'corp': {
+                    1: {'id': 1, 'name': 'Corp Spies!'}},
+                'alliance': {
+                    1: {'id': 1, 'name': 'Alliance Friend'},
+                    2: {'id': 2, 'name': 'Stupid'}},
+                'personal': {
+                    1: {'id': 1, 'name': 'Alts'},
+                    2: {'id': 2, 'name': 'Evil Twins'},
+                    4611686018427387904: {'id': 4611686018427387904, 'name': 'Label 61'}},
+            },
         }
 
         self.assertEqual(result['personal'], expected_result['personal'])
@@ -60,24 +84,39 @@ class ContactsTestCase(unittest.TestCase):
             'corp': {
                 1082138174: {'standing': 10.0, 'id': 1082138174,
                              'name': 'Nomad LLP',
-                             'in_watchlist': None},
+                             'in_watchlist': None,
+                             'labels': {}},
                 1086308227: {'standing': 0.0, 'id': 1086308227,
                              'name': 'Rebel Alliance of New Eden',
-                             'in_watchlist': None},
+                             'in_watchlist': None,
+                             'labels': {
+                                1: {'id': 1, 'name': 'Corp Spies!'}}},
                 1113838907: {'standing': -10.0, 'id': 1113838907,
                              'name': 'Significant other',
-                             'in_watchlist': None}
+                             'in_watchlist': None,
+                             'labels': {}}
             },
             'alliance': {
                 2049763943: {'standing': -10.0, 'id': 2049763943,
                              'name': 'EntroPraetorian Aegis',
-                             'in_watchlist': None},
+                             'in_watchlist': None,
+                             'labels': {}},
                 2067199408: {'standing': -10.0, 'id': 2067199408,
                              'name': 'Vera Cruz Alliance',
-                             'in_watchlist': None},
+                             'in_watchlist': None,
+                             'labels': {
+                                2: {'id': 2, 'name': 'Stupid'}}},
                 2081065875: {'standing': -10.0, 'id': 2081065875,
                              'name': 'TheRedMaple',
-                             'in_watchlist': None}
+                             'in_watchlist': None,
+                             'labels': {}}
+            },
+            'labels': {
+                'corp': {
+                    1: {'id': 1, 'name': 'Corp Spies!'}},
+                'alliance': {
+                    1: {'id': 1, 'name': 'Alliance Friend'},
+                    2: {'id': 2, 'name': 'Stupid'}},
             },
         }
 
