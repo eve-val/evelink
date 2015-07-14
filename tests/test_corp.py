@@ -406,6 +406,22 @@ class CorpTestCase(APITestCase):
         self.assertEqual(current, 12345)
         self.assertEqual(expires, 67890)
 
+    @mock.patch('evelink.corp.parse_bookmarks')
+    def test_bookmarks(self, mock_parse):
+        self.api.get.return_value = API_RESULT_SENTINEL
+        mock_parse.return_value = mock.sentinel.parsed_bookmarks
+
+        result, current, expires = self.corp.bookmarks()
+        self.assertEqual(result, mock.sentinel.parsed_bookmarks)
+        self.assertEqual(mock_parse.mock_calls, [
+                mock.call(mock.sentinel.api_result),
+            ])
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('corp/Bookmarks', params={}),
+            ])
+        self.assertEqual(current, 12345)
+        self.assertEqual(expires, 67890)
+
     def test_shareholders(self):
         self.api.get.return_value = self.make_api_result("corp/shareholders.xml")
 
