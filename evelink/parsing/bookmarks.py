@@ -9,7 +9,6 @@ def parse_bookmarks(api_results):
         folder = {
             'id': folder_id,
             'name': a['folderName'], # "" = toplevel
-            'creator_id': int(a['creatorID']),
             'bookmarks': {},
         }
         bookmarks = row.find('rowset')
