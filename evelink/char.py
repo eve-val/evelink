@@ -682,5 +682,70 @@ class Char(object):
 
         return api.APIResult(results, api_result.timestamp, api_result.expires)
 
+    @auto_call('char/ChatChannels')
+    def chat_channels(self, api_result=None):
+        """Get a list of chat channels this character owns or ops."""
+        rowset = api_result.result.find('rowset')
+
+        results = {}
+        for row in rowset.findall('row'):
+            a = row.attrib
+            channel = {
+                'id': int(a['channelID']),
+                'owner': {
+                    'id': int(a['ownerID']),
+                    'name': a['ownerName'],
+                },
+                'name': a['displayName'],
+                'comparison_name': a['comparisonKey'],
+                'passworded': a['hasPassword'] == 'True',
+                'motd': a['motd'],
+                'allowed': {},
+                'blocked': {},
+                'muted': {},
+                'ops': {},
+            }
+
+            sections = {}
+            for section in row.findall('rowset'):
+                sections[section.attrib['name']] = section
+
+            if 'allowed' in sections:
+                for entity in sections['allowed'].findall('row'):
+                    entity_id = int(entity.attrib['accessorID'])
+                    channel['allowed'][entity_id] = {
+                        'id': entity_id,
+                        'name': entity.attrib['accessorName'],
+                    }
+            if 'blocked' in sections:
+                for entity in sections['blocked'].findall('row'):
+                    entity_id = int(entity.attrib['accessorID'])
+                    channel['blocked'][entity_id] = {
+                        'id': entity_id,
+                        'name': entity.attrib['accessorName'],
+                        'until_ts': api.parse_ts(entity.attrib['untilWhen']),
+                        'reason': entity.attrib['reason'],
+                    }
+            if 'muted' in sections:
+                for entity in sections['muted'].findall('row'):
+                    entity_id = int(entity.attrib['accessorID'])
+                    channel['muted'][entity_id] = {
+                        'id': entity_id,
+                        'name': entity.attrib['accessorName'],
+                        'until_ts': api.parse_ts(entity.attrib['untilWhen']),
+                        'reason': entity.attrib['reason'],
+                    }
+            if 'operators' in sections:
+                for entity in sections['operators'].findall('row'):
+                    entity_id = int(entity.attrib['accessorID'])
+                    channel['ops'][entity_id] = {
+                        'id': entity_id,
+                        'name': entity.attrib['accessorName'],
+                    }
+
+            results[channel['id']] = channel
+
+        return api.APIResult(results, api_result.timestamp, api_result.expires)
+
 
 # vim: set ts=4 sts=4 sw=4 et:
