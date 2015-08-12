@@ -954,5 +954,64 @@ class CharTestCase(APITestCase):
         self.assertEqual(current, 12345)
         self.assertEqual(expires, 67890)
 
+    def test_chat_channels(self):
+        self.api.get.return_value = self.make_api_result("char/chat_channels.xml")
+
+        result, current, expires = self.char.chat_channels()
+
+        self.assertEqual(self.api.mock_calls,
+            [mock.call.get('char/ChatChannels', params={'characterID': 1}),])
+
+        self.maxDiff = None
+        self.assertEqual(result, {
+                -69329950: {
+                    'id': -69329950,
+                    'owner': {
+                        'id': 95578451,
+                        'name': 'CCP Tellus',
+                    },
+                    'name': 'Players\' Haven',
+                    'comparison_name': 'players\'haven',
+                    'passworded': False,
+                    'motd': '<b>Feed pineapples to the cats!</b>',
+                    'allowed': {
+                        99005629: {
+                            'id': 99005629,
+                            'name': 'Tellus Alliance',
+                        },
+                    },
+                    'blocked': {
+                        98396389: {
+                            'id': 98396389,
+                            'name': 'Tellus Corporation',
+                            'until_ts': None,
+                            'reason': '',
+                        },
+                    },
+                    'muted': {
+                        90006031: {
+                            'id': 90006031,
+                            'name': 'CCP Nestor',
+                            'until_ts': 1438960660,
+                            'reason': 'Test success! You can\'t speak now.',
+                        },
+                    },
+                    'ops': {
+                        92168909: {
+                            'id': 92168909,
+                            'name': 'CCP FoxFour',
+                        },
+                        95465499: {
+                            'id': 95465499,
+                            'name': 'CCP Bartender',
+                        },
+                    },
+                },
+            })
+
+        self.assertEqual(current, 12345)
+        self.assertEqual(expires, 67890)
+
+
 if __name__ == "__main__":
     unittest.main()
