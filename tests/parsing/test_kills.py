@@ -52,7 +52,11 @@ class KillsTestCase(unittest.TestCase):
                         'name': ''},
                     'id': 150080271,
                     'name': 'Pilot 333',
-                    'ship_type_id': 670}},
+                    'ship_type_id': 670,
+                    'x': 0.0,
+                    'y': 0.0,
+                    'z': 0.0,
+                }},
             15640551: {
                 'attackers': {
                     935091361: {
@@ -100,5 +104,9 @@ class KillsTestCase(unittest.TestCase):
                         'name': ''},
                     'id': 150080271,
                     'name': 'Pilot 333',
-                    'ship_type_id': 670}}
+                    'ship_type_id': 670,
+                    'x': 1.4,
+                    'y': -20.0,
+                    'z': 3000.0,
+                }},
             })

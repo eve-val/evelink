@@ -5,7 +5,7 @@
                 corporationID="1254875843" corporationName="Starbase Anchoring Corp"
                 allianceID="1254074" allianceName="EVE Gurus"
                 factionID="0" factionName="" damageTaken="446"
-                shipTypeID="670" />
+                shipTypeID="670" x="1.4" y="-20.0" z="3000" />
             <rowset name="attackers"> 
                 <row characterID="935091361" characterName="ICU123"
                     corporationID="224588600" corporationName="Inkblot Squad"
@@ -49,7 +49,7 @@
                 corporationID="1254875843" corporationName="Starbase Anchoring Corp"
                 allianceID="1254074" allianceName="EVE Gurus"
                 factionID="0" factionName="" damageTaken="446"
-                shipTypeID="670" />
+                shipTypeID="670" x="0" y="0" z="0" />
             <rowset name="attackers"> 
                 <row characterID="935091361" characterName="ICU123"
                     corporationID="224588600" corporationName="Inkblot Squad"
