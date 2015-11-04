@@ -32,6 +32,9 @@ def parse_kills(api_result):
             },
             'damage': int(a['damageTaken']),
             'ship_type_id': int(a['shipTypeID']),
+            'x': float(a['x']),
+            'y': float(a['y']),
+            'z': float(a['z']),
         }
 
         result[kill_id]['attackers'] = {}
