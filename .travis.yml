@@ -18,3 +18,4 @@ after_success:
 notifications:
   email:
     - d-eve-lopment@googlegroups.com
+sudo: false
