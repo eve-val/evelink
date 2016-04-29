@@ -240,6 +240,95 @@ class Char(object):
 
         return api.APIResult(result, api_result.timestamp, api_result.expires)
 
+    @auto_call('char/Skills')
+    def skills(self, api_result=None):
+        """Returns a specific character's skills."""
+        _str, _int, _float, _bool, _ts = api.elem_getters(api_result.result)
+
+        result = {
+            'free_skillpoints': _int('freeSkillPoints'),
+        }
+
+        rowsets = {}
+        for rowset in api_result.result.findall('rowset'):
+            key = rowset.attrib['name']
+            rowsets[key] = rowset
+
+        result['skills'] = {}
+        result['skillpoints'] = 0
+        for skill in rowsets['skills']:
+            a = skill.attrib
+            skill_id = int(a['typeID'])
+            sp = int(a['skillpoints'])
+            result['skills'][skill_id] = {
+                'id': skill_id,
+                'skillpoints': sp,
+                'level': int(a['level']),
+                'published': a['published'] == '1',
+            }
+            result['skillpoints'] += sp
+
+        return api.APIResult(result, api_result.timestamp, api_result.expires)
+
+    @auto_call('char/Clones')
+    def clones(self, api_result=None):
+        """Returns jumpclones for a specific character."""
+        _str, _int, _float, _bool, _ts = api.elem_getters(api_result.result)
+        result = {
+            'create_ts': _ts('DoB'),
+            'race': _str('race'),
+            'bloodline': _str('bloodLine'),
+            'ancestry': _str('ancestry'),
+            'remote_station_ts': _ts('remoteStationDate'),
+            'last_respec_ts': _ts('lastRespecDate'),
+            'last_timed_respec_ts': _ts('lastTimedRespec'),
+            'free_respecs': _int('freeRespecs'),
+            'gender': _str('gender'),
+            'attributes': {},
+            'implants': {},
+            'jumpclone': {
+                'jump_ts': _ts('cloneJumpDate'),
+            },
+        }
+
+        for attr in ('intelligence', 'memory', 'charisma', 'perception', 'willpower'):
+            result['attributes'][attr] = {}
+            base = int(api_result.result.findtext('attributes/%s' % attr))
+            result['attributes'][attr]['base'] = base
+
+        rowsets = {}
+        for rowset in api_result.result.findall('rowset'):
+            key = rowset.attrib['name']
+            rowsets[key] = rowset
+
+        for implant in rowsets['implants']:
+            a = implant.attrib
+            result['implants'][int(a['typeID'])] = a['typeName']
+
+        jumpclone_implants = {}
+        for implant in rowsets['jumpCloneImplants']:
+            a = implant.attrib
+            jumpclone_id = int(a['jumpCloneID'])
+            implants = jumpclone_implants.setdefault(jumpclone_id, {})
+            implants[int(a['typeID'])] = a['typeName']
+
+        result['jumpclone']['clones'] = {}
+        for jumpclone in rowsets['jumpClones']:
+            a = jumpclone.attrib
+            jumpclone_id = int(a['jumpCloneID'])
+            location_id = int(a['locationID'])
+            # This is keyed off location_id because it simplifies a
+            # common lookup ("what systems do I have jumpclones in")
+            result['jumpclone']['clones'][location_id] = {
+                'id': jumpclone_id,
+                'name': a['cloneName'],
+                'type_id': int(a['typeID']),
+                'location_id': location_id,
+                'implants': jumpclone_implants.get(jumpclone_id, {})
+            }
+
+        return api.APIResult(result, api_result.timestamp, api_result.expires)
+
     @auto_call('char/CharacterSheet')
     def character_sheet(self, api_result=None):
         """Returns attributes relating to a specific character."""
