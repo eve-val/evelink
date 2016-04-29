@@ -212,7 +212,9 @@ APIResult = collections.namedtuple("APIResult", [
 class API(object):
     """A wrapper around the EVE API."""
 
-    def __init__(self, base_url="api.eveonline.com", cache=None, api_key=None, user_agent=None):
+    def __init__(self,
+                 base_url="api.eveonline.com", cache=None,
+                 api_key=None, user_agent=None, sso_token=None):
         self.base_url = base_url
         self.user_agent = _user_agent
 
@@ -228,6 +230,10 @@ class API(object):
         if api_key and len(api_key) != 2:
             raise ValueError("The provided API key must be a tuple of (keyID, vCode).")
         self.api_key = api_key
+        if sso_token and len(sso_token) != 2:
+            # TODO: maybe allow omitting type somehow? For now this is easier.
+            raise ValueError("The provided SSO token must be a tuple of (token, type).")
+        self.sso_token = sso_token
         self._set_last_timestamps()
 
     def _set_last_timestamps(self, current_time=0, cached_until=0):
@@ -253,7 +259,11 @@ class API(object):
         params = dict((k, _clean(v)) for k,v in params.items())
 
         _log.debug("Calling %s with params=%r", path, params)
-        if self.api_key:
+        if self.sso_token:
+            _log.debug("SSO token added")
+            params['accessToken'] = self.sso_token[0]
+            params['accessType'] = self.sso_token[1]
+        elif self.api_key:
             _log.debug("keyID and vCode added")
             params['keyID'] = self.api_key[0]
             params['vCode'] = self.api_key[1]

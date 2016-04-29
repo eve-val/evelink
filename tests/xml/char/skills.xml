@@ -1,0 +1,10 @@
+<result>
+  <freeSkillPoints>50000</freeSkillPoints>
+  <rowset name="skills" key="typeID" columns="typeID,skillpoints,level,published">
+    <row typeID="3431" skillpoints="8000" level="3" published="1"/>
+    <row typeID="3413" skillpoints="8000" level="3" published="1"/>
+    <row typeID="21059" skillpoints="500" level="1" published="1"/>
+    <row typeID="3416" skillpoints="8000" level="3" published="1"/>
+    <row typeID="3445" skillpoints="512000" level="5" published="0"/>
+  </rowset>
+</result>

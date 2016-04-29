@@ -364,6 +364,105 @@ class CharTestCase(APITestCase):
                 mock.call.get('char/KillMails', params={'characterID': 1, 'beforeKillID': 12345}),
             ])
 
+    def test_clones(self):
+        self.api.get.return_value = self.make_api_result("char/clones.xml")
+
+        result, current, expires = self.char.clones()
+        self.assertEqual(current, 12345)
+        self.assertEqual(expires, 67890)
+
+        self.assertEqual(result, {
+            'create_ts': 1136073600,
+            'race': 'Minmatar',
+            'bloodline': 'Brutor',
+            'ancestry': 'Slave Child',
+            'gender': 'Female',
+            'attributes': {
+                'charisma': {'base': 7},
+                'intelligence': {'base': 6},
+                'memory': {'base': 4},
+                'perception': {'base': 12},
+                'willpower': {'base': 10},
+            },
+            'implants': {
+                33516: 'High-grade Ascendancy Alpha',
+                33525: 'High-grade Ascendancy Beta',
+                33526: 'High-grade Ascendancy Delta',
+                33527: 'High-grade Ascendancy Epsilon',
+                33528: 'High-grade Ascendancy Gamma',
+            },
+            'remote_station_ts': 1414507856,
+            'last_respec_ts': 1402496116,
+            'last_timed_respec_ts': 1399734757,
+            'free_respecs': 2,
+            'jumpclone': {
+                'clones': {
+                    60014842: {
+                        'id': 5,
+                        'location_id': 60014842,
+                        'name': '',
+                        'type_id': 164,
+                        'implants': {
+                            22119: 'Mid-grade Slave Alpha',
+                            22120: 'Mid-grade Slave Beta',
+                            22121: 'Mid-grade Slave Delta',
+                            22122: 'Mid-grade Slave Epsilon',
+                            22123: 'Mid-grade Slave Gamma',
+                            22124: 'Mid-grade Slave Omega',
+                        },
+                    },
+                    60014848: {
+                        'id': 4,
+                        'location_id': 60014848,
+                        'name': 'some random name',
+                        'type_id': 164,
+                        'implants': {
+                            20499: 'High-grade Slave Alpha',
+                            20501: 'High-grade Slave Beta',
+                            20503: 'High-grade Slave Delta',
+                            20505: 'High-grade Slave Epsilon',
+                            20507: 'High-grade Slave Gamma',
+                            20509: 'High-grade Slave Omega',
+                            33068: 'QA SpaceAnchor Implant',
+                        },
+                    },
+                    60014930: {
+                        'id': 2,
+                        'location_id': 60014930,
+                        'name': '',
+                        'type_id': 164,
+                        'implants': {},
+                    },
+                },
+                'jump_ts': 1412801690,
+            },
+        })
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('char/Clones', params={'characterID': 1}),
+            ])
+
+    def test_skills(self):
+        self.api.get.return_value = self.make_api_result("char/skills.xml")
+
+        result, current, expires = self.char.skills()
+        self.assertEqual(current, 12345)
+        self.assertEqual(expires, 67890)
+
+        self.assertEqual(result, {
+            'skills': {
+                3431: {'level': 3, 'published': True, 'skillpoints': 8000, 'id': 3431},
+                3413: {'level': 3, 'published': True, 'skillpoints': 8000, 'id': 3413},
+                21059: {'level': 1, 'published': True, 'skillpoints': 500, 'id': 21059},
+                3416: {'level': 3, 'published': True, 'skillpoints': 8000, 'id': 3416},
+                3445: {'level': 5, 'published': False, 'skillpoints': 512000, 'id': 3445}
+            },
+            'skillpoints': 536500,
+            'free_skillpoints': 50000,
+        })
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('char/Skills', params={'characterID': 1}),
+            ])
+
     def test_character_sheet(self):
         self.api.get.return_value = self.make_api_result("char/character_sheet.xml")
 

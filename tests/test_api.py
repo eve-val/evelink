@@ -198,6 +198,60 @@ class APITestCase(unittest.TestCase):
         self.assertEqual(request_dict, expected_request_dict)
 
     @mock.patch('evelink.thirdparty.six.moves.urllib.request.urlopen')
+    def test_get_with_sso_token(self, mock_urlopen):
+        mock_urlopen.return_value.read.return_value = self.test_xml
+        self.cache.get.return_value = None
+
+        sso_token = (123, 'character')
+        api = evelink_api.API(cache=self.cache, sso_token=sso_token)
+
+        api.get('foo', {'a':[2,3,4]})
+
+        # Make sure the sso token and access type were passed
+        self.assertTrue(mock_urlopen.called)
+        self.assertTrue(len(mock_urlopen.call_args[0]) > 0)
+
+        request = mock_urlopen.call_args[0][0]
+        self.assertEqual(
+            'https://api.eveonline.com/foo.xml.aspx',
+            request.get_full_url()
+        )
+
+        request_dict = urllib.parse.parse_qs(request.data.decode())
+        expected_request_dict = urllib.parse.parse_qs(
+            "a=2%2C3%2C4&accessType=character&accessToken=123")
+
+        self.assertEqual(request_dict, expected_request_dict)
+
+    @mock.patch('evelink.thirdparty.six.moves.urllib.request.urlopen')
+    def test_get_with_sso_token_and_apikey(self, mock_urlopen):
+        mock_urlopen.return_value.read.return_value = self.test_xml
+        self.cache.get.return_value = None
+
+        sso_token = (123, 'character')
+        api_key = (1, 'code')
+        api = evelink_api.API(cache=self.cache, sso_token=sso_token, api_key=api_key)
+
+        api.get('foo', {'a':[2,3,4]})
+
+        # Make sure the sso token and access type were passed,
+        # and that the api key is not (SSO overrides).
+        self.assertTrue(mock_urlopen.called)
+        self.assertTrue(len(mock_urlopen.call_args[0]) > 0)
+
+        request = mock_urlopen.call_args[0][0]
+        self.assertEqual(
+            'https://api.eveonline.com/foo.xml.aspx',
+            request.get_full_url()
+        )
+
+        request_dict = urllib.parse.parse_qs(request.data.decode())
+        expected_request_dict = urllib.parse.parse_qs(
+            "a=2%2C3%2C4&accessType=character&accessToken=123")
+
+        self.assertEqual(request_dict, expected_request_dict)
+
+    @mock.patch('evelink.thirdparty.six.moves.urllib.request.urlopen')
     def test_get_with_error(self, mock_urlopen):
         # I had to go digging in the source code for urllib2 to find out
         # how to manually instantiate HTTPError instances. :( The empty
