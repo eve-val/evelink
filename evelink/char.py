@@ -83,8 +83,8 @@ class Char(object):
         """Lists items that a specified contract contains"""
         return api.APIResult(parse_contract_items(api_result.result), api_result.timestamp, api_result.expires)
 
-    @auto_call('char/Contracts')
-    def contracts(self, api_result=None):
+    @auto_call('char/Contracts', map_params={'contract_id' : 'contractID'})
+    def contracts(self, contract_id = None, api_result=None):
         """Returns a record of all contracts for a specified character"""
         return api.APIResult(parse_contracts(api_result.result), api_result.timestamp, api_result.expires)
 

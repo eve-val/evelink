@@ -96,6 +96,22 @@ class CharTestCase(APITestCase):
         self.assertEqual(current, 12345)
         self.assertEqual(expires, 67890)
 
+    @mock.patch('evelink.char.parse_contracts')
+    def test_contracts_specific(self, mock_parse):
+        self.api.get.return_value = API_RESULT_SENTINEL
+        mock_parse.return_value = mock.sentinel.parsed_contracts
+
+        result, current, expires = self.char.contracts(contract_id=23)
+        self.assertEqual(result, mock.sentinel.parsed_contracts)
+        self.assertEqual(mock_parse.mock_calls, [
+                mock.call(mock.sentinel.api_result),
+            ])
+        self.assertEqual(self.api.mock_calls, [
+                mock.call.get('char/Contracts', params={'characterID': 1, 'contractID' : 23,}),
+            ])
+        self.assertEqual(current, 12345)
+        self.assertEqual(expires, 67890)
+
     @mock.patch('evelink.char.parse_wallet_journal')
     def test_wallet_journal(self, mock_parse):
         self.api.get.return_value = API_RESULT_SENTINEL

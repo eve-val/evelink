@@ -262,8 +262,8 @@ class Corp(object):
         """Lists items that a specified contract contains"""
         return api.APIResult(parse_contract_items(api_result.result), api_result.timestamp, api_result.expires)
 
-    @api.auto_call('corp/Contracts')
-    def contracts(self, api_result=None):
+    @api.auto_call('corp/Contracts', map_params={'contract_id' : 'contractID'})
+    def contracts(self, contract_id = None, api_result=None):
         """Get information about corp contracts."""
         return api.APIResult(parse_contracts(api_result.result), api_result.timestamp, api_result.expires)
 
