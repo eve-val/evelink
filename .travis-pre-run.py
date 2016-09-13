@@ -13,9 +13,10 @@ from xml.etree import ElementTree as ET
 from zipfile import ZipFile
 
 
+# TODO: this feed no longer exists; figure out where (if anywhere) to grab url
 GAE_FEED_URL = 'https://code.google.com/feeds/p/googleappengine/downloads/basic'
 SDK_PATTERN = r'http://googleappengine.googlecode.com/files/google_appengine_(\d\.)+zip'
-DEFAULT_URL = 'http://googleappengine.googlecode.com/files/google_appengine_1.8.9.zip'
+DEFAULT_URL = 'https://storage.googleapis.com/appengine-sdks/featured/google_appengine_1.9.40.zip'
 
 _log = logging.getLogger('travis.prerun')
 logging.basicConfig(level=logging.INFO)
