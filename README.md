@@ -1,7 +1,7 @@
 EVELink - Python Bindings for the EVE API
 =========================================
 
-EVELink provides a means to access the [EVE XML API](https://developers.eveonline.com/resource/xml-api) from Python.
+EVELink provides a means to access the [EVE XML API](https://eveonline-third-party-documentation.readthedocs.io/en/latest/xmlapi/) from Python.
 
 [![PyPI](http://img.shields.io/pypi/v/EVELink.svg)](https://pypi.python.org/pypi/EVELink)
 
