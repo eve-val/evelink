@@ -4,18 +4,17 @@
 #
 
 import argparse
+import json
 import logging
 import os
 import re
 import sys
 from evelink.thirdparty.six.moves import urllib
-from xml.etree import ElementTree as ET
 from zipfile import ZipFile
 
 
-# TODO: this feed no longer exists; figure out where (if anywhere) to grab url
-GAE_FEED_URL = 'https://code.google.com/feeds/p/googleappengine/downloads/basic'
-SDK_PATTERN = r'http://googleappengine.googlecode.com/files/google_appengine_(\d\.)+zip'
+GAE_SDK_DOWNLOAD_LIST = 'https://www.googleapis.com/storage/v1/b/appengine-sdks/o?prefix=featured'
+SDK_FILE_PATTERN = re.compile(r'google_appengine_([0-9.]+)\.zip')
 DEFAULT_URL = 'https://storage.googleapis.com/appengine-sdks/featured/google_appengine_1.9.40.zip'
 
 _log = logging.getLogger('travis.prerun')
@@ -39,20 +38,20 @@ def get_args_parser():
     return parser
 
 
-def get_sdk_url(feed, pattern):
+def get_sdk_url(api_url, pattern):
     try:
-        _log.info("Fetching atom feed for GAE sdk releases...")
-        f = urllib.request.urlopen(feed)
-        tree = ET.fromstring(f.read())
+        _log.info("Fetching GAE sdk releases...")
+        f = urllib.request.urlopen(api_url)
+        data = json.loads(f.read())
     finally:
         f.close()
 
-    ns = {'a': 'http://www.w3.org/2005/Atom'}
-    for link in tree.findall("a:entry/a:link[@rel='direct']", namespaces=ns):
-        url = link.get('href')
-        if re.match(SDK_PATTERN, url):
-            _log.info("Found last release: %s", url)
-            return url
+    medialinks = [item['mediaLink'] for item in data['items']]
+    python_sdks = [i for i in medialinks if pattern.search(i)]
+    if python_sdks:
+      # lazy version sort
+      python_sdks.sort(key=lambda x: x.split('.'), reverse=True)
+      return python_sdks[0]
     raise ValueError("No download links found!")
 
 
@@ -78,13 +77,14 @@ def main(gae_lib_dst):
         return
 
     try:
-        url = get_sdk_url(GAE_FEED_URL, SDK_PATTERN)
+        url = get_sdk_url(GAE_SDK_DOWNLOAD_LIST, SDK_FILE_PATTERN)
         _log.info("Found GAE SDK url: %s", url)
-    except Exception:
+    except Exception as e:
+        _log.error(e)
         url = DEFAULT_URL
         _log.info(
             "Failed finding GAE SDK url at %s; Will use default url (%s)",
-            GAE_FEED_URL,
+            GAE_SDK_DOWNLOAD_LIST,
             url
         )
 
