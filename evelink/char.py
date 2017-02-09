@@ -42,8 +42,8 @@ class Char(object):
         self.api = api
         self.char_id = char_id
 
-    @auto_call('char/AssetList')
-    def assets(self, api_result=None):
+    @auto_call('char/AssetList', map_params={'flat': 'flat'})
+    def assets(self, api_result=None, flat=None):
         """Get information about corp assets.
 
         Each item is a dict, with keys 'id', 'item_type_id',

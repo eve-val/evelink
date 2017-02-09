@@ -190,8 +190,8 @@ class Corp(object):
         """Return a corporation's buy and sell orders."""
         return api.APIResult(parse_market_orders(api_result.result), api_result.timestamp, api_result.expires)
 
-    @api.auto_call('corp/AssetList')
-    def assets(self, api_result=None):
+    @api.auto_call('corp/AssetList', map_params={'flat': 'flat'})
+    def assets(self, api_result=None, flat=None):
         """Get information about corp assets.
 
         Each item is a dict, with keys 'id', 'item_type_id',
